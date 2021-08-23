@@ -1,0 +1,5 @@
+@CHARSET "UTF-8";
+.cmacc-access-denied { text-align:center; padding-top:100px; padding-bottom:100px; }
+.cmacc-excerpt { mask: linear-gradient(0deg, rgba(0,0,0,0) 0px, rgb(0, 0, 0) 200px); -webkit-mask: linear-gradient(0deg, rgba(0,0,0,0) 0px, rgb(0, 0, 0) 200px); }
+.cmacc-access-denied-login-button { margin-top: 1em; }
+.cmacc-excerpt-for-archive .cmacc-access-denied { text-align:left; padding-top:0px; padding-bottom:0px; }

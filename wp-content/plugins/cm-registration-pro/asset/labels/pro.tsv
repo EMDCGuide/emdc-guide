@@ -1,0 +1,81 @@
+user_profile_edit_form_header	Edit profile	User's profile edit form header.	User profile
+user_profile_display_name	My display name:	Field for user's display name.	User profile
+user_profile_email	Email address:	User's email.	User profile
+user_profile_email_description	If you change this, we will send you an email at your new address to confirm it. <strong>The new address will not become active until confirmed.</strong>	User's email field description.	User profile
+user_profile_email_change	There is a pending change of the email to <strong>%s</strong>.	User's email field after email change message.	User profile
+user_profile_email_cancel	Cancel	User's email field after email change cancel link text.	User profile
+user_profile_email_cancel_confirm	Are you sure you want to cancel your request?	User's email cancel request confirm message.	User profile
+user_profile_email_confirm_success	Your new email is successfully confirmed.	User's email confirm success message.	User profile
+user_profile_email_confirm_failure	Something wrong while confirmation.	User's email confirm failure message.	User profile
+user_profile_website	Website URL:	User's website.	User profile
+user_profile_description	About me:	User's description.	User profile
+user_profile_save_btn	Save	Save button.	User profile
+user_profile_logout_btn	Logout	Logout button.	User profile
+user_profile_return_btn	Return	Return button.	User profile
+user_profile_edit_success	Profile has been saved.	Profile edit success message.	User profile
+change_password_form_header	Change password	Change password shortcode header.	User profile
+change_password_new_pass_field	New password:	New password field.	User profile
+change_password_repeat_pass_field	Repeat new password:	Repeat new password field.	User profile
+change_password_form_btn	Change password	Change password button.	User profile
+change_password_error_empty_pass	Please enter new password.	Empty password error.	User profile
+change_password_error_pass_does_not_match	Repeated password does not match.	Repeated password error.	User profile
+change_password_success	Password has been changed.	Change password success message.	User profile
+user_profile_invit_code	Invitation Code	Invitation Code field.	User profile
+user_profile_no_invit_code	No invitation code was used.	No invitation code was used.	User profile
+user_profile_username_used	This username is already used.	This username is already used.	User profile
+user_profile_email_used	This email address is already used.	This email address is already used.	User profile
+
+social_login_btn_prefix	Login with	Login button text prefix.	Social login
+social_login_register_btn_prefix	Register with	Register button text prefix.	Social login
+cmreg_social_login_error_generic	Sorry, couldn't login with the Social Login feature.	Generic error.	Social login
+cmreg_social_login_error_registration	Sorry, couldn't create a user account.	Registration error.	Social login
+cmreg_social_login_error_unknown_user	User with this email address doesn't exists. Please register an account first.	Unknown user login error.	Social login
+cmreg_social_login_error_account_inactive	Please check your email account for the verification email.	Inactive user account error.	Social login
+cmreg_social_login_user_not_found	Couldn't login user: user not found.	Social login error.	Social login
+social_login_back_to_page	Back to main page	Back to main page link.	Social login
+social_login_invit_code_text	In order to continue the registration process please enter an invitation code.	Invitation code form explanation.	Social login
+social_login_invit_code_input	Invitation code	Invitation code field placeholder.	Social login
+social_login_invit_code_ok_btn	OK	Submit button for the invitation code form.	Social login
+social_login_no_invit_code_btn	I don't have any invitation code	No invitation code button.	Social login
+social_login_invit_code_required_err	Invaitation code is required	Error when user didn't entered the invitation code.	Social login
+social_login_register_success	User has been registered.	Registration success message.	Social login
+social_login_register_error	Couldn't register a user:	Error when registering a user.	Social login
+
+register_invit_code_invalid_error	Invitation code is invalid.	Invalid or exceeded invitation code error message.	Registration
+register_invitation_code_link	Got an invitation code?	Invitation code link.	Registration
+register_error_not_allowed_ip	Sorry, you cannot register because your IP address is not allowed.	Error message when user's IP address is not allowed.	Registration
+register_error_disallowed_ip	Sorry, you cannot register because your IP address has been disallowed.	Error message when user's IP address is not allowed.	Registration
+register_age_verification_error	Sorry, you're not allowed to register due to the age verification policy.	Error message for the age verification.	Registration
+
+login_error_not_allowed_ip	Sorry, you cannot login because your IP address is not allowed.	Error message when user's IP address is not allowed.	Login
+login_error_disallowed_ip	Sorry, you cannot login because your IP address has been disallowed.	Error message when user's IP address has been disallowed.	Login
+login_limit_attempts_msg	Login attempts: %d	Message about the login attempts left.	Login
+login_error_limit_attempts_exceeded	You exceeded the login attempts.	Login attempts limit error message.	Login
+login_error_limit_attempts_captcha	Please rewrite characters from captcha.	Rewrite characters from captcha after exceeded the login attempts limit.	Login
+login_error_limit_attempts_wait	Please try again after %d minutes.	User have to wait when exceeded the login attempts limit.	Login
+
+create_invitation_code_params_header	Invitation parameters	Invitation parameters header.	Invite friend
+invitation_expiration_date	Expiration date	Expiration date	Invite friend
+invitation_users_limit	Users limit	Users limit	Invite friend
+invitation_email_verification	Email verification	Email verification	Invite friend
+invitation_user_role	User role	User role	Invite friend
+invitation_send_to_email	Send to email address	Send invitation to email address	Invite friend
+invitation_create_btn	Create invitation code	Create invitation code button.	Invite friend
+invitation_code_str	Code	Invitation code string.	Invite friend
+invitation_email_addr	Email address	Invitation email address.	Invite friend
+invitation_created_date	Created	Invitation created date.	Invite friend
+invitation_expires_never	never	Invitation expires never.	Invite friend
+invitation_unlimited_users	unlimited	Invitation unlimited users.	Invite friend
+invitation_list_empty	No invitation codes to show.	Empty invitations list.	Invite friend
+invitation_verify_email_required	required	Required email verification.	Invite friend
+invitation_verify_email_not_required	no	Email verification not required.	Invite friend
+invitation_limit_reached	You cannot invite more friends. Invitations limit has been reached.	Invitation limit reached.	Invite friend
+invitation_used	Used	Wheter the invitation code has been used.	Invite friend
+invitation_used_yes	Yes	Invitation code has been used.	Invite friend
+invitation_used_no	No	Invitation code has not been used.	Invite friend
+
+reset_password_form_header	Reset password	Reset password shortcode header.	Reset Password
+reset_password_new_pass_field	New password:	New password field.	Reset Password
+reset_password_form_btn	Reset password	Reset password button.	Reset Password
+reset_password_error_empty_pass	Please enter new password.	Empty password error.	Reset Password
+reset_password_success	Password has been reset.	Change password success message.	Reset Password

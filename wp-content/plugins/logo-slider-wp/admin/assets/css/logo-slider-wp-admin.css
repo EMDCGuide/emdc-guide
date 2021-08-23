@@ -1,0 +1,101 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+
+
+.lgx-update {
+    display: inline-block;
+    line-height: 19px;
+    padding: 11px 15px;
+    font-size: 14px;
+    text-align: left;
+    margin: 10px 0 20px;
+    background-color: #fff;
+    border-left: 4px solid #34a853;
+    -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+}
+
+.lgx-update strong {
+    font-weight: 400;
+}
+
+#poststuff .lgx-settings-inside {
+    padding: 25px ;
+}
+
+
+#poststuff .lgx-settings-forms h2{
+    display: none;
+}
+
+#poststuff .lgx-settings-nav .nav-tab-wrapper {
+    margin: 0;
+    padding: 0;
+}
+#poststuff .lgx-settings-nav .nav-tab-wrapper .nav-tab {
+    margin-left: 0;
+}
+
+.lgx-settings-forms .inside {
+    padding: 0;
+}
+
+.lgx-settings-nav  .nav-tab-active, .lgx-settings-nav  .nav-tab-active:focus:active {
+    background: #fff;
+    color: #34a853;
+}
+
+/*
+.lgx-settings-nav  .nav-tab-active:focus, .lgx-settings-nav  .nav-tab-active:hover {
+    color: #008299;
+}*/
+
+
+#adminmenu .menu-icon-logosliderwp .wp-menu-image:before {
+    content: "\e900";
+    font-family: 'lgxicon', serif !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    font-size: 20px !important;
+}
+
+
+.lgx_logo_slider_shortcode_copy_box{
+
+    width: 45%;
+    border: 1px solid #4caf50;
+    background: #ffffff;
+    min-height: 180px;
+    padding: 5px;
+    text-align: center;
+    margin: 1%;
+    display: inline-block;
+    float: left;
+
+}
+
+#the-list.ui-sortable tr:hover {
+    cursor: move;
+}
+
+
+
+table.wp-list-table {
+    border-collapse: collapse;
+}
+
+tr.placeholder-highlight {
+    /*height: 150px;*/
+    background-color: #f1f1f1 !important;
+    border: 2px dashed #0073aa !important;
+}
+
+.lgx_ls_logo.column-lgx_ls_logo img{
+    max-width: 85px;
+}

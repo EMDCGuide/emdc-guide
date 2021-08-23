@@ -1,0 +1,37 @@
+.cmacc-pagination, .cmacc-pagination li { list-style: none; margin: 0; padding: 0; }
+.cmacc-pagination li { display: inline-block; }
+.cmacc-pagination a { display: inline-block; padding: 0.5em 1em; font-size: 14px; text-decoration: none; font-weight: bold; background: #f0f0f0; border: 1px solid #cccccc; color: #777777; }
+.cmacc-pagination a:hover { color: black; border-color: #999999; }
+.cmacc-pagination .current-page a { background: white; color: black; }
+
+.cmacc-block { background: white; padding: 1em; width: 600px; border: solid 1px #dddddd; margin: 2em 2em 2em 0; float: left; }
+.cmacc-block h3 { margin-top: 0 !important; }
+
+.cmacc-admin-notice { position: relative; padding-right: 30px !important; }
+.cmacc-admin-notice .cmacc-dismiss { position: absolute; top: 10px; right: 10px; text-decoration: none; background: #aaaaaa; color: white; border-radius: 15px 15px; width: 15px; height: 15px; text-align: center; font-size: 15px; font-weight: bold; line-height: 15px; }
+	
+.cmacc-restrict-loggedin, .cmacc-restrict-roles, .cmacc-restrict-whitelist, .cmacc-restrict-blacklist, .cmacc-restrict-specificdate { margin-left:2em; }
+
+.cmacc-url-filters input[type="text"] { width:89%; }
+.cmacc-url-filters tr.cmacc-template { display:none; }
+.cmacc-url-filters .submit { text-align:right; }
+
+.access_restricted_by_whitelist_con input[type="text"] { width:135px !important; vertical-align: middle; }
+.access_restricted_by_blacklist_con input[type="text"] { width:135px !important; vertical-align: middle; }
+.access_denied_x_days_from_registration_con input[type="number"] { width:300px; vertical-align: middle; }
+.restriction_type_con select { width:300px; }
+
+#cmacc-cmacc-post-access .access_restricted_by_whitelist_con input[type="text"] { width:70% !important; vertical-align: middle; }
+#cmacc-cmacc-post-access .access_restricted_by_blacklist_con input[type="text"] { width:70% !important; vertical-align: middle; }
+.inside .cmacc-restriction-settings .access_denied_x_days_from_registration_con { margin-top:10px; }
+#cmacc-cmacc-post-access .access_denied_x_days_from_registration_con input[type="number"] { width:100%; vertical-align: middle; }
+.inside .cmacc-restriction-settings .restriction_type_con { margin-top:10px; }
+#cmacc-cmacc-post-access .restriction_type_con select { width:100%; }
+
+.cmacc-checkboxlist-container { margin-top:5px; margin-bottom:5px; }
+.cmacc-restrict-specificdate { margin-top:5px; margin-bottom:5px; }
+
+.inside .cmacc-restriction-settings .access_restricted_by_specificdate_con span.from { display:block; }
+.inside .cmacc-restriction-settings .access_restricted_by_specificdate_con span.from span { width: 25px; display: inline-block; text-align:right; padding-right:10px; }
+.inside .cmacc-restriction-settings .access_restricted_by_specificdate_con span.to { display:block; margin-top:10px; }
+.inside .cmacc-restriction-settings .access_restricted_by_specificdate_con span.to span { width: 25px; display: inline-block; text-align:right; padding-right:10px; }
