@@ -49,8 +49,8 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 					</div>
 					<div class="copr-form-buttons">
 						<div class="copr-width-50">
-							<a href="#" data-number="$questionNumber" class="copr-previous"><span class="dashicons dashicons-arrow-left-alt2"></span> $prevLabel</a> |
-							<a href="#" data-number="$questionNumber" class="copr-next">$nextLabel <span class="dashicons dashicons-arrow-right-alt2"></span></a>
+							<a href="#" class="copr-previous"><span class="dashicons dashicons-arrow-left-alt2"></span> $prevLabel</a> |
+							<a href="#" class="copr-next">$nextLabel <span class="dashicons dashicons-arrow-right-alt2"></span></a>
 						</div>
 						<div class="copr-width-50 copr-align-right submit">
 							<input type="submit" name="submit" value="Save" />

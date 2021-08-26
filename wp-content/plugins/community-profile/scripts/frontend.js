@@ -13,14 +13,44 @@ jQuery(function($) {
       const total = children.length;
       wrapper.attr('data-current', current);
       wrapper.attr('data-total', total);
-      if (current) {
-        // Disable previous
-        displayed.find('.copr-previous').first().addClass('copr-disabled');
+      children.first().find('.copr-previous').first().addClass('copr-disabled');
+      children.last().find('.copr-next').first().addClass('copr-disabled');
+    });
+    /**
+     * Handle next button
+     */
+    $('.copr-questions-wrapper .copr-next').on('click', function() {
+      const link = $(this);
+      if (link.hasClass('copr-disabled')) {
+        return false;
       }
-      if (current == total) {
-        // Disable next
-        displayed.find('.copr-next').first().addClass('copr-disabled');
+      const parent = link.closest('.copr-questions-wrapper');
+      const current = parseInt(parent.attr('data-current'), 10);
+      const total = parseInt(parent.attr('data-total'), 10);
+      const next = current + 1;
+      parent.find(`div[data-number="${current}"]`).fadeOut('slow', function() {
+        parent.find(`div[data-number="${next}"]`).fadeIn('slow');
+        parent.attr('data-current', next);
+      });
+      return false;
+    });
+    /**
+     * Handle previous button
+     */
+    $('.copr-questions-wrapper .copr-previous').on('click', function() {
+      const link = $(this);
+      if (link.hasClass('copr-disabled')) {
+        return false;
       }
+      const parent = link.closest('.copr-questions-wrapper');
+      const current = parseInt(parent.attr('data-current'), 10);
+      const total = parseInt(parent.attr('data-total'), 10);
+      const prev = current - 1;
+      parent.find(`div[data-number="${current}"]`).fadeOut('slow', function() {
+        parent.find(`div[data-number="${prev}"]`).fadeIn('slow');
+        parent.attr('data-current', prev);
+      });
+      return false;
     });
   }
 });

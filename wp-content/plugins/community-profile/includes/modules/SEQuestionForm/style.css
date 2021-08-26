@@ -40,3 +40,9 @@
 a.copr-disabled {
     opacity: 0.4;
 }
+a.copr-disabled:hover {
+    cursor: not-allowed;
+}
+.submit input:hover {
+    cursor: pointer;
+}
