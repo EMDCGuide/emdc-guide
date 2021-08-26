@@ -12,6 +12,9 @@
     margin-top: 10px;
     width: 100%;
 }
+.copr-answer-choices {
+    padding-left: 10px;
+}
 .copr-question-field-wrapper {
     margin: 20px 0;
 }

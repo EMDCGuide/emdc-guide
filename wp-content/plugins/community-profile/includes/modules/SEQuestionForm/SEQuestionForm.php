@@ -135,6 +135,23 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 			$formElement = '';
 			if (strtolower($pieces[1]) === 'text') {
 				$formElement = '<textarea name="answer" class="copr-answer-textarea" rows="10"></textarea>';
+			} else if (strtolower($pieces[1]) === 'choice') {
+				if (count($pieces) < 3) {
+					/**
+					 * Missing choices
+					 */
+					continue;
+				}
+				$formElement = '<div class="copr-answer-choices">';
+				$choices = explode(',', $pieces[2]);
+				foreach ($choices as $choiceKey => $choice) {
+					$checked = '';
+					if ($choiceKey == 0) {
+						$checked = ' checked';
+					}
+					$formElement .= '<div><input type="radio" name="answer" value="' . $choice .'"' . $checked . ' /><label>' . $choice .'</label></div>';
+				}
+				$formElement .= '</div>';
 			}
 			$question = $pieces[0];
 			$questionNumber = $key + 1;
