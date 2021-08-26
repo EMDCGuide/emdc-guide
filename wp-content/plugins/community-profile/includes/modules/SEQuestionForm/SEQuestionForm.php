@@ -46,6 +46,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 					<div class="form-element-wrapper">
 						<label>$questionNumber) $question</label>
 						$formElement
+						<p class="copr-hidden copr-answer-error copr-error-message"></p>
 					</div>
 					<div class="copr-form-buttons">
 						<div class="copr-width-50">

@@ -43,7 +43,7 @@ function copr_initialize_extension() {
  */
 function copr_save_answer() {
 	$isAjax = (isset($_POST['is_ajax'])) ? boolval($_POST['is_ajax']) : false;
-	if (!check_ajax_referer('submit_answers')) {
+	if ((!isset($_POST)) || (!check_ajax_referer('submit_answers'))) {
 		if ($isAjax) {
 			status_header(400, 'Invalid Request!');
 			exit;
@@ -52,8 +52,31 @@ function copr_save_answer() {
 			exit;
 		}
 	}
+	$payload = array(
+		'data'		=>	array(
+			'answer'			=>	$_POST['answer'],
+			'question_number'	=>	$_POST['question_number'],
+			'question'			=>	$_POST['question'],
+			'tag'				=>	$_POST['tag'],
+		),
+		'errors'	=>	array(),
+		'success'	=>	false,
+	);
+	if (!$_POST['answer']) {
+		$payload['success'] = false;
+		$payload['errors'][] = array(
+			'field'	=>	'answer',
+			'error'	=>	esc_html__('The answer cannot be blank!', 'copr-my-extension'),
+		);
+	} else {
+		$payload['success'] = true;
+		/**
+		 * Save the data
+		 */
+	}
 	if ($isAjax) {
-		echo json_encode($_POST);
+		header('Content-Type: application/json');
+		echo json_encode($payload);
 		exit;
 	} else {
 		wp_redirect($_POST['_wp_http_referer']);

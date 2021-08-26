@@ -65,12 +65,26 @@ jQuery(function($) {
         .prop('disabled', 'disabled')
         .addClass('copr-disabled');
       $.post(form.attr('action'), payload).done(function(data) {
-        console.log(data);
         submit
           .val(submit.attr('data-save'))
           .prop('disabled', '')
           .removeClass('copr-disabled');
-        next.click();
+        if (data.success) {
+          form.find(`input, textarea`).removeClass('copr-errored');
+          form.find(`.copr-error-message`).addClass('copr-hidden').text('');
+          next.click();
+        } else {
+          data.errors.forEach(function(error) {
+            const field = form.find(`*[name="${error.field}"]`).first();
+            if (field.length > 0) {
+                field.addClass('copr-errored');
+            }
+            const errorHolder = form.find(`.copr-${error.field}-error`).first();
+            if (errorHolder.length > 0) {
+                errorHolder.text(error.error).removeClass('copr-hidden');
+            }
+          });
+        }
       });
       return false;
     });
