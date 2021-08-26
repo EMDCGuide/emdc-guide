@@ -35,5 +35,32 @@ if ( ! function_exists( 'copr_initialize_extension' ) ):
 function copr_initialize_extension() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/CommunityProfile.php';
 }
+
+/**
+ * Save an answer
+ *
+ * @return void
+ */
+function copr_save_answer() {
+	$isAjax = (isset($_POST['is_ajax'])) ? boolval($_POST['is_ajax']) : false;
+	if (!check_ajax_referer('submit_answers')) {
+		if ($isAjax) {
+			status_header(400, 'Invalid Request!');
+			exit;
+		} else {
+			wp_redirect($_POST['_wp_http_referer']);
+			exit;
+		}
+	}
+	if ($isAjax) {
+		echo json_encode($_POST);
+		exit;
+	} else {
+		wp_redirect($_POST['_wp_http_referer']);
+		exit;
+	}
+}
+
+add_action( 'wp_ajax_copr_save_answer', 'copr_save_answer' );
 add_action( 'divi_extensions_init', 'copr_initialize_extension' );
 endif;

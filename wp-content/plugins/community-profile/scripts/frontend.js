@@ -52,5 +52,27 @@ jQuery(function($) {
       });
       return false;
     });
+    /**
+     * Handle form submissions
+     */
+    $('.copr-question-field-wrapper form').submit(function() {
+      const form = $(this);
+      const payload = `${form.serialize()}&is_ajax=true`;
+      const submit = form.find('input[type="submit"]').first();
+      const next = form.find('.copr-next').first();
+      submit
+        .val(submit.attr('data-saving'))
+        .prop('disabled', 'disabled')
+        .addClass('copr-disabled');
+      $.post(form.attr('action'), payload).done(function(data) {
+        console.log(data);
+        submit
+          .val(submit.attr('data-save'))
+          .prop('disabled', '')
+          .removeClass('copr-disabled');
+        next.click();
+      });
+      return false;
+    });
   }
 });

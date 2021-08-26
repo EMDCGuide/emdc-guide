@@ -53,7 +53,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 							<a href="#" class="copr-next">$nextLabel <span class="dashicons dashicons-arrow-right-alt2"></span></a>
 						</div>
 						<div class="copr-width-50 copr-align-right submit">
-							<input type="submit" name="submit" value="Save" />
+							<input type="submit" name="submit" value="$save" data-save="$save" data-saving="$saving" />
 						</div>
 						<div class="copr-fixed"></div>
 					</div>
@@ -168,6 +168,8 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 				'$prevLabel'		=>	$prevLabel,
 				'$question'			=>	$question,
 				'$questionNumber'	=>	$questionNumber,
+				'$save'				=>	esc_html__('Save', 'copr-my-extension'),
+				'$saving'			=>	esc_html__('Saving', 'copr-my-extension'),
 				'$tag'				=>	$tag,
 				'$uniqueId'			=>	$questionLabel,
 				'$wrapperClasses'	=>	$wrapperClasses,

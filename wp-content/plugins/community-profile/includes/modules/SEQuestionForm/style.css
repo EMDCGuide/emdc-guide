@@ -40,10 +40,10 @@
     display: block;
     clear: both;
 }
-a.copr-disabled {
+.copr-disabled {
     opacity: 0.4;
 }
-a.copr-disabled:hover {
+.copr-disabled:hover {
     cursor: not-allowed;
 }
 .submit input:hover {
