@@ -4,5 +4,8 @@
     <rule ref="PSR2" />
     <rule ref="PSR1.Files.SideEffects">
         <exclude-pattern>Database.php</exclude-pattern>
+        <exclude-pattern>Stores/AnswerStore.php</exclude-pattern>
+        <exclude-pattern>Stores/QuestionStore.php</exclude-pattern>
+        <exclude-pattern>Stores/SectionStore.php</exclude-pattern>
     </rule>
  </ruleset>

@@ -24,11 +24,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Community Profile. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
 */
+require_once(plugin_dir_path( __FILE__ ) . DIRECTORY_SEPARATOR . 'autoloader.php');
+
+use MissionalDigerati\CommunityProfile\Database;
+use MissionalDigerati\CommunityProfile\Stores\AnswerStore;
+use MissionalDigerati\CommunityProfile\Stores\QuestionStore;
+use MissionalDigerati\CommunityProfile\Stores\SectionStore;
+
 if ( ! function_exists( 'copr_initialize_extension' ) ):
 
 define('COPR_ROOT_DIR', plugin_dir_path( __FILE__ ));
 define('COPR_DS', DIRECTORY_SEPARATOR);
-require_once(COPR_ROOT_DIR . 'lib' . COPR_DS . 'MissionalDigerati' . COPR_DS . 'CommunityProfile' . COPR_DS . 'Database.php');
 
 /**
  * Creates the extension's main class instance.
@@ -46,10 +52,10 @@ function copr_initialize_extension() {
  */
 function copr_activate_plugin() {
 	global $wpdb;
-	$database = new MissionalDigerati\CommunityProfile\Database(
-		$wpdb->get_charset_collate(),
-		$wpdb->prefix
-	);
+	$database = new Database($wpdb->get_charset_collate());
+	$database->addStore(new SectionStore($wpdb, $wpdb->prefix));
+	$database->addStore(new QuestionStore($wpdb, $wpdb->prefix));
+	$database->addStore(new AnswerStore($wpdb, $wpdb->prefix));
 	$database->install();
 }
 
@@ -59,6 +65,7 @@ function copr_activate_plugin() {
  * @return void
  */
 function copr_save_answer() {
+	global $wpdb;
 	$isAjax = (isset($_POST['is_ajax'])) ? boolval($_POST['is_ajax']) : false;
 	if ((!isset($_POST)) || (!check_ajax_referer('submit_answers'))) {
 		if ($isAjax) {
