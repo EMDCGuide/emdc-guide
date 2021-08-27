@@ -2,7 +2,6 @@
 
 jQuery(function($) {
   if ($('.copr-questions-wrapper').length > 0) {
-    console.log('HERE');
     /**
      * Do some prework
      */

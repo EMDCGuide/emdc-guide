@@ -18,6 +18,8 @@ class SEQuestionForm extends Component {
    */
   currentIndex = 0;
 
+  fadeStateClass = ' visible';
+
   /**
    * An array of the questions
    *
@@ -73,7 +75,11 @@ class SEQuestionForm extends Component {
    * @return {void}
    */
   getNextItem() {
-    this.setItem(true);
+    this.fadeStateClass = ' hidden';
+    setTimeout(() => {
+      this.fadeStateClass = ' visible';
+      this.setItem(true);
+    }, 300);
   }
 
   /**
@@ -82,7 +88,11 @@ class SEQuestionForm extends Component {
    * @return {void}
    */
   getPreviousItem() {
-    this.setItem(false, true);
+    this.fadeStateClass = ' hidden';
+    setTimeout(() => {
+      this.fadeStateClass = ' visible';
+      this.setItem(false, true);
+    }, 300);
   }
 
   /**
@@ -96,7 +106,9 @@ class SEQuestionForm extends Component {
       this.setItem(false);
     }
     return (
-      <ItemElement isLast={this.state.isLast} item={this.state.item} number={this.state.number} onNextClicked={this.getNextItem.bind(this)} onPreviousClicked={this.getPreviousItem.bind(this)} />
+      <div className={`copr-fade-element${this.fadeStateClass}`}>
+        <ItemElement isLast={this.state.isLast} item={this.state.item} number={this.state.number} onNextClicked={this.getNextItem.bind(this)} onPreviousClicked={this.getPreviousItem.bind(this)} />
+      </div>
     );
   }
 }
