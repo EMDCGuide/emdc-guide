@@ -101,6 +101,7 @@ class SEQuestionForm extends Component {
    * @return {object} A React object
    */
   render() {
+    console.log(this.props);
     this.items = this.props.questions.split("\n");
     if (this.state.item === '') {
       this.setItem(false);
