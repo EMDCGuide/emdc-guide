@@ -1,0 +1,21 @@
+{
+    "name": "missional-digerati/community-profile",
+    "description": "A plugin for tracking the SE journey of all members within a BuddyPress community.",
+    "authors": [
+        {
+            "name": "Missional Digerati",
+            "email": "johnathan@missionaldigerati.org"
+        }
+    ],
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.6"
+    },
+    "scripts": {
+      "lint": "phpcs --standard=ruleset.xml lib/"
+    },
+    "autoload": {
+      "psr-4": {
+        "MissionalDigerati\\": "lib/MissionalDigerati"
+      }
+    }
+}

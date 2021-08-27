@@ -24,16 +24,33 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Community Profile. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
 */
-
-
 if ( ! function_exists( 'copr_initialize_extension' ) ):
+
+define('COPR_ROOT_DIR', plugin_dir_path( __FILE__ ));
+define('COPR_DS', DIRECTORY_SEPARATOR);
+require_once(COPR_ROOT_DIR . 'lib' . COPR_DS . 'MissionalDigerati' . COPR_DS . 'CommunityProfile' . COPR_DS . 'Database.php');
+
 /**
  * Creates the extension's main class instance.
  *
  * @since 1.0.0
  */
 function copr_initialize_extension() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/CommunityProfile.php';
+	require_once(COPR_ROOT_DIR . 'includes/CommunityProfile.php');
+}
+
+/**
+ * Run code when the plugin is activated
+ *
+ * @return void
+ */
+function copr_activate_plugin() {
+	global $wpdb;
+	$database = new MissionalDigerati\CommunityProfile\Database(
+		$wpdb->get_charset_collate(),
+		$wpdb->prefix
+	);
+	$database->install();
 }
 
 /**
@@ -86,4 +103,5 @@ function copr_save_answer() {
 
 add_action( 'wp_ajax_copr_save_answer', 'copr_save_answer' );
 add_action( 'divi_extensions_init', 'copr_initialize_extension' );
+register_activation_hook( __FILE__, 'copr_activate_plugin' );
 endif;
