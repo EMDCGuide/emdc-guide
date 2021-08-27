@@ -101,7 +101,21 @@ class SEQuestionForm extends Component {
    * @return {object} A React object
    */
   render() {
-    console.log(this.props);
+    let errors = [];
+    if (!this.props.title) {
+      errors.push(<p class="copr-error-message">Please provide the section title in the module settings.</p>);
+    }
+    if (!this.props.tag) {
+      errors.push(<p class="copr-error-message">Please provide the curriculum tag in the module settings.</p>);
+    }
+    if (!this.props.questions) {
+      errors.push(<p class="copr-error-message">Please provide questions in the module settings.</p>);
+    }
+    if (errors.length > 0) {
+      return (
+        <div class="copr-error-box">{errors}</div>
+      );
+    }
     this.items = this.props.questions.split("\n");
     if (this.state.item === '') {
       this.setItem(false);

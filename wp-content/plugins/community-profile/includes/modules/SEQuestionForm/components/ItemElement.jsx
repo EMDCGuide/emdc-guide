@@ -20,12 +20,17 @@ class ItemElement extends Component {
       );
     }
 
-    let formElement = '<p className="copr-error-message">You defined an incorrect type.</p>';
+    let formElement = null;
     if (parts[1] === 'text') {
       formElement = this.getTextarea();
     } else if (parts[1] === 'choice') {
       const choices = parts[2].split(',');
       formElement = this.getRadioButtons(choices);
+    }
+    if (!formElement) {
+      return (
+        <div class="copr-error-box"><p className="copr-error-message">You defined an incorrect question type or it is malformed.</p></div>
+      )
     }
     const nextDisabledClass = (this.props.isLast) ? ' copr-disabled' : '';
     const prevDisabledClass = (this.props.number === 1) ? ' copr-disabled' : '';
@@ -81,7 +86,7 @@ class ItemElement extends Component {
   getRadioButtons(choices) {
     if (choices.length === 0) {
       return (
-        <p className="copr-error-message">Missing choices on this question.</p>
+        <div class="copr-error-box"><p className="copr-error-message">Missing choices on this question.</p></div>
       )
     }
     const inputs = choices.map((choice, index) =>  this.getRadioButton(choice, index));
