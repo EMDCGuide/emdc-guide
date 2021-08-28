@@ -60,6 +60,7 @@ class QuestionStore
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             copr_section_id mediumint(9) NOT NULL,
             unique_hash varchar(255) DEFAULT '' NOT NULL,
+            question_number mediumint(9) NOT NULL,
             question longtext DEFAULT '' NOT NULL,
             created_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
             PRIMARY KEY  (id),
