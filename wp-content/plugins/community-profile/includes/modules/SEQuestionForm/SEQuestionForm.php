@@ -40,6 +40,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 				<form action="$formAction" method="post">
 					<input type="hidden" name="action" value="copr_save_answer" />
 					<input type="hidden" name="tag" value="$tag" />
+					<input type="hidden" name="section_title" value="$title" />
 					<input type="hidden" name="question_number" value="$questionNumber" />
 					<input type="hidden" name="question" value="$question" />
 					$nounce
@@ -123,6 +124,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 		$lines = explode("<br />", $this->props['questions']);
 		$html = '';
 		$tag = strtolower(esc_html($this->props['tag']));
+		$title = esc_html($this->props['title']);
 		$nextLabel = esc_html__('Next', 'copr-my-extension');
 		$prevLabel = esc_html__('Previous', 'copr-my-extension');
 		foreach ($lines as $key => $line) {
@@ -172,6 +174,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 				'$save'				=>	esc_html__('Save', 'copr-my-extension'),
 				'$saving'			=>	esc_html__('Saving', 'copr-my-extension'),
 				'$tag'				=>	$tag,
+				'$title'			=>	$title,
 				'$uniqueId'			=>	$questionLabel,
 				'$wrapperClasses'	=>	$wrapperClasses,
 			);
