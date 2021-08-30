@@ -90,7 +90,7 @@ class SectionStore
      * Find the section based on it's tag.
      *
      * @param  string $tag  The tag of the section
-     * @return object       The tag details
+     * @return object       The section details
      */
     public function findByTag($tag)
     {
