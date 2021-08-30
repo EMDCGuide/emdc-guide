@@ -80,7 +80,7 @@ function copr_save_answer() {
 	$payload = array(
 		'data'		=>	array(
 			'answer'			=>	$_POST['answer'],
-			'question_number'	=>	$_POST['question_number'],
+			'question_number'	=>	intval($_POST['question_number']),
 			'question'			=>	$_POST['question'],
 			'section_title'		=>	$_POST['section_title'],
 			'tag'				=>	$_POST['tag'],
@@ -103,7 +103,7 @@ function copr_save_answer() {
 		$sectionId = $sectionStore->createOrUpdate($_POST['section_title'], $_POST['tag']);
 		$payload['data']['section_id'] = $sectionId;
 		if ($sectionId) {
-			$questionId = $questionStore->create($sectionId, $_POST['question_number'], $_POST['question']);
+			$questionId = $questionStore->update($_POST['question_number'], $_POST['question']);
 			$payload['data']['question_id'] = $questionId;
 			if ($questionId) {
 				$payload['success'] = true;

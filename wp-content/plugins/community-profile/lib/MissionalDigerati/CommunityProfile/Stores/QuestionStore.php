@@ -82,6 +82,7 @@ class QuestionStore
         $question = $this->db->get_row($prepare);
         if ($question) {
             $question->id = intval($question->id);
+            $question->question_number = intval($question->question_number);
         }
         return $question;
     }
@@ -112,6 +113,28 @@ class QuestionStore
     }
 
     /**
+     * Update the given question.  Only the number will be updated.  We use question to create
+     * the unique hash.
+     *
+     * @param  integer  $number   The number of the question
+     * @param  string   $question The question
+     * @return  integer|false     It returns the id or false if it doesn't exist
+     */
+    public function update($number, $question)
+    {
+        $exists = $this->findByQuestion($question);
+        if (!$exists) {
+            return false;
+        }
+
+        if ($exists->number !== $number) {
+            // Only update if there was a change.
+            $this->updateQuestion($number, $question);
+        }
+        return $exists->id;
+    }
+
+    /**
      * Create a question
      *
      * @param  integer  $sectionId  The id of the existing section
@@ -133,6 +156,26 @@ class QuestionStore
             $hash,
             $number,
             $question
+        );
+        return $this->db->query($prepare);
+    }
+
+    /**
+     * Update the given question.  Only the number will be updated.  We use question to create
+     * the unique hash.
+     *
+     * @param  integer  $number   The number of the question
+     * @param  string   $question The question
+     * @return  integer           The number of rows affected by the update
+     *
+     * @access protected
+     */
+    protected function updateQuestion($number, $question)
+    {
+        $tableName = $this->prefix . self::$tableName;
+        $hash = md5($question);
+        $prepare = $this->db->prepare("UPDATE {$tableName} SET question_number = %s WHERE unique_hash = %s",
+            $number, $hash
         );
         return $this->db->query($prepare);
     }
