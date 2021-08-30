@@ -49,7 +49,7 @@ class SectionStore
      * @param  string $title    The title of the section
      * @param  string $tag      The tag of the section
      *
-     * @return boolean          Did it successfully create?
+     * @return integer|false    Returns the id if inserted otherwise it returns false
      */
     public function create($title, $tag)
     {
@@ -61,7 +61,8 @@ class SectionStore
             $title,
             strtolower($tag)
         );
-        return $this->db->query($prepare);
+        $this->db->query($prepare);
+        return $this->db->insert_id;
     }
 
     /**
