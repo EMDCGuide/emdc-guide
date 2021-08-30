@@ -5,6 +5,8 @@ require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 /**
  * A class for handling the storage of the Section in the database.
+ *
+ * NOTE: we use tag as the look up field.  It is a unique field.
  */
 class SectionStore
 {
@@ -57,16 +59,31 @@ class SectionStore
         if ($exists) {
             return $exists->id;
         }
-        $tableName = $this->prefix . self::$tableName;
-        $prepare = $this->db->prepare("INSERT INTO {$tableName}
-                (title, tag, created_at)
-                VALUES(%s, %s, NOW())
-            ",
-            $title,
-            strtolower($tag)
-        );
-        $this->db->query($prepare);
-        return $this->db->insert_id;
+
+        $created = $this->createSection($title, $tag);
+        return ($created) ? $this->db->insert_id : false;
+    }
+
+    /**
+     * convience method to create or update the given section.
+     *
+     * @param   string          $title          The title of the section
+     * @param   string          $tag            The tag to find the current section.
+     * @return  integer|false                   It returns the id or false if it failed to update
+     */
+    public function createOrUpdate($title, $tag)
+    {
+        $exists = $this->findByTag($tag);
+        if (!$exists) {
+            $created = $this->createSection($title, $tag);
+            return ($created) ? $this->db->insert_id : false;
+        }
+
+        if ($exists->title !== $title) {
+            // Only update if there was a change.
+            $this->updateSection($title, $tag);
+        }
+        return $exists->id;
     }
 
     /**
@@ -81,7 +98,32 @@ class SectionStore
         $prepare = $this->db->prepare("SELECT * FROM {$tableName} WHERE tag = '%s'",
             strtolower($tag)
         );
-        return $this->db->get_row($prepare);
+        $section = $this->db->get_row($prepare);
+        $section->id = intval($section->id);
+        return $section;
+    }
+
+    /**
+     * Update the existing section.
+     *
+     * NOTE: Do not update the tag field!
+     *
+     * @param   string          $title      The title of the section
+     * @param   string          $tag        The tag to find the current section.
+     * @return  integer|false               It returns the id or false if it doesn't exist
+     */
+    public function update($title, $tag)
+    {
+        $exists = $this->findByTag($tag);
+        if (!$exists) {
+            return false;
+        }
+
+        if ($exists->title !== $title) {
+            // Only update if there was a change.
+            $this->updateSection($title, $tag);
+        }
+        return $exists->id;
     }
 
     /**
@@ -103,5 +145,47 @@ class SectionStore
             PRIMARY KEY  (id)
         ) {$charsetCollate};";
         dbDelta($sql);
+    }
+
+    /**
+     * Create the section
+     *
+     * @param  string $title    The title of the section
+     * @param  string $tag      The tag of the section
+     *
+     * @return boolean          Was it successfully created?
+     * @access protected
+     */
+    protected function createSection($title, $tag)
+    {
+        $tableName = $this->prefix . self::$tableName;
+        $prepare = $this->db->prepare("INSERT INTO {$tableName}
+                (title, tag, created_at)
+                VALUES(%s, %s, NOW())
+            ",
+            $title,
+            strtolower($tag)
+        );
+        return $this->db->query($prepare);
+    }
+
+    /**
+     * Update the existing section.
+     *
+     * NOTE: Do not update the tag field!
+     *
+     * @param   string      $title  The title of the section
+     * @param   string      $tag    The tag to find the current section.
+     *
+     * @return  integer             The number of rows affected by the update
+     * @access  protected
+     */
+    protected function updateSection($title, $tag)
+    {
+        $tableName = $this->prefix . self::$tableName;
+        $prepare = $this->db->prepare("UPDATE {$tableName} SET title = %s WHERE tag = %s",
+            $title, strtolower($tag)
+        );
+        return $this->db->query($prepare);
     }
 }
