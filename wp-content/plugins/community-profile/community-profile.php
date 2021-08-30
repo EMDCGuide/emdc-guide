@@ -66,9 +66,9 @@ function copr_activate_plugin() {
  */
 function copr_save_answer() {
 	global $wpdb;
-	header('Content-Type: application/json');
+	$userId = get_current_user_id();
 	$isAjax = (isset($_POST['is_ajax'])) ? boolval($_POST['is_ajax']) : false;
-	if ((!isset($_POST)) || (!check_ajax_referer('submit_answers'))) {
+	if ((!isset($_POST)) || (!check_ajax_referer('submit_answers')) || ($userId === 0)) {
 		if ($isAjax) {
 			status_header(400, 'Invalid Request!');
 			exit;
@@ -100,13 +100,18 @@ function copr_save_answer() {
 		 */
 		$sectionStore = new SectionStore($wpdb, $wpdb->prefix);
 		$questionStore = new QuestionStore($wpdb, $wpdb->prefix);
+		$answerStore = new AnswerStore($wpdb, $wpdb->prefix);
 		$sectionId = $sectionStore->createOrUpdate($_POST['section_title'], $_POST['tag']);
 		$payload['data']['section_id'] = $sectionId;
 		if ($sectionId) {
-			$questionId = $questionStore->createOrUpdate($sectionId, $_POST['question_number'], $_POST['question']);
+			$questionId = $questionStore->createOrUpdate($sectionId, intval($_POST['question_number']), $_POST['question']);
 			$payload['data']['question_id'] = $questionId;
 			if ($questionId) {
-				$payload['success'] = true;
+				$answerId = $answerStore->create($userId, intval($_POST['group_id']), $questionId, $_POST['answer']);
+				$payload['data']['answer_id'] = $answerId;
+				if ($answerId) {
+					$payload['success'] = true;
+				}
 			}
 		}
 	}
