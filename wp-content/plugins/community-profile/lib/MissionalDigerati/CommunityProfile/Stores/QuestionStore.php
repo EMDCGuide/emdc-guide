@@ -53,7 +53,7 @@ class QuestionStore
      * @param  integer  $sectionId  The id of the existing section
      * @param  integer  $number     The question number
      * @param  string   $question   The question
-     * @return integer|false        Returns the id if inserted otherwise it returns false
+     * @return integer|false        It returns the id or false if it failed to create/update
      */
     public function create($sectionId, $number, $question)
     {
@@ -64,6 +64,29 @@ class QuestionStore
 
         $created = $this->createQuestion($sectionId, $number, $question);
         return ($created) ? $this->db->insert_id : false;
+    }
+
+    /**
+     * Create or Update a question
+     *
+     * @param  integer  $sectionId  The id of the existing section
+     * @param  integer  $number     The question number
+     * @param  string   $question   The question
+     * @return integer|false        Returns the id if inserted otherwise it returns false
+     */
+    public function createOrUpdate($sectionId, $number, $question)
+    {
+        $exists = $this->findByQuestion($question);
+        if (!$exists) {
+            $created = $this->createQuestion($sectionId, $number, $question);
+            return ($created) ? $this->db->insert_id : false;
+        }
+
+        if ($exists->question_number !== $number) {
+            // Only update if there was a change.
+            $this->updateQuestion($number, $question);
+        }
+        return $exists->id;
     }
 
     /**
@@ -127,7 +150,7 @@ class QuestionStore
             return false;
         }
 
-        if ($exists->number !== $number) {
+        if ($exists->question_number !== $number) {
             // Only update if there was a change.
             $this->updateQuestion($number, $question);
         }
