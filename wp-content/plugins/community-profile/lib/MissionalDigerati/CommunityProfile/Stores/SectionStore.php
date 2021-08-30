@@ -99,7 +99,9 @@ class SectionStore
             strtolower($tag)
         );
         $section = $this->db->get_row($prepare);
-        $section->id = intval($section->id);
+        if ($section) {
+            $section->id = intval($section->id);
+        }
         return $section;
     }
 
