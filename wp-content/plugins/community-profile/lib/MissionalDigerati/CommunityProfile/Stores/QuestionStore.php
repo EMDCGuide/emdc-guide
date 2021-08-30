@@ -84,7 +84,7 @@ class QuestionStore
 
         if ($exists->question_number !== $number) {
             // Only update if there was a change.
-            $this->updateQuestion($number, $question);
+            $this->updateQuestion($sectionId, $number, $question);
         }
         return $exists->id;
     }
@@ -156,7 +156,7 @@ class QuestionStore
 
         if ($exists->question_number !== $number) {
             // Only update if there was a change.
-            $this->updateQuestion($number, $question);
+            $this->updateQuestion($sectionId, $number, $question);
         }
         return $exists->id;
     }
@@ -191,18 +191,22 @@ class QuestionStore
      * Update the given question.  Only the number will be updated.  We use question to create
      * the unique hash.
      *
+     * @param  integer  $sectionId  The id of the existing section
      * @param  integer  $number   The number of the question
      * @param  string   $question The question
      * @return  integer           The number of rows affected by the update
      *
      * @access protected
      */
-    protected function updateQuestion($number, $question)
+    protected function updateQuestion($sectionId, $number, $question)
     {
         $tableName = $this->prefix . self::$tableName;
         $hash = md5($question);
-        $prepare = $this->db->prepare("UPDATE {$tableName} SET question_number = %s WHERE unique_hash = %s",
-            $number, $hash
+        $prepare = $this->db->prepare("UPDATE {$tableName} SET question_number = %s
+            WHERE unique_hash = %s AND copr_section_id = %d",
+            $number,
+            $hash,
+            $sectionId
         );
         return $this->db->query($prepare);
     }
