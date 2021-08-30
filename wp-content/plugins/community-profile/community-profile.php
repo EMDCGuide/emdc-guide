@@ -107,7 +107,7 @@ function copr_save_answer() {
 			$questionId = $questionStore->createOrUpdate($sectionId, intval($_POST['question_number']), $_POST['question']);
 			$payload['data']['question_id'] = $questionId;
 			if ($questionId) {
-				$answerId = $answerStore->update($userId, intval($_POST['group_id']), $questionId, $_POST['answer']);
+				$answerId = $answerStore->createOrUpdate($userId, intval($_POST['group_id']), $questionId, $_POST['answer']);
 				$payload['data']['answer_id'] = $answerId;
 				if ($answerId) {
 					$payload['success'] = true;

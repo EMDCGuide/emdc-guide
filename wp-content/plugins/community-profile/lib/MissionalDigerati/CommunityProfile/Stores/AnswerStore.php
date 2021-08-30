@@ -67,6 +67,30 @@ class AnswerStore
     }
 
     /**
+     * Create or update the answer
+     *
+     * @param  integer  $userId         The current user's id
+     * @param  integer  $groupId        The current group's id
+     * @param  integer  $questionId     The current question's id
+     * @param  string   $answer         The answer
+     *
+     * @return integer|false            Returns the id if inserted otherwise it returns false
+     */
+    public function createOrUpdate($userId, $groupId, $questionId, $answer)
+    {
+        $exists = $this->find($userId, $groupId, $questionId);
+        if (!$exists) {
+            $created = $this->createAnswer($userId, $groupId, $questionId, $answer);
+            return ($created) ? $this->db->insert_id : false;
+        }
+
+        if ($exists->answer !== $answer) {
+            $this->updateAnswer($userId, $groupId, $questionId, $answer);
+        }
+        return $exists->id;
+    }
+
+    /**
      * Find the answer
      *
      * @param  integer  $userId         The current user's id
