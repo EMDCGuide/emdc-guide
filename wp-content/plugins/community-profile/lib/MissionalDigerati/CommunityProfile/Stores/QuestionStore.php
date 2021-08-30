@@ -57,7 +57,7 @@ class QuestionStore
      */
     public function create($sectionId, $number, $question)
     {
-        $exists = $this->findByQuestion($question);
+        $exists = $this->findByQuestion($sectionId, $question);
         if ($exists) {
             return $exists->id;
         }
@@ -76,7 +76,7 @@ class QuestionStore
      */
     public function createOrUpdate($sectionId, $number, $question)
     {
-        $exists = $this->findByQuestion($question);
+        $exists = $this->findByQuestion($sectionId, $question);
         if (!$exists) {
             $created = $this->createQuestion($sectionId, $number, $question);
             return ($created) ? $this->db->insert_id : false;
@@ -92,15 +92,18 @@ class QuestionStore
     /**
      * Find a question by it's question
      *
-     * @param  string $question The question to find
-     * @return object           The question details
+     * @param  integer  $sectionId  The id of the existing section
+     * @param  string   $question   The question to find
+     * @return object               The question details
      */
-    public function findByQuestion($question)
+    public function findByQuestion($sectionId, $question)
     {
         $tableName = $this->prefix . self::$tableName;
         $hash = md5($question);
-        $prepare = $this->db->prepare("SELECT * FROM {$tableName} WHERE unique_hash = '%s'",
-            $hash
+        $prepare = $this->db->prepare("SELECT * FROM {$tableName}
+            WHERE unique_hash = '%s' AND copr_section_id = %d",
+            $hash,
+            $sectionId
         );
         $question = $this->db->get_row($prepare);
         if ($question) {
@@ -139,13 +142,14 @@ class QuestionStore
      * Update the given question.  Only the number will be updated.  We use question to create
      * the unique hash.
      *
-     * @param  integer  $number   The number of the question
-     * @param  string   $question The question
-     * @return  integer|false     It returns the id or false if it doesn't exist
+     * @param  integer  $sectionId  The id of the existing section
+     * @param  integer  $number     The number of the question
+     * @param  string   $question   The question
+     * @return  integer|false       It returns the id or false if it doesn't exist
      */
-    public function update($number, $question)
+    public function update($sectionId, $number, $question)
     {
-        $exists = $this->findByQuestion($question);
+        $exists = $this->findByQuestion($sectionId, $question);
         if (!$exists) {
             return false;
         }
