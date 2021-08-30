@@ -7,6 +7,8 @@ require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 /**
  * A class for handling the storage of the Question in the database.
+ *
+ * NOTE: we create and use a md5 hash of the question as the look up field.
  */
 class QuestionStore
 {
@@ -46,6 +48,45 @@ class QuestionStore
     }
 
     /**
+     * Create a question
+     *
+     * @param  integer  $sectionId  The id of the existing section
+     * @param  integer  $number     The question number
+     * @param  string   $question   The question
+     * @return integer|false        Returns the id if inserted otherwise it returns false
+     */
+    public function create($sectionId, $number, $question)
+    {
+        $exists = $this->findByQuestion($question);
+        if ($exists) {
+            return $exists->id;
+        }
+
+        $created = $this->createQuestion($sectionId, $number, $question);
+        return ($created) ? $this->db->insert_id : false;
+    }
+
+    /**
+     * Find a question by it's question
+     *
+     * @param  string $question The question to find
+     * @return object           The question details
+     */
+    public function findByQuestion($question)
+    {
+        $tableName = $this->prefix . self::$tableName;
+        $hash = md5($question);
+        $prepare = $this->db->prepare("SELECT * FROM {$tableName} WHERE unique_hash = '%s'",
+            $hash
+        );
+        $question = $this->db->get_row($prepare);
+        if ($question) {
+            $question->id = intval($question->id);
+        }
+        return $question;
+    }
+
+    /**
      * Set up the questions table.
      *
      * @param   string  $charsetCollate The character set and collation
@@ -68,5 +109,31 @@ class QuestionStore
             FOREIGN KEY  (copr_section_id) REFERENCES {$sectionTableName}(id)
         ) {$charsetCollate};";
         dbDelta($sql);
+    }
+
+    /**
+     * Create a question
+     *
+     * @param  integer  $sectionId  The id of the existing section
+     * @param  integer  $number     The question number
+     * @param  string   $question   The question
+     * @return boolean              Was it successfully created?
+     *
+     * @access protected
+     */
+    protected function createQuestion($sectionId, $number, $question)
+    {
+        $tableName = $this->prefix . self::$tableName;
+        $hash = md5($question);
+        $prepare = $this->db->prepare("INSERT INTO {$tableName}
+                (copr_section_id, unique_hash, question_number, question, created_at)
+                VALUES(%d, %s, %d, %s, NOW())
+            ",
+            $sectionId,
+            $hash,
+            $number,
+            $question
+        );
+        return $this->db->query($prepare);
     }
 }

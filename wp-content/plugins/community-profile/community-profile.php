@@ -99,10 +99,15 @@ function copr_save_answer() {
 		 * Save the data
 		 */
 		$sectionStore = new SectionStore($wpdb, $wpdb->prefix);
+		$questionStore = new QuestionStore($wpdb, $wpdb->prefix);
 		$sectionId = $sectionStore->createOrUpdate($_POST['section_title'], $_POST['tag']);
-		$payload['data']['id'] = $sectionId;
+		$payload['data']['section_id'] = $sectionId;
 		if ($sectionId) {
-			$payload['success'] = true;
+			$questionId = $questionStore->create($sectionId, $_POST['question_number'], $_POST['question']);
+			$payload['data']['question_id'] = $questionId;
+			if ($questionId) {
+				$payload['success'] = true;
+			}
 		}
 	}
 	if ($isAjax) {
