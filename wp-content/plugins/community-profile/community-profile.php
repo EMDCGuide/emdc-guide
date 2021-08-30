@@ -66,9 +66,6 @@ function copr_activate_plugin() {
  * @return void
  */
 function copr_save_answer() {
-	ini_set('display_errors', 1);
-	ini_set('display_startup_errors', 1);
-	error_reporting(E_ALL);
 	global $wpdb;
 	$userId = get_current_user_id();
 	$isAjax = (isset($_POST['is_ajax'])) ? boolval($_POST['is_ajax']) : false;
