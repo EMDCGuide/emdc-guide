@@ -53,6 +53,10 @@ class SectionStore
      */
     public function create($title, $tag)
     {
+        $exists = $this->findByTag($tag);
+        if ($exists) {
+            return $exists->id;
+        }
         $tableName = $this->prefix . self::$tableName;
         $prepare = $this->db->prepare("INSERT INTO {$tableName}
                 (title, tag, created_at)
@@ -63,6 +67,21 @@ class SectionStore
         );
         $this->db->query($prepare);
         return $this->db->insert_id;
+    }
+
+    /**
+     * Find the section based on it's tag.
+     *
+     * @param  string $tag  The tag of the section
+     * @return object       The tag details
+     */
+    public function findByTag($tag)
+    {
+        $tableName = $this->prefix . self::$tableName;
+        $prepare = $this->db->prepare("SELECT * FROM {$tableName} WHERE tag = '%s'",
+            strtolower($tag)
+        );
+        return $this->db->get_row($prepare);
     }
 
     /**
@@ -80,6 +99,7 @@ class SectionStore
             title varchar(255) DEFAULT '' NOT NULL,
             tag varchar(45) DEFAULT '' NOT NULL,
             created_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+            UNIQUE KEY (tag),
             PRIMARY KEY  (id)
         ) {$charsetCollate};";
         dbDelta($sql);

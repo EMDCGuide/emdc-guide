@@ -100,7 +100,7 @@ function copr_save_answer() {
 		 */
 		$sectionStore = new SectionStore($wpdb, $wpdb->prefix);
 		$sectionId = $sectionStore->create($_POST['section_title'], $_POST['tag']);
-		if ($sectionId !== false) {
+		if ($sectionId) {
 			$payload['success'] = true;
 		}
 	}
