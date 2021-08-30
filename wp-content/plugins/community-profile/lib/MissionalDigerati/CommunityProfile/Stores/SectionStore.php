@@ -69,7 +69,7 @@ class SectionStore
      *
      * @param   string          $title          The title of the section
      * @param   string          $tag            The tag to find the current section.
-     * @return  integer|false                   It returns the id or false if it failed to update
+     * @return  integer|false                   It returns the id or false if it failed to create/update
      */
     public function createOrUpdate($title, $tag)
     {
