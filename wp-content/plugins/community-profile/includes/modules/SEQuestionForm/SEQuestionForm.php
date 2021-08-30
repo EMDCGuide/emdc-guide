@@ -43,6 +43,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 					<input type="hidden" name="section_title" value="$title" />
 					<input type="hidden" name="question_number" value="$questionNumber" />
 					<input type="hidden" name="question" value="$question" />
+					<input type="hidden" name="group_id" value="1" />
 					$nounce
 					<div class="form-element-wrapper">
 						<label>$questionNumber) $question</label>
