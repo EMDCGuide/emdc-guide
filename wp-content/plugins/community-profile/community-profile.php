@@ -30,6 +30,7 @@ use MissionalDigerati\CommunityProfile\Database;
 use MissionalDigerati\CommunityProfile\Stores\AnswerStore;
 use MissionalDigerati\CommunityProfile\Stores\QuestionStore;
 use MissionalDigerati\CommunityProfile\Stores\SectionStore;
+use MissionalDigerati\CommunityProfile\Repositories\AnswerRepository;
 
 if ( ! function_exists( 'copr_initialize_extension' ) ):
 
@@ -65,6 +66,9 @@ function copr_activate_plugin() {
  * @return void
  */
 function copr_save_answer() {
+	ini_set('display_errors', 1);
+	ini_set('display_startup_errors', 1);
+	error_reporting(E_ALL);
 	global $wpdb;
 	$userId = get_current_user_id();
 	$isAjax = (isset($_POST['is_ajax'])) ? boolval($_POST['is_ajax']) : false;
@@ -98,19 +102,16 @@ function copr_save_answer() {
 		/**
 		 * Save the data
 		 */
-		$sectionStore = new SectionStore($wpdb, $wpdb->prefix);
-		$questionStore = new QuestionStore($wpdb, $wpdb->prefix);
-		$answerStore = new AnswerStore($wpdb, $wpdb->prefix);
-		$sectionId = $sectionStore->createOrUpdate($_POST['section_title'], $_POST['tag']);
-		if ($sectionId) {
-			$questionId = $questionStore->createOrUpdate($sectionId, intval($_POST['question_number']), $_POST['question']);
-			if ($questionId) {
-				$answerId = $answerStore->createOrUpdate($userId, intval($_POST['group_id']), $questionId, $_POST['answer']);
-				if ($answerId) {
-					$payload['success'] = true;
-				}
-			}
-		}
+		$repo = new AnswerRepository($wpdb, $wpdb->prefix);
+		$payload['success'] = $repo->createOrUpdate(
+			intval($_POST['group_id']),
+			$userId,
+			$_POST['section_title'],
+			$_POST['tag'],
+			intval($_POST['question_number']),
+			$_POST['question'],
+			$_POST['answer']
+		);
 	}
 	if ($isAjax) {
 		header('Content-Type: application/json');
