@@ -119,6 +119,30 @@ class AnswerStore
     }
 
     /**
+     * Update the answer
+     *
+     * @param  integer  $userId         The current user's id
+     * @param  integer  $groupId        The current group's id
+     * @param  integer  $questionId     The current question's id
+     * @param  string   $answer         The answer
+     *
+     * @return integer|false            It returns the id or false if it doesn't exist
+     */
+    public function update($userId, $groupId, $questionId, $answer)
+    {
+        $exists = $this->find($userId, $groupId, $questionId);
+        if (!$exists) {
+            return false;
+        }
+
+        if ($exists->answer !== $answer) {
+            $this->updateAnswer($userId, $groupId, $questionId, $answer);
+        }
+
+        return $exists->id;
+    }
+
+    /**
      * Create a new answer
      *
      * @param  integer  $userId         The current user's id
@@ -139,6 +163,29 @@ class AnswerStore
             $userId,
             $groupId,
             $answer
+        );
+        return $this->db->query($prepare);
+    }
+
+    /**
+     * Update the answer
+     *
+     * @param  integer  $userId         The current user's id
+     * @param  integer  $groupId        The current group's id
+     * @param  integer  $questionId     The current question's id
+     * @param  string   $answer         The answer
+     *
+     * @return integer                  The number of rows affected by the update
+     */
+    protected function updateAnswer($userId, $groupId, $questionId, $answer)
+    {
+        $tableName = $this->prefix . self::$tableName;
+        $prepare = $this->db->prepare("UPDATE {$tableName} SET answer = %s, updated_at = NOW()
+            WHERE copr_question_id = %d AND user_id = %d AND group_id = %d",
+            $answer,
+            $questionId,
+            $userId,
+            $groupId
         );
         return $this->db->query($prepare);
     }
