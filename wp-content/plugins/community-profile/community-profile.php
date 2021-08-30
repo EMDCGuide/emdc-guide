@@ -66,6 +66,7 @@ function copr_activate_plugin() {
  */
 function copr_save_answer() {
 	global $wpdb;
+	header('Content-Type: application/json');
 	$isAjax = (isset($_POST['is_ajax'])) ? boolval($_POST['is_ajax']) : false;
 	if ((!isset($_POST)) || (!check_ajax_referer('submit_answers'))) {
 		if ($isAjax) {
@@ -81,6 +82,7 @@ function copr_save_answer() {
 			'answer'			=>	$_POST['answer'],
 			'question_number'	=>	$_POST['question_number'],
 			'question'			=>	$_POST['question'],
+			'section_title'		=>	$_POST['section_title'],
 			'tag'				=>	$_POST['tag'],
 		),
 		'errors'	=>	array(),
@@ -93,10 +95,14 @@ function copr_save_answer() {
 			'error'	=>	esc_html__('The answer cannot be blank!', 'copr-my-extension'),
 		);
 	} else {
-		$payload['success'] = true;
 		/**
 		 * Save the data
 		 */
+		$sectionStore = new SectionStore($wpdb, $wpdb->prefix);
+		$result = $sectionStore->create($_POST['section_title'], $_POST['tag']);
+		if ($result) {
+			$payload['success'] = true;
+		}
 	}
 	if ($isAjax) {
 		header('Content-Type: application/json');

@@ -44,6 +44,27 @@ class SectionStore
     }
 
     /**
+     * Create a new section
+     *
+     * @param  string $title    The title of the section
+     * @param  string $tag      The tag of the section
+     *
+     * @return boolean          Did it successfully create?
+     */
+    public function create($title, $tag)
+    {
+        $tableName = $this->prefix . self::$tableName;
+        $prepare = $this->db->prepare("INSERT INTO {$tableName}
+                (title, tag, created_at)
+                VALUES(%s, %s, NOW())
+            ",
+            $title,
+            strtolower($tag)
+        );
+        return $this->db->query($prepare);
+    }
+
+    /**
      * Set up the sections table.
      *
      * @param   string  $charsetCollate The character set and collation
