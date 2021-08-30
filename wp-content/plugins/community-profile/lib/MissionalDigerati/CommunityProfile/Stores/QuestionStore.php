@@ -36,7 +36,8 @@ class QuestionStore
     /**
      * Build the class
      *
-     * @param object $db The WordPress database object
+     * @param   object    $db        The WordPress database object
+     * @param   string    $prefix    The prefix for the database table (default: '')
      */
     public function __construct($db, $prefix = '')
     {
