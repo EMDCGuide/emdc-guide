@@ -102,13 +102,10 @@ function copr_save_answer() {
 		$questionStore = new QuestionStore($wpdb, $wpdb->prefix);
 		$answerStore = new AnswerStore($wpdb, $wpdb->prefix);
 		$sectionId = $sectionStore->createOrUpdate($_POST['section_title'], $_POST['tag']);
-		$payload['data']['section_id'] = $sectionId;
 		if ($sectionId) {
 			$questionId = $questionStore->createOrUpdate($sectionId, intval($_POST['question_number']), $_POST['question']);
-			$payload['data']['question_id'] = $questionId;
 			if ($questionId) {
 				$answerId = $answerStore->createOrUpdate($userId, intval($_POST['group_id']), $questionId, $_POST['answer']);
-				$payload['data']['answer_id'] = $answerId;
 				if ($answerId) {
 					$payload['success'] = true;
 				}

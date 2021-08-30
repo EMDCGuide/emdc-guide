@@ -95,7 +95,8 @@ class SectionStore
     public function findByTag($tag)
     {
         $tableName = $this->prefix . self::$tableName;
-        $prepare = $this->db->prepare("SELECT * FROM {$tableName} WHERE tag = '%s'",
+        $prepare = $this->db->prepare(
+            "SELECT * FROM {$tableName} WHERE tag = '%s'",
             strtolower($tag)
         );
         $section = $this->db->get_row($prepare);
@@ -161,7 +162,8 @@ class SectionStore
     protected function createSection($title, $tag)
     {
         $tableName = $this->prefix . self::$tableName;
-        $prepare = $this->db->prepare("INSERT INTO {$tableName}
+        $prepare = $this->db->prepare(
+            "INSERT INTO {$tableName}
                 (title, tag, created_at)
                 VALUES(%s, %s, NOW())
             ",
@@ -185,8 +187,10 @@ class SectionStore
     protected function updateSection($title, $tag)
     {
         $tableName = $this->prefix . self::$tableName;
-        $prepare = $this->db->prepare("UPDATE {$tableName} SET title = %s WHERE tag = %s",
-            $title, strtolower($tag)
+        $prepare = $this->db->prepare(
+            "UPDATE {$tableName} SET title = %s WHERE tag = %s",
+            $title,
+            strtolower($tag)
         );
         return $this->db->query($prepare);
     }

@@ -101,7 +101,8 @@ class AnswerStore
     public function find($userId, $groupId, $questionId)
     {
         $tableName = $this->prefix . self::$tableName;
-        $prepare = $this->db->prepare("SELECT * FROM {$tableName}
+        $prepare = $this->db->prepare(
+            "SELECT * FROM {$tableName}
             WHERE copr_question_id = %d AND user_id = %d AND group_id = %d",
             $questionId,
             $userId,
@@ -179,7 +180,8 @@ class AnswerStore
     protected function createAnswer($userId, $groupId, $questionId, $answer)
     {
         $tableName = $this->prefix . self::$tableName;
-        $prepare = $this->db->prepare("INSERT INTO {$tableName}
+        $prepare = $this->db->prepare(
+            "INSERT INTO {$tableName}
                 (copr_question_id, user_id, group_id, answer, created_at)
                 VALUES(%d, %d, %d, %s, NOW())
             ",
@@ -204,7 +206,8 @@ class AnswerStore
     protected function updateAnswer($userId, $groupId, $questionId, $answer)
     {
         $tableName = $this->prefix . self::$tableName;
-        $prepare = $this->db->prepare("UPDATE {$tableName} SET answer = %s, updated_at = NOW()
+        $prepare = $this->db->prepare(
+            "UPDATE {$tableName} SET answer = %s, updated_at = NOW()
             WHERE copr_question_id = %d AND user_id = %d AND group_id = %d",
             $answer,
             $questionId,

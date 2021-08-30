@@ -100,7 +100,8 @@ class QuestionStore
     {
         $tableName = $this->prefix . self::$tableName;
         $hash = md5($question);
-        $prepare = $this->db->prepare("SELECT * FROM {$tableName}
+        $prepare = $this->db->prepare(
+            "SELECT * FROM {$tableName}
             WHERE unique_hash = '%s' AND copr_section_id = %d",
             $hash,
             $sectionId
@@ -175,7 +176,8 @@ class QuestionStore
     {
         $tableName = $this->prefix . self::$tableName;
         $hash = md5($question);
-        $prepare = $this->db->prepare("INSERT INTO {$tableName}
+        $prepare = $this->db->prepare(
+            "INSERT INTO {$tableName}
                 (copr_section_id, unique_hash, question_number, question, created_at)
                 VALUES(%d, %s, %d, %s, NOW())
             ",
@@ -202,7 +204,8 @@ class QuestionStore
     {
         $tableName = $this->prefix . self::$tableName;
         $hash = md5($question);
-        $prepare = $this->db->prepare("UPDATE {$tableName} SET question_number = %s
+        $prepare = $this->db->prepare(
+            "UPDATE {$tableName} SET question_number = %s
             WHERE unique_hash = %s AND copr_section_id = %d",
             $number,
             $hash,
