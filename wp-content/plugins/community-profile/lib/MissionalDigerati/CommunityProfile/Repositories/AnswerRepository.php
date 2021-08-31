@@ -97,4 +97,30 @@ class AnswerRepository
         }
         return $success;
     }
+
+    /**
+     * Find all the answers for a specific section.  Tag is used to find the section.
+     *
+     * @param  string   $sectionTag     The section tag
+     * @param  integer  $groupId        The group id
+     * @param  integer  $userId         The user id
+     * @return array                    An array of standard objects
+     */
+    public function findAllBySectionTag($sectionTag, $groupId, $userId)
+    {
+        $answerTableName = $this->prefix . AnswerStore::$tableName;
+        $questionTableName = $this->prefix . QuestionStore::$tableName;
+        $sectionTableName = $this->prefix . SectionStore::$tableName;
+        $prepare = $this->db->prepare(
+            "SELECT s.title as section_title, s.tag as section_tag, q.unique_hash, q.question, q.question_number, a.answer
+            FROM {$sectionTableName} as s JOIN
+            {$questionTableName} as q ON s.id = q.copr_section_id JOIN
+            {$answerTableName} as a ON q.id = a.copr_question_id WHERE
+            s.tag = %s AND a.group_id = %d AND a.user_id = %d",
+            strtolower($sectionTag),
+            $groupId,
+            $userId
+        );
+        return $this->db->get_results($prepare);
+    }
 }

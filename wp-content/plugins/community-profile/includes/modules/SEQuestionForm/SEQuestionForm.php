@@ -1,4 +1,8 @@
 <?php
+require_once(plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'autoloader.php');
+
+use MissionalDigerati\CommunityProfile\Repositories\AnswerRepository;
+
 /**
  * A custom Divi module for displaying questions for the SE journey.
  */
@@ -125,6 +129,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 		$lines = explode("<br />", $this->props['questions']);
 		$html = '';
 		$tag = strtolower(esc_html($this->props['tag']));
+		$answers = $this->getUserAnswers($tag);
 		$title = esc_html($this->props['title']);
 		$nextLabel = esc_html__('Next', 'copr-my-extension');
 		$prevLabel = esc_html__('Previous', 'copr-my-extension');
@@ -136,9 +141,12 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 				 */
 				continue;
 			}
+			$question = trim($pieces[0]);
+			$hash = md5($question);
+			$answer = (isset($answers[$hash])) ? $answers[$hash] : '';
 			$formElement = '';
 			if (strtolower($pieces[1]) === 'text') {
-				$formElement = '<textarea name="answer" class="copr-answer-textarea" rows="10"></textarea>';
+				$formElement = '<textarea name="answer" class="copr-answer-textarea" rows="10">' . $answer . '</textarea>';
 			} else if (strtolower($pieces[1]) === 'choice') {
 				if (count($pieces) < 3) {
 					/**
@@ -150,14 +158,13 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 				$choices = explode(',', $pieces[2]);
 				foreach ($choices as $choiceKey => $choice) {
 					$checked = '';
-					if ($choiceKey == 0) {
+					if (strtolower($choice) === strtolower($answer)) {
 						$checked = ' checked';
 					}
 					$formElement .= '<div><input type="radio" name="answer" value="' . $choice .'"' . $checked . ' /><label>' . $choice .'</label></div>';
 				}
 				$formElement .= '</div>';
 			}
-			$question = $pieces[0];
 			$questionNumber = $key + 1;
 			$questionLabel = 'question-' . $tag . '-' . $questionNumber;
 			$wrapperClasses = '';
@@ -182,6 +189,25 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 			$html .= strtr($this->formTemplate, $vars);
 		}
 		return '<div class="copr-questions-wrapper">' . $html . '</div>';
+	}
+
+	/**
+	 * Get the user's answers.
+	 *
+	 * @param  string 	$tag 	The section tag
+	 * @return array      		An array whose key is the question.unique_hash and value is the answer
+	 */
+	protected function getUserAnswers($tag)
+	{
+		global $wpdb;
+		$userId = get_current_user_id();
+		$repo =  new AnswerRepository($wpdb, $wpdb->prefix);
+		$results = $repo->findAllBySectionTag($tag, 1, $userId);
+		$answers = [];
+		foreach ($results as $result) {
+			$answers[$result->unique_hash] = $result->answer;
+		}
+		return $answers;
 	}
 }
 
