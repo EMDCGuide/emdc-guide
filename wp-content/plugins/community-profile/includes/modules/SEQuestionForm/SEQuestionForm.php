@@ -47,7 +47,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 					<input type="hidden" name="section_title" value="$title" />
 					<input type="hidden" name="question_number" value="$questionNumber" />
 					<input type="hidden" name="question" value="$question" />
-					<input type="hidden" name="group_id" value="1" />
+					<input type="hidden" name="group_id" value="11" />
 					$nounce
 					<div class="form-element-wrapper">
 						<label>$questionNumber) $question</label>
@@ -202,7 +202,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 		global $wpdb;
 		$userId = get_current_user_id();
 		$repo =  new AnswerRepository($wpdb, $wpdb->prefix);
-		$results = $repo->findAllBySectionTag($tag, 1, $userId);
+		$results = $repo->findAllBySectionTag($tag, 11, $userId);
 		$answers = [];
 		foreach ($results as $result) {
 			$answers[$result->unique_hash] = $result->answer;
