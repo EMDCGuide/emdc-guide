@@ -134,8 +134,8 @@ class QuestionStore
             question longtext DEFAULT '' NOT NULL,
             created_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
             PRIMARY KEY  (id),
-            UNIQUE KEY (unique_hash),
-            FOREIGN KEY  (copr_section_id) REFERENCES {$sectionTableName}(id)
+            UNIQUE KEY unique_hash (unique_hash),
+            FOREIGN KEY (copr_section_id) REFERENCES {$sectionTableName} (id)
         ) {$charsetCollate};";
         dbDelta($sql);
     }

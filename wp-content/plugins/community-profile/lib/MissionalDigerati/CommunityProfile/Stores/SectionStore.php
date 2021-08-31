@@ -145,7 +145,7 @@ class SectionStore
             title varchar(255) DEFAULT '' NOT NULL,
             tag varchar(45) DEFAULT '' NOT NULL,
             created_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-            UNIQUE KEY (tag),
+            UNIQUE KEY tag (tag),
             PRIMARY KEY  (id)
         ) {$charsetCollate};";
         dbDelta($sql);

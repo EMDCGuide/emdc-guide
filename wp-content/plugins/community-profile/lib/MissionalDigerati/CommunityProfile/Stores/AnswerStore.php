@@ -139,7 +139,7 @@ class AnswerStore
             created_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
             updated_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
             PRIMARY KEY  (id),
-            FOREIGN KEY  (copr_question_id) REFERENCES {$questionTableName}(id)
+            FOREIGN KEY (copr_question_id) REFERENCES {$questionTableName}(id)
         ) {$charsetCollate};";
         dbDelta($sql);
     }
