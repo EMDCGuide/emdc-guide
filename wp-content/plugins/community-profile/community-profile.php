@@ -61,6 +61,66 @@ function copr_activate_plugin() {
 }
 
 /**
+ * Delete an answer
+ *
+ * @return void
+ */
+function copr_delete_answer() {
+	global $wpdb;
+	$userId = get_current_user_id();
+	$groupId = $_POST['group_id'];
+	$answerId = $_POST['answer_id'];
+	$store = new AnswerStore($wpdb, $wpdb->prefix);
+	$answer = $store->findById($answerId);
+	$isAjax = (isset($_POST['is_ajax'])) ? boolval($_POST['is_ajax']) : false;
+	if ((!isset($_POST)) || (!check_ajax_referer('delete_answer')) || ($userId === 0)) {
+		if ($isAjax) {
+			status_header(400, 'Invalid Request!');
+			exit;
+		} else {
+			wp_redirect($_POST['_wp_http_referer']);
+			exit;
+		}
+	}
+	if (!$answer) {
+		if (!$canModerate) {
+			if ($isAjax) {
+				status_header(400, 'Invalid Request!');
+				exit;
+			} else {
+				wp_redirect($_POST['_wp_http_referer']);
+				exit;
+			}
+		}
+	}
+	if (function_exists('bp_version')) {
+		// BuddyPress is available
+		$canModerate = (groups_is_user_mod($userId, $groupId) || groups_is_user_admin($userId, $groupId));
+		if ((!$canModerate) && ($answer->user_id !== $userId)) {
+			if ($isAjax) {
+				status_header(401, 'Unauthorized!');
+				exit;
+			} else {
+				wp_redirect($_POST['_wp_http_referer']);
+				exit;
+			}
+		}
+	}
+	$payload = array(
+		'success'	=>	false,
+	);
+	$payload['success'] = ($store->delete($answerId) !== false);
+	if ($isAjax) {
+		header('Content-Type: application/json');
+		echo json_encode($payload);
+		exit;
+	} else {
+		wp_redirect($_POST['_wp_http_referer']);
+		exit;
+	}
+}
+
+/**
  * Save an answer
  *
  * @return void
@@ -171,7 +231,9 @@ function copr_bp_tab_screen_title() {
  */
 function copr_bp_tab_screen_content() {
 	global $wpdb;
+	$currentUserId = get_current_user_id();
 	$groupId = bp_get_current_group_id();
+	$canModerate = (groups_is_user_mod($currentUserId, $groupId) || groups_is_user_admin($currentUserId, $groupId));
 	$repo =  new AnswerRepository($wpdb, $wpdb->prefix);
 	$answers = $repo->findAllForGroup($groupId);
 	require_once(COPR_ROOT_DIR . 'templates' . COPR_DS . 'profile-tab.php');
@@ -196,6 +258,7 @@ function copr_bp_tab() {
 }
 
 add_action( 'wp_ajax_copr_save_answer', 'copr_save_answer' );
+add_action( 'wp_ajax_copr_delete_answer', 'copr_delete_answer' );
 add_action( 'divi_extensions_init', 'copr_initialize_extension' );
 add_action( 'wp_enqueue_scripts', 'copr_set_up_resource_files' );
 register_activation_hook( __FILE__, 'copr_activate_plugin' );

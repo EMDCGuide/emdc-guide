@@ -24,3 +24,15 @@
 .copr-question {
     margin: 20px 5px;
 }
+.copr-answer-manage {
+    text-align: right;
+}
+.copr-answer-manage form:first-child {
+    margin-right: 5px;
+}
+.copr-answer-manage form {
+    display: inline;
+}
+.copr-js-show {
+    display: none;
+}

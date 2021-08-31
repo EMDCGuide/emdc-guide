@@ -92,6 +92,26 @@ class AnswerStore
     }
 
     /**
+     * Delete the given answer
+     *
+     * @param  integer  $id     The id of the answer
+     * @return boolean          success or not
+     */
+    public function delete($id)
+    {
+        $exists = $this->findById($id);
+        if (!$exists) {
+            return false;
+        }
+        $tableName = $this->prefix . self::$tableName;
+        $prepare = $this->db->prepare(
+            "DELETE FROM {$tableName} WHERE id = %d",
+            $id
+        );
+        return $this->db->query($prepare);
+    }
+
+    /**
      * Find the answer
      *
      * @param  integer  $userId         The current user's id
@@ -108,6 +128,29 @@ class AnswerStore
             $questionId,
             $userId,
             $groupId
+        );
+        $answer = $this->db->get_row($prepare);
+        if ($answer) {
+            $answer->id = intval($answer->id);
+            $answer->copr_question_id = intval($answer->copr_question_id);
+            $answer->user_id = intval($answer->user_id);
+            $answer->group_id = intval($answer->group_id);
+        }
+        return $answer;
+    }
+
+    /**
+     * find the answer by id
+     *
+     * @param  integer  $id     The answer's id
+     * @return object           The answer object
+     */
+    public function findById($id)
+    {
+        $tableName = $this->prefix . self::$tableName;
+        $prepare = $this->db->prepare(
+            "SELECT * FROM {$tableName} WHERE id = %d",
+            $id
         );
         $answer = $this->db->get_row($prepare);
         if ($answer) {
