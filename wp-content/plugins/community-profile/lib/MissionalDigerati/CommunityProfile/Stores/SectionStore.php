@@ -98,7 +98,7 @@ class SectionStore
         $tableName = $this->prefix . self::$tableName;
         $prepare = $this->db->prepare(
             "SELECT * FROM {$tableName} WHERE tag = '%s'",
-            strtolower($tag)
+            strtolower(trim($tag))
         );
         $section = $this->db->get_row($prepare);
         if ($section) {
@@ -169,7 +169,7 @@ class SectionStore
                 VALUES(%s, %s, NOW())
             ",
             $title,
-            strtolower($tag)
+            strtolower(trim($tag))
         );
         return $this->db->query($prepare);
     }
@@ -191,7 +191,7 @@ class SectionStore
         $prepare = $this->db->prepare(
             "UPDATE {$tableName} SET title = %s WHERE tag = %s",
             $title,
-            strtolower($tag)
+            strtolower(trim($tag))
         );
         return $this->db->query($prepare);
     }

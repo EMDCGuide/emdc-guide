@@ -100,19 +100,19 @@ class QuestionStore
     public function findByQuestion($sectionId, $question)
     {
         $tableName = $this->prefix . self::$tableName;
-        $hash = md5($question);
+        $hash = md5(trim($question));
         $prepare = $this->db->prepare(
             "SELECT * FROM {$tableName}
             WHERE unique_hash = '%s' AND copr_section_id = %d",
             $hash,
             $sectionId
         );
-        $question = $this->db->get_row($prepare);
-        if ($question) {
-            $question->id = intval($question->id);
-            $question->question_number = intval($question->question_number);
+        $result = $this->db->get_row($prepare);
+        if ($result) {
+            $result->id = intval($result->id);
+            $result->question_number = intval($result->question_number);
         }
-        return $question;
+        return $result;
     }
 
     /**
@@ -176,6 +176,7 @@ class QuestionStore
     protected function createQuestion($sectionId, $number, $question)
     {
         $tableName = $this->prefix . self::$tableName;
+        $question = trim($question);
         $hash = md5($question);
         $prepare = $this->db->prepare(
             "INSERT INTO {$tableName}
@@ -204,6 +205,7 @@ class QuestionStore
     protected function updateQuestion($sectionId, $number, $question)
     {
         $tableName = $this->prefix . self::$tableName;
+        $question = trim($question);
         $hash = md5($question);
         $prepare = $this->db->prepare(
             "UPDATE {$tableName} SET question_number = %s
