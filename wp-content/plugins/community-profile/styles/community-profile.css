@@ -1,0 +1,26 @@
+/**
+ * These are styles for the community profile feed.
+ */
+
+.copr-flex-parent {
+    display: flex;
+}
+.copr-flex-child {
+    flex: 1;
+}
+.copr-avatar-wrapper {
+    flex: none;
+    text-align: center;
+    width: 100px;
+}
+.copr-single-answer {
+    border: 1px solid #eaeaea;
+    padding: 15px 15px 15px 0px;
+    margin-bottom: 5px;
+}
+.copr-section-title {
+    margin: 20px 0px 10px;
+}
+.copr-question {
+    margin: 20px 5px;
+}

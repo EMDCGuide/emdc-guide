@@ -120,7 +120,87 @@ function copr_save_answer() {
 	}
 }
 
+/**
+ * Add addition css and javascript files
+ */
+function copr_set_up_resource_files() {
+	wp_register_style( 'copr_plugin', plugins_url('styles' . COPR_DS . 'community-profile.css', __FILE__) );
+    wp_enqueue_style( 'copr_plugin' );
+    wp_enqueue_script( 'copr_plugin', plugins_url('scripts' . COPR_DS . 'community-profile.js', __FILE__), array( 'jquery' ) );
+	wp_enqueue_script( 'copr_plugin' );
+}
+
+/**
+ * Initialization function for BuddyPress
+ *
+ * @return void
+ */
+function copr_bp_initialize() {
+	global $bp;
+	$user_access = false;
+    $group_link = '';
+    if( bp_is_active('groups') && !empty($bp->groups->current_group) ){
+        $group_link = $bp->root_domain . '/' . bp_get_groups_root_slug() . '/' . $bp->groups->current_group->slug . '/';
+        $user_access = $bp->groups->current_group->user_has_access;
+        bp_core_new_subnav_item( array(
+            'name' 				=> __( 'Community Profile', 'copr-my-extension' ),
+            'slug' 				=> 'community-profile',
+            'parent_url' 		=> $group_link,
+            'parent_slug' 		=> $bp->groups->current_group->slug,
+            'screen_function' 	=> 'copr_bp_tab',
+            'position' 			=> 50,
+            'user_has_access' 	=> $user_access,
+            'item_css_id' 		=> 'custom'
+        ));
+    }
+}
+
+/**
+ * Get the title for our BuddyPress tab
+ *
+ * @return string 	The title
+ */
+function copr_bp_tab_screen_title() {
+	return __( 'Community Profile', 'copr-my-extension' );
+}
+
+/**
+ * Get the content for our BuddyPress tab
+ *
+ * @return string 	The content
+ */
+function copr_bp_tab_screen_content() {
+	global $wpdb;
+	$groupId = bp_get_current_group_id();
+	$repo =  new AnswerRepository($wpdb, $wpdb->prefix);
+	$answers = $repo->findAllForGroup($groupId);
+	require_once(COPR_ROOT_DIR . 'templates' . COPR_DS . 'profile-tab.php');
+}
+
+/**
+ * Callback for BuddyPress to create the Community Profile tab
+ *
+ * @return void
+ * @link https://wordpress.stackexchange.com/a/345664
+ */
+function copr_bp_tab() {
+	add_action( 'bp_template_title', 'copr_bp_tab_screen_title' );
+	add_action( 'bp_template_content', 'copr_bp_tab_screen_content' );
+
+	$templates = array('groups/single/plugins.php', 'plugin-template.php');
+	if (strstr(locate_template($templates), 'groups/single/plugins.php')) {
+		bp_core_load_template(apply_filters('bp_core_template_plugin', 'groups/single/plugins'));
+	} else {
+		bp_core_load_template(apply_filters('bp_core_template_plugin', 'plugin-template'));
+	}
+}
+
 add_action( 'wp_ajax_copr_save_answer', 'copr_save_answer' );
 add_action( 'divi_extensions_init', 'copr_initialize_extension' );
+add_action( 'wp_enqueue_scripts', 'copr_set_up_resource_files' );
 register_activation_hook( __FILE__, 'copr_activate_plugin' );
+if (function_exists('bp_version')) {
+	// BuddyPress hooks
+	add_action( 'bp_init', 'copr_bp_initialize' );
+}
 endif;
