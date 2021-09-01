@@ -36,3 +36,10 @@
 .copr-js-show {
     display: none;
 }
+.copr-no-answers {
+    font-style: italic;
+    margin: 20px;
+}
+.copr-align-right {
+    text-align: right;
+}
