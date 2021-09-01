@@ -188,24 +188,28 @@ class AnswerStore
     }
 
     /**
-     * Update the answer
+     * Update the answer using the id as reference
      *
-     * @param  integer  $userId         The current user's id
-     * @param  integer  $groupId        The current group's id
-     * @param  integer  $questionId     The current question's id
+     * @param  integer  $id             The current answer's id
      * @param  string   $answer         The answer
      *
      * @return integer|false            It returns the id or false if it doesn't exist
      */
-    public function update($userId, $groupId, $questionId, $answer)
+    public function updateById($id, $answer)
     {
-        $exists = $this->find($userId, $groupId, $questionId);
+        $exists = $this->findById($id);
         if (!$exists) {
             return false;
         }
 
         if ($exists->answer !== $answer) {
-            $this->updateAnswer($userId, $groupId, $questionId, $answer);
+            $tableName = $this->prefix . self::$tableName;
+            $prepare = $this->db->prepare(
+                "UPDATE {$tableName} SET answer = %s, updated_at = NOW() WHERE id = %d",
+                $answer,
+                $id
+            );
+            $this->db->query($prepare);
         }
 
         return $exists->id;

@@ -83,14 +83,12 @@ function copr_delete_answer() {
 		}
 	}
 	if (!$answer) {
-		if (!$canModerate) {
-			if ($isAjax) {
-				status_header(400, 'Invalid Request!');
-				exit;
-			} else {
-				wp_redirect($_POST['_wp_http_referer']);
-				exit;
-			}
+		if ($isAjax) {
+			status_header(400, 'Invalid Request!');
+			exit;
+		} else {
+			wp_redirect($_POST['_wp_http_referer']);
+			exit;
 		}
 	}
 	if (function_exists('bp_version')) {
@@ -185,6 +183,64 @@ function copr_save_answer() {
 }
 
 /**
+ * Update an answer using it's id
+ *
+ * @return void
+ */
+function copr_update_answer_by_id() {
+	global $wpdb;
+	$userId = get_current_user_id();
+	$groupId = $_POST['group_id'];
+	$answerId = $_POST['answer_id'];
+	$store = new AnswerStore($wpdb, $wpdb->prefix);
+	$answer = $store->findById($answerId);
+	$isAjax = (isset($_POST['is_ajax'])) ? boolval($_POST['is_ajax']) : false;
+	if ((!isset($_POST)) || (!check_ajax_referer('edit_answer')) || ($userId === 0)) {
+		if ($isAjax) {
+			status_header(400, 'Invalid Request!');
+			exit;
+		} else {
+			wp_redirect($_POST['_wp_http_referer']);
+			exit;
+		}
+	}
+	if (!$answer) {
+		if ($isAjax) {
+			status_header(400, 'Invalid Request!');
+			exit;
+		} else {
+			wp_redirect($_POST['_wp_http_referer']);
+			exit;
+		}
+	}
+	if (function_exists('bp_version')) {
+		// BuddyPress is available
+		$canModerate = (groups_is_user_mod($userId, $groupId) || groups_is_user_admin($userId, $groupId));
+		if ((!$canModerate) && ($answer->user_id !== $userId)) {
+			if ($isAjax) {
+				status_header(401, 'Unauthorized!');
+				exit;
+			} else {
+				wp_redirect($_POST['_wp_http_referer']);
+				exit;
+			}
+		}
+	}
+	$payload = array(
+		'success'	=>	false,
+	);
+	$payload['success'] = ($store->updateById($answerId, $_POST['answer']) !== false);
+	if ($isAjax) {
+		header('Content-Type: application/json');
+		echo json_encode($payload);
+		exit;
+	} else {
+		wp_redirect($_POST['_wp_http_referer']);
+		exit;
+	}
+}
+
+/**
  * Add addition css and javascript files
  */
 function copr_set_up_resource_files() {
@@ -263,6 +319,7 @@ function copr_bp_tab() {
 
 add_action( 'wp_ajax_copr_save_answer', 'copr_save_answer' );
 add_action( 'wp_ajax_copr_delete_answer', 'copr_delete_answer' );
+add_action( 'wp_ajax_copr_update_answer_by_id', 'copr_update_answer_by_id' );
 add_action( 'divi_extensions_init', 'copr_initialize_extension' );
 add_action( 'wp_enqueue_scripts', 'copr_set_up_resource_files' );
 register_activation_hook( __FILE__, 'copr_activate_plugin' );

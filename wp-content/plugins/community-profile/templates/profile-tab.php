@@ -62,7 +62,7 @@
                             <a href="#" class="copr-js-show copr-edit-link" data-showing-text="<?php echo __( 'Hide', 'copr-my-extension' ); ?>" data-hiding-text="<?php echo __( 'Edit', 'copr-my-extension' ); ?>">
                                 <span class="dashicons dashicons-edit"></span> <?php echo __( 'Edit', 'copr-my-extension' ); ?>
                             </a>
-                            <form action="<?php echo admin_url('admin-ajax.php'); ?>" method="post">
+                            <form action="<?php echo admin_url('admin-ajax.php'); ?>" data-really-message="<?php echo __( 'Are you sure you want to delete it?', 'copr-my-extension' ); ?>" method="post">
                                 <?php echo wp_nonce_field('delete_answer'); ?>
                                 <input type="hidden" name="action" value="copr_delete_answer" />
                                 <input type="hidden" name="group_id" value="<?php echo $groupId; ?>" />
