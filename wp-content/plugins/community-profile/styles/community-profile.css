@@ -48,3 +48,9 @@
 #copr-section-filter {
     text-align: right;
 }
+#copr-community-profile a {
+    color: #2EA3F2 !important;
+}
+#copr-community-profile a:hover {
+    opacity: .80;
+}

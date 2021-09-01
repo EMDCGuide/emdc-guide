@@ -122,8 +122,9 @@ class AnswerRepository
         $questionTableName = $this->prefix . QuestionStore::$tableName;
         $sectionTableName = $this->prefix . SectionStore::$tableName;
         $prepare = $this->db->prepare(
-            "SELECT s.title as section_title, s.tag as section_tag, q.question, q.unique_hash as question_hash,
-            q.question_number, q.question_type, q.question_choices, a.id as answer_id, a.answer, a.user_id, a.created_at
+            "SELECT s.title as section_title, s.tag as section_tag, s.url as section_url, q.question,
+            q.unique_hash as question_hash, q.question_number, q.question_type, q.question_choices,
+            a.id as answer_id, a.answer, a.user_id, a.created_at
             FROM {$sectionTableName} as s JOIN {$questionTableName} as q ON s.id = q.copr_section_id JOIN
             {$answerTableName} as a ON q.id = a.copr_question_id WHERE
             a.group_id = %d ORDER BY s.tag ASC, q.question_number ASC, a.created_at ASC",

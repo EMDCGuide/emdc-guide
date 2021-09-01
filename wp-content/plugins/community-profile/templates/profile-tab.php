@@ -20,7 +20,15 @@
                     $sectionTitle = $answer->section_title . ' (' . strtoupper($answer->section_tag) . ')';
             ?>
                 <div id="section-<?php echo strtolower($answer->section_tag); ?>" class="copr-section-wrapper" data-title="<?php echo $sectionTitle; ?>" data-tag="<?php echo strtolower($answer->section_tag); ?>">
-                    <h2 class="copr-section-title"><?php echo $sectionTitle; ?></h2>
+                    <h2 class="copr-section-title">
+                        <?php
+                            if ($answer->section_url !== '') {
+                                echo '<a href="' . $answer->section_url . '" target="_blank">' . $sectionTitle . '</a>';
+                            } else {
+                                echo $sectionTitle;
+                            }
+                        ?>
+                    </h2>
             <?php endif; ?>
             <?php
                 if ($currentQuestion !== $answer->question_hash):
