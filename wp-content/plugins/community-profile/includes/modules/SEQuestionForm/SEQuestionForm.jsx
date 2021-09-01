@@ -111,6 +111,9 @@ class SEQuestionForm extends Component {
     if (!this.props.questions) {
       errors.push(<p class="copr-error-message">Please provide questions in the module settings.</p>);
     }
+    if (!this.props.url) {
+      errors.push(<p class="copr-error-message">Please provide section link in the module settings.</p>);
+    }
     if (errors.length > 0) {
       return (
         <div class="copr-error-box">{errors}</div>

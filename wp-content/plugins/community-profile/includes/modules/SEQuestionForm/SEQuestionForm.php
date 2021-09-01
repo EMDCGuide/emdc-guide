@@ -43,8 +43,9 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 			<div class="copr-question-field-wrapper">
 				<form action="$formAction" method="post">
 					<input type="hidden" name="action" value="copr_save_answer" />
-					<input type="hidden" name="tag" value="$tag" />
+					<input type="hidden" name="section_tag" value="$tag" />
 					<input type="hidden" name="section_title" value="$title" />
+					<input type="hidden" name="section_url" value="$url" />
 					<input type="hidden" name="question_number" value="$questionNumber" />
 					<input type="hidden" name="question_type" value="$questionType" />
 					<input type="hidden" name="question_choices" value="$questionChoices" />
@@ -109,6 +110,13 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 				'description'		=>	esc_html__('The tag for this section.', 'copr-my-extension'),
 				'toggle_slug'		=>	'main_content',
 			),
+			'url'	=>	array(
+				'label'				=>	esc_html__('Section Link', 'copr-my-extension'),
+				'type'				=>	'text',
+				'option_category'	=>	'basic_option',
+				'description'		=>	esc_html__('The link to this section\'s page.', 'copr-my-extension'),
+				'toggle_slug'		=>	'main_content',
+			),
 			'questions'	=>	array(
 				'label'				=>	esc_html__('The Questions', 'copr-my-extension'),
 				'type'				=>	'textarea',
@@ -131,6 +139,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 		$lines = explode("<br />", $this->props['questions']);
 		$html = '';
 		$tag = strtolower(esc_html($this->props['tag']));
+		$url = esc_html($this->props['url']);
 		$answers = $this->getUserAnswers($tag);
 		$title = esc_html($this->props['title']);
 		$nextLabel = esc_html__('Next', 'copr-my-extension');
@@ -192,6 +201,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 				'$tag'				=>	$tag,
 				'$title'			=>	$title,
 				'$uniqueId'			=>	$questionLabel,
+				'$url'				=>	$url,
 				'$wrapperClasses'	=>	$wrapperClasses,
 			);
 			$html .= strtr($this->formTemplate, $vars);

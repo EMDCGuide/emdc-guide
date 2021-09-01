@@ -51,17 +51,18 @@ class SectionStore
      *
      * @param  string $title    The title of the section
      * @param  string $tag      The tag of the section
+     * @param  string $url      The url of the section
      *
      * @return integer|false    Returns the id if inserted otherwise it returns false
      */
-    public function create($title, $tag)
+    public function create($title, $tag, $url)
     {
         $exists = $this->findByTag($tag);
         if ($exists) {
             return $exists->id;
         }
 
-        $created = $this->createSection($title, $tag);
+        $created = $this->createSection($title, $tag, $url);
         return ($created) ? $this->db->insert_id : false;
     }
 
@@ -70,19 +71,20 @@ class SectionStore
      *
      * @param   string          $title          The title of the section
      * @param   string          $tag            The tag to find the current section.
+     * @param   string          $url            The url of the section
      * @return  integer|false                   It returns the id or false if it failed to create/update
      */
-    public function createOrUpdate($title, $tag)
+    public function createOrUpdate($title, $tag, $url)
     {
         $exists = $this->findByTag($tag);
         if (!$exists) {
-            $created = $this->createSection($title, $tag);
+            $created = $this->createSection($title, $tag, $url);
             return ($created) ? $this->db->insert_id : false;
         }
 
-        if ($exists->title !== $title) {
+        if (($exists->title !== $title) || ($exists->url !== $url)) {
             // Only update if there was a change.
-            $this->updateSection($title, $tag);
+            $this->updateSection($title, $tag, $url);
         }
         return $exists->id;
     }
@@ -114,18 +116,20 @@ class SectionStore
      *
      * @param   string          $title      The title of the section
      * @param   string          $tag        The tag to find the current section.
+     * @param   string          $url            The url of the section
+     *
      * @return  integer|false               It returns the id or false if it doesn't exist
      */
-    public function update($title, $tag)
+    public function update($title, $tag, $url)
     {
         $exists = $this->findByTag($tag);
         if (!$exists) {
             return false;
         }
 
-        if ($exists->title !== $title) {
+        if (($exists->title !== $title) || ($exists->url !== $url)) {
             // Only update if there was a change.
-            $this->updateSection($title, $tag);
+            $this->updateSection($title, $tag, $url);
         }
         return $exists->id;
     }
@@ -144,6 +148,7 @@ class SectionStore
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             title varchar(255) DEFAULT '' NOT NULL,
             tag varchar(45) DEFAULT '' NOT NULL,
+            url varchar(255) DEFAULT '' NOT NULL,
             created_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
             UNIQUE KEY tag (tag),
             PRIMARY KEY  (id)
@@ -156,20 +161,22 @@ class SectionStore
      *
      * @param  string $title    The title of the section
      * @param  string $tag      The tag of the section
+     * @param  string $url      The url of the section
      *
      * @return boolean          Was it successfully created?
      * @access protected
      */
-    protected function createSection($title, $tag)
+    protected function createSection($title, $tag, $url)
     {
         $tableName = $this->prefix . self::$tableName;
         $prepare = $this->db->prepare(
             "INSERT INTO {$tableName}
-                (title, tag, created_at)
-                VALUES(%s, %s, NOW())
+                (title, tag, url, created_at)
+                VALUES(%s, %s, %s, NOW())
             ",
             $title,
-            strtolower(trim($tag))
+            strtolower(trim($tag)),
+            $url
         );
         return $this->db->query($prepare);
     }
@@ -181,16 +188,18 @@ class SectionStore
      *
      * @param   string      $title  The title of the section
      * @param   string      $tag    The tag to find the current section.
+     * @param   string      $url    The url of the section
      *
      * @return  integer             The number of rows affected by the update
      * @access  protected
      */
-    protected function updateSection($title, $tag)
+    protected function updateSection($title, $tag, $url)
     {
         $tableName = $this->prefix . self::$tableName;
         $prepare = $this->db->prepare(
-            "UPDATE {$tableName} SET title = %s WHERE tag = %s",
+            "UPDATE {$tableName} SET title = %s, url = %s WHERE tag = %s",
             $title,
+            $url,
             strtolower(trim($tag))
         );
         return $this->db->query($prepare);
