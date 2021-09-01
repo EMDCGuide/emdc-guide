@@ -4,6 +4,9 @@
 jQuery(function($) {
   $('.copr-js-hide').hide();
   $('.copr-js-show').show();
+  /**
+   * Set up the deletion of answers
+   */
   $('.copr-delete-answer').on('click', function() {
     var form = $(this).closest('form');
     var confirmMsg = form.attr('data-really-message');
@@ -19,6 +22,9 @@ jQuery(function($) {
     }
     return false;
   });
+  /**
+   * Set up the editing of answers
+   */
   $('.copr-edit-link').on('click', function() {
     var link = $(this);
     var parent = link.closest('.copr-single-answer');
@@ -37,6 +43,9 @@ jQuery(function($) {
     }
     return false;
   });
+  /**
+   * Set up the submission of answer's editing form
+   */
   $('form.copr-edit-answer').on('submit', function() {
     var form = $(this);
     var parent = form.closest('.copr-single-answer');
@@ -57,5 +66,23 @@ jQuery(function($) {
       }
     });
     return false;
+  });
+  /**
+   * Set up the filter
+   */
+  var selector = $('#copr-section-filter select');
+  $('.copr-section-wrapper').each(function() {
+    var title = $(this).attr('data-title');
+    var tag = $(this).attr('data-tag');
+    selector.append('<option value="' + tag + '">' + title + '</option>');
+  });
+  selector.on('change', function() {
+    var value = $(this).val();
+    if (value === 'all') {
+      $('.copr-section-wrapper').show();
+    } else {
+      $('.copr-section-wrapper').hide();
+      $('#section-' + value).show();
+    }
   });
 });

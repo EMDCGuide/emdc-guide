@@ -1,7 +1,6 @@
 /**
  * These are styles for the community profile feed.
  */
-
 .copr-flex-parent {
     display: flex;
 }
@@ -45,4 +44,7 @@
 }
 .copr-edit-answer {
     margin-bottom: 10px;
+}
+#copr-section-filter {
+    text-align: right;
 }

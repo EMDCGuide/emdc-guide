@@ -1,6 +1,9 @@
 <div id="item-body">
     <h2 class="bp-screen-reader-text"><?php echo __( 'Community Profile', 'copr-my-extension' ); ?></h2>
-    <div id="community-profile">
+    <div id="copr-community-profile">
+        <div id="copr-section-filter" class="copr-js-show">
+            <span class="dashicons dashicons-filter"></span> <?php echo __( 'Filter By:', 'copr-my-extension' ); ?> <select name="copr-section-filter"><option value="all"><?php echo __( 'Display All', 'copr-my-extension' ); ?></option></select>
+        </div>
         <?php $currentTag = ''; ?>
         <?php $currentQuestion = ''; ?>
         <?php if (count($answers) === 0): ?>
@@ -10,9 +13,14 @@
             <?php $user = get_user_by( 'id', $answer->user_id); ?>
             <?php
                 if ($currentTag !== $answer->section_tag):
+                    if ($currentTag !== '') {
+                        echo '</div>';
+                    }
                     $currentTag = $answer->section_tag;
+                    $sectionTitle = $answer->section_title . ' (' . strtoupper($answer->section_tag) . ')';
             ?>
-                <h2 class="copr-section-title"><?php echo $answer->section_title; ?> (<?php echo strtoupper($answer->section_tag); ?>)</h2>
+                <div id="section-<?php echo strtolower($answer->section_tag); ?>" class="copr-section-wrapper" data-title="<?php echo $sectionTitle; ?>" data-tag="<?php echo strtolower($answer->section_tag); ?>">
+                    <h2 class="copr-section-title"><?php echo $sectionTitle; ?></h2>
             <?php endif; ?>
             <?php
                 if ($currentQuestion !== $answer->question_hash):
@@ -74,5 +82,6 @@
                     <?php endif; ?>
                 </div>
         <?php endforeach; ?>
+    </div><!-- Last div for the final section title. -->
     </div>
 </div>
