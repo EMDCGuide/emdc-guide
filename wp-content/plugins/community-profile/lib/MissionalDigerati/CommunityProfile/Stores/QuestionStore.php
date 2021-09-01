@@ -99,8 +99,7 @@ class QuestionStore
             return ($created) ? $this->db->insert_id : false;
         }
 
-        if (
-            ($exists->question_number !== $number) ||
+        if (($exists->question_number !== $number) ||
             ($exists->choice !== $choices) ||
             ($exists->question_type !== $questionType)
         ) {
@@ -186,8 +185,7 @@ class QuestionStore
             return false;
         }
 
-        if (
-            ($exists->question_number !== $number) ||
+        if (($exists->question_number !== $number) ||
             ($exists->choice !== $choices) ||
             ($exists->question_type !== $questionType)
         ) {
