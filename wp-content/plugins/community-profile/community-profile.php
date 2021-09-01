@@ -141,8 +141,10 @@ function copr_save_answer() {
 	$payload = array(
 		'data'		=>	array(
 			'answer'			=>	$_POST['answer'],
+			'question_choices'	=>	$_POST['question_choices'],
 			'question_number'	=>	intval($_POST['question_number']),
 			'question'			=>	$_POST['question'],
+			'question_type'		=>	$_POST['question_type'],
 			'section_title'		=>	$_POST['section_title'],
 			'tag'				=>	$_POST['tag'],
 		),
@@ -165,8 +167,10 @@ function copr_save_answer() {
 			$userId,
 			$_POST['section_title'],
 			$_POST['tag'],
+			$_POST['question_choices'],
 			intval($_POST['question_number']),
 			$_POST['question'],
+			$_POST['question_type'],
 			$_POST['answer']
 		);
 	}

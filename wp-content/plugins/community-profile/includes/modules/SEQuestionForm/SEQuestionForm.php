@@ -46,6 +46,8 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 					<input type="hidden" name="tag" value="$tag" />
 					<input type="hidden" name="section_title" value="$title" />
 					<input type="hidden" name="question_number" value="$questionNumber" />
+					<input type="hidden" name="question_type" value="$questionType" />
+					<input type="hidden" name="question_choices" value="$questionChoices" />
 					<input type="hidden" name="question" value="$question" />
 					<input type="hidden" name="group_id" value="11" />
 					$nounce
@@ -145,6 +147,8 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 			$hash = md5($question);
 			$answer = (isset($answers[$hash])) ? $answers[$hash] : '';
 			$formElement = '';
+			$questionType = 'text';
+			$questionChoices = '';
 			if (strtolower($pieces[1]) === 'text') {
 				$formElement = '<textarea name="answer" class="copr-answer-textarea" rows="10">' . $answer . '</textarea>';
 			} else if (strtolower($pieces[1]) === 'choice') {
@@ -154,11 +158,13 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 					 */
 					continue;
 				}
+				$questionType = 'choice';
+				$questionChoices = $pieces[2];
 				$formElement = '<div class="copr-answer-choices">';
-				$choices = explode(',', $pieces[2]);
+				$choices = explode(',', $questionChoices);
 				foreach ($choices as $choiceKey => $choice) {
 					$checked = '';
-					if (strtolower($choice) === strtolower($answer)) {
+					if ((strtolower($choice) === strtolower($answer)) || (($answer === '') && ($choiceKey === 0))) {
 						$checked = ' checked';
 					}
 					$formElement .= '<div><input type="radio" name="answer" value="' . $choice .'"' . $checked . ' /><label>' . $choice .'</label></div>';
@@ -178,7 +184,9 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 				'$nounce'			=>	wp_nonce_field('submit_answers'),
 				'$prevLabel'		=>	$prevLabel,
 				'$question'			=>	$question,
+				'$questionChoices'	=>	$questionChoices,
 				'$questionNumber'	=>	$questionNumber,
+				'$questionType'		=>	$questionType,
 				'$save'				=>	esc_html__('Save', 'copr-my-extension'),
 				'$saving'			=>	esc_html__('Saving', 'copr-my-extension'),
 				'$tag'				=>	$tag,

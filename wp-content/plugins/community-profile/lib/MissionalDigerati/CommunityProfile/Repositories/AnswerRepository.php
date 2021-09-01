@@ -70,8 +70,10 @@ class AnswerRepository
      * @param  integer  $userId             The user id
      * @param  string   $sectionTitle       The title of the section
      * @param  string   $sectionTag         The section tag
+     * @param  string   $questionChoices    The choices for the question
      * @param  integer  $questionNumber     The question's number
      * @param  string   $question           The question
+     * @param  string   $questionType       The type of question
      * @param  string   $answer             The answer
      * @return boolean                      Was it successful?
      */
@@ -80,14 +82,22 @@ class AnswerRepository
         $userId,
         $sectionTitle,
         $sectionTag,
+        $questionChoices,
         $questionNumber,
         $question,
+        $questionType,
         $answer
     ) {
         $success = false;
         $sectionId = $this->sectionStore->createOrUpdate($sectionTitle, $sectionTag);
         if ($sectionId) {
-            $questionId = $this->questionStore->createOrUpdate($sectionId, intval($questionNumber), $question);
+            $questionId = $this->questionStore->createOrUpdate(
+                $sectionId,
+                $questionChoices,
+                intval($questionNumber),
+                $question,
+                $questionType
+            );
             if ($questionId) {
                 $answerId = $this->answerStore->createOrUpdate(intval($userId), intval($groupId), $questionId, $answer);
                 if ($answerId) {

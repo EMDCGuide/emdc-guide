@@ -51,41 +51,67 @@ class QuestionStore
     /**
      * Create a question
      *
-     * @param  integer  $sectionId  The id of the existing section
-     * @param  integer  $number     The question number
-     * @param  string   $question   The question
-     * @return integer|false        It returns the id or false if it failed to create/update
+     * @param  integer  $sectionId      The id of the existing section
+     * @param  string   $choices        The question choices
+     * @param  integer  $number         The question number
+     * @param  string   $question       The question
+     * @param  string   $questionType   The type of question
+     * @return integer|false            It returns the id or false if it failed to create/update
      */
-    public function create($sectionId, $number, $question)
+    public function create($sectionId, $choices, $number, $question, $questionType)
     {
         $exists = $this->findByQuestion($sectionId, $question);
         if ($exists) {
             return $exists->id;
         }
 
-        $created = $this->createQuestion($sectionId, $number, $question);
+        $created = $this->createQuestion(
+            $sectionId,
+            $choices,
+            $number,
+            $question,
+            $questionType
+        );
         return ($created) ? $this->db->insert_id : false;
     }
 
     /**
      * Create or Update a question
      *
-     * @param  integer  $sectionId  The id of the existing section
-     * @param  integer  $number     The question number
-     * @param  string   $question   The question
-     * @return integer|false        Returns the id if inserted otherwise it returns false
+     * @param  integer  $sectionId      The id of the existing section
+     * @param  string   $choices        The question choices
+     * @param  integer  $number         The question number
+     * @param  string   $question       The question
+     * @param  string   $questionType   The type of question
+     * @return integer|false            Returns the id if inserted otherwise it returns false
      */
-    public function createOrUpdate($sectionId, $number, $question)
+    public function createOrUpdate($sectionId, $choices, $number, $question, $questionType)
     {
         $exists = $this->findByQuestion($sectionId, $question);
         if (!$exists) {
-            $created = $this->createQuestion($sectionId, $number, $question);
+            $created = $this->createQuestion(
+                $sectionId,
+                $choices,
+                $number,
+                $question,
+                $questionType
+            );
             return ($created) ? $this->db->insert_id : false;
         }
 
-        if ($exists->question_number !== $number) {
+        if (
+            ($exists->question_number !== $number) ||
+            ($exists->choice !== $choices) ||
+            ($exists->question_type !== $questionType)
+        ) {
             // Only update if there was a change.
-            $this->updateQuestion($sectionId, $number, $question);
+            $this->updateQuestion(
+                $sectionId,
+                $choices,
+                $number,
+                $question,
+                $questionType
+            );
         }
         return $exists->id;
     }
@@ -131,6 +157,8 @@ class QuestionStore
             copr_section_id mediumint(9) NOT NULL,
             unique_hash varchar(255) DEFAULT '' NOT NULL,
             question_number mediumint(9) NOT NULL,
+            question_type varchar(45) DEFAULT 'text' NOT NULL,
+            question_choices varchar(255) DEFAULT '' NOT NULL,
             question longtext DEFAULT '' NOT NULL,
             created_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
             PRIMARY KEY  (id),
@@ -144,21 +172,33 @@ class QuestionStore
      * Update the given question.  Only the number will be updated.  We use question to create
      * the unique hash.
      *
-     * @param  integer  $sectionId  The id of the existing section
-     * @param  integer  $number     The number of the question
-     * @param  string   $question   The question
-     * @return  integer|false       It returns the id or false if it doesn't exist
+     * @param  integer  $sectionId      The id of the existing section
+     * @param  string   $choices        The question choices
+     * @param  integer  $number         The question number
+     * @param  string   $question       The question
+     * @param  string   $questionType   The type of question
+     * @return  integer|false           It returns the id or false if it doesn't exist
      */
-    public function update($sectionId, $number, $question)
+    public function update($sectionId, $choices, $number, $question, $questionType)
     {
         $exists = $this->findByQuestion($sectionId, $question);
         if (!$exists) {
             return false;
         }
 
-        if ($exists->question_number !== $number) {
+        if (
+            ($exists->question_number !== $number) ||
+            ($exists->choice !== $choices) ||
+            ($exists->question_type !== $questionType)
+        ) {
             // Only update if there was a change.
-            $this->updateQuestion($sectionId, $number, $question);
+            $this->updateQuestion(
+                $sectionId,
+                $choices,
+                $number,
+                $question,
+                $questionType
+            );
         }
         return $exists->id;
     }
@@ -166,26 +206,30 @@ class QuestionStore
     /**
      * Create a question
      *
-     * @param  integer  $sectionId  The id of the existing section
-     * @param  integer  $number     The question number
-     * @param  string   $question   The question
-     * @return boolean              Was it successfully created?
+     * @param  integer  $sectionId      The id of the existing section
+     * @param  string   $choices        The question choices
+     * @param  integer  $number         The question number
+     * @param  string   $question       The question
+     * @param  string   $questionType   The type of question
+     * @return boolean                  Was it successfully created?
      *
      * @access protected
      */
-    protected function createQuestion($sectionId, $number, $question)
+    protected function createQuestion($sectionId, $choices, $number, $question, $questionType)
     {
         $tableName = $this->prefix . self::$tableName;
         $question = trim($question);
         $hash = md5($question);
         $prepare = $this->db->prepare(
             "INSERT INTO {$tableName}
-                (copr_section_id, unique_hash, question_number, question, created_at)
-                VALUES(%d, %s, %d, %s, NOW())
+                (copr_section_id, unique_hash, question_number, question_type, question_choices, question, created_at)
+                VALUES(%d, %s, %d, %s, %s, %s, NOW())
             ",
             $sectionId,
             $hash,
             $number,
+            $questionType,
+            $choices,
             $question
         );
         return $this->db->query($prepare);
@@ -196,21 +240,25 @@ class QuestionStore
      * the unique hash.
      *
      * @param  integer  $sectionId  The id of the existing section
-     * @param  integer  $number   The number of the question
-     * @param  string   $question The question
-     * @return  integer           The number of rows affected by the update
+     * @param  string   $choices        The question choices
+     * @param  integer  $number         The question number
+     * @param  string   $question       The question
+     * @param  string   $questionType   The type of question
+     * @return  integer                 The number of rows affected by the update
      *
      * @access protected
      */
-    protected function updateQuestion($sectionId, $number, $question)
+    protected function updateQuestion($sectionId, $choices, $number, $question, $questionType)
     {
         $tableName = $this->prefix . self::$tableName;
         $question = trim($question);
         $hash = md5($question);
         $prepare = $this->db->prepare(
-            "UPDATE {$tableName} SET question_number = %s
+            "UPDATE {$tableName} SET question_number = %s, question_type = %s, question_choices = %s
             WHERE unique_hash = %s AND copr_section_id = %d",
             $number,
+            $questionType,
+            $choices,
             $hash,
             $sectionId
         );
