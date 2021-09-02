@@ -28,7 +28,7 @@
                     ?>
                 </div>
             <?php endif; ?>
-            <p class="copr-hidden copr-answer-error copr-error-message">"<?php echo __( 'The answer cannot be blank!', 'copr-my-extension' ); ?></p>
+            <p class="copr-hidden copr-answer-error copr-error-message"></p>
         </div>
         <div class="submit copr-align-right">
             <input type="submit" value="Save" data-save="<?php echo __( 'Save', 'copr-my-extension' ); ?>" data-saving="<?php echo __( 'Saving', 'copr-my-extension' ); ?>">

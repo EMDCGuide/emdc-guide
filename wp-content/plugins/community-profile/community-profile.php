@@ -61,7 +61,7 @@ function copr_activate_plugin() {
 }
 
 /**
- * Delete an answer
+ * POST: Delete an answer
  *
  * @return void
  */
@@ -119,7 +119,39 @@ function copr_delete_answer() {
 }
 
 /**
- * Save an answer
+ * GET: Get a HTML template.
+ *
+ * @return void
+ */
+function copr_get_template() {
+	global $wpdb;
+	$repo = new AnswerRepository($wpdb, $wpdb->prefix);
+	$currentUserId = get_current_user_id();
+	if (!isset($_GET['group_id'])) {
+		status_header(400, 'Invalid Request!');
+		exit;
+	}
+	if (!isset($_GET['answer_id'])) {
+		status_header(400, 'Invalid Request!');
+		exit;
+	}
+	if (!isset($_GET['template_name'])) {
+		status_header(400, 'Invalid Request!');
+		exit;
+	}
+	$groupId = intval($_GET['group_id']);
+	$templateName = $_GET['template_name'];
+	$canModerate = (groups_is_user_mod($currentUserId, $groupId) || groups_is_user_admin($currentUserId, $groupId));
+	$id = intval($_GET['answer_id']);
+	$answer = $repo->findById($id);
+	$templateFile = COPR_ROOT_DIR . 'templates' . COPR_DS . $templateName . '.php';
+	if (file_exists($templateFile)) {
+		require_once($templateFile);
+	}
+}
+
+/**
+ * POST: Save an answer
  *
  * @return void
  */
@@ -128,7 +160,6 @@ function copr_save_answer() {
 	$repo = new AnswerRepository($wpdb, $wpdb->prefix);
 	$userId = get_current_user_id();
 	$isAjax = (isset($_POST['is_ajax'])) ? boolval($_POST['is_ajax']) : false;
-	$template = (isset($_POST['template'])) ? $_POST['template'] : null;
 	if ((!isset($_POST)) || (!check_ajax_referer('submit_answers')) || ($userId === 0)) {
 		if ($isAjax) {
 			status_header(400, 'Invalid Request!');
@@ -140,6 +171,7 @@ function copr_save_answer() {
 	}
 	$payload = array(
 		'data'		=>	array(
+			'id'				=>	-1,
 			'answer'			=>	$_POST['answer'],
 			'question_choices'	=>	$_POST['question_choices'],
 			'question_number'	=>	intval($_POST['question_number']),
@@ -174,18 +206,9 @@ function copr_save_answer() {
 			$_POST['question_type'],
 			$_POST['answer']
 		);
+		$payload['data']['id'] = $repo->lastId;
 	}
-	if (($template === 'single-answer') && ($payload['success'])) {
-		$currentUserId = get_current_user_id();
-		$groupId = intval($_POST['group_id']);
-		$canModerate = (groups_is_user_mod($currentUserId, $groupId) || groups_is_user_admin($currentUserId, $groupId));
-		$answer = $repo->findById($repo->lastId);
-		require_once(COPR_ROOT_DIR . 'templates' . COPR_DS . '_single_answer.php');
-		exit;
-	} else if (($template === 'single-answer') && (!$payload['success'])) {
-		status_header(400, 'Invalid Request!');
-		exit;
-	} else if ($isAjax) {
+	if ($isAjax) {
 		header('Content-Type: application/json');
 		echo json_encode($payload);
 		exit;
@@ -320,6 +343,7 @@ function copr_bp_tab() {
 	}
 }
 
+add_action( 'wp_ajax_copr_get_template', 'copr_get_template' );
 add_action( 'wp_ajax_copr_save_answer', 'copr_save_answer' );
 add_action( 'wp_ajax_copr_delete_answer', 'copr_delete_answer' );
 add_action( 'wp_ajax_copr_update_answer_by_id', 'copr_update_answer_by_id' );

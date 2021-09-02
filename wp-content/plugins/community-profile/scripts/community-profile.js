@@ -95,47 +95,56 @@ jQuery(function($) {
     const answerField = form.find('*[name="answer"]').first();
     const answerErrorHolder = form.find(`.copr-answer-error`).first();
     const parent = form.closest('.copr-my-response-wrapper');
-    const payload = `${form.serialize()}&is_ajax=true&template=single-answer`;
+    const payload = `${form.serialize()}&is_ajax=true`;
     const submit = form.find('input[type="submit"]').first();
     const data = form.serializeArray();
-    let answer = '';
+    let groupId = '';
     for (var i = 0; i < data.length; i++) {
-      if (data[i]['name'] === 'answer') {
-        answer = data[i]['value'];
+      if (data[i]['name'] === 'group_id') {
+        groupId = data[i]['value'];
       }
-    }
-    if (answer === '') {
-      if (answerField.length > 0) {
-          answerField.addClass('copr-errored');
-      }
-      if (answerErrorHolder.length > 0) {
-          answerErrorHolder.removeClass('copr-hidden');
-      }
-      return false;
     }
     submit
       .val(submit.attr('data-saving'))
       .prop('disabled', 'disabled')
       .addClass('copr-disabled');
     $.post(form.attr('action'), payload).done(function(data) {
+      if (data.success) {
+        const templatePayload = `action=copr_get_template&group_id=${groupId}&answer_id=${data.data.id}&template_name=_single_answer`;
+        $.get(form.attr('action'), templatePayload).done(function(html) {
+          submit
+            .val(submit.attr('data-save'))
+            .prop('disabled', '')
+            .removeClass('copr-disabled');
+          parent.slideUp('slow', function() {
+            const ele = $(html);
+            ele.find('.copr-js-hide').hide();
+            ele.find('.copr-js-show').css('display', 'block');
+            ele.find('a.copr-js-show').css('display', 'inline-block');
+            parent.replaceWith(ele);
+          });
+        });
+      } else {
+        data.errors.forEach(function(error) {
+          const field = form.find(`*[name="${error.field}"]`).first();
+          if (field.length > 0) {
+              field.addClass('copr-errored');
+          }
+          const errorHolder = form.find(`.copr-${error.field}-error`).first();
+          if (errorHolder.length > 0) {
+              errorHolder.text(error.error).removeClass('copr-hidden');
+          }
+        });
+        submit
+          .val(submit.attr('data-save'))
+          .prop('disabled', '')
+          .removeClass('copr-disabled');
+      }
+    }).fail(function() {
       submit
         .val(submit.attr('data-save'))
         .prop('disabled', '')
         .removeClass('copr-disabled');
-      parent.slideUp('slow', function() {
-        const ele = $(data);
-        ele.find('.copr-js-hide').hide();
-        ele.find('.copr-js-show').css('display', 'block');
-        ele.find('a.copr-js-show').css('display', 'inline-block');
-        parent.replaceWith(ele);
-      });
-    }).fail(function() {
-      if (answerField.length > 0) {
-          answerField.addClass('copr-errored');
-      }
-      if (answerErrorHolder.length > 0) {
-          answerErrorHolder.removeClass('copr-hidden');
-      }
     });
     return false;
   });
