@@ -139,6 +139,10 @@ function copr_get_template() {
 		status_header(400, 'Invalid Request!');
 		exit;
 	}
+	if (!function_exists('bp_version')) {
+		status_header(500, 'BuddyPress not Installed!');
+		exit;
+	}
 	$groupId = intval($_GET['group_id']);
 	$templateName = $_GET['template_name'];
 	$canModerate = (groups_is_user_mod($currentUserId, $groupId) || groups_is_user_admin($currentUserId, $groupId));
