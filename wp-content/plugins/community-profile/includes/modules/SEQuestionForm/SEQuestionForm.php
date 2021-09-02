@@ -92,23 +92,23 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 		<div class="copr-add-group-form-wrapper">
 		<div class="copr-form-error"></div>
 		<form action="$formAction" class="copr-add-group-form" method="post" data-error-message="$formError">
-			<input type="hidden" name="action" value="copr_save_answer" />
+			<input type="hidden" name="action" value="copr_add_group" />
 			$nounce
 			<div class="form-element-wrapper">
 				<label>$nameLabel</label>
-				<input type="text" name="group_name" value="" />
-				<p class="copr-hidden copr-group_name-error copr-error-message"></p>
+				<input type="text" name="group_name" value="$name" class="$nameInputClasses" />
+				<p class="copr-group_name-error copr-error-message$nameErrorClasses">$nameError</p>
 			</div>
 			<div class="form-element-wrapper">
 				<label>$descLabel</label>
-				<textarea type="text" name="group_desc" rows="10"></textarea>
-				<p class="copr-hidden copr-group_desc-error copr-error-message"></p>
+				<textarea type="text" name="group_desc" rows="10" class="$descInputClasses">$desc</textarea>
+				<p class="copr-group_desc-error copr-error-message$descErrorClasses">$descError</p>
 			</div>
 			<div class="form-element-wrapper">
 				<label>$typeLabel</label>
-				<div class="copr-radio-option"><input type="radio" name="answer" value="public" checked /><label>$optionPublic</label></div>
-				<div class="copr-radio-option"><input type="radio" name="answer" value="private" /><label>$optionPrivate</label></div>
-				<div class="copr-radio-option"><input type="radio" name="answer" value="hidden" /><label>$optionHidden</label></div>
+				<div class="copr-radio-option"><input type="radio" name="group_type" value="public"$publicChecked /><label>$optionPublic</label></div>
+				<div class="copr-radio-option"><input type="radio" name="group_type" value="private"$privateChecked /><label>$optionPrivate</label></div>
+				<div class="copr-radio-option"><input type="radio" name="group_type" value="hidden"$hiddenChecked /><label>$optionHidden</label></div>
 				<p class="copr-hidden copr-group_type-error copr-error-message"></p>
 			</div>
 			<div class="copr-align-right submit">
@@ -301,18 +301,64 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 	protected function getGroupSelectorContent($selector = '')
 	{
 		$hasBP = (function_exists('bp_version')) ? 'true' : 'false';
+		$errors = (isset($_GET['error_fields'])) ? $_GET['error_fields'] : '';
+		$name = (isset($_GET['group_name'])) ? urldecode($_GET['group_name']) : '';
+		$desc = (isset($_GET['group_desc'])) ? urldecode($_GET['group_desc']) : '';
+		$groupType = (isset($_GET['group_type'])) ? urldecode($_GET['group_type']) : '';
+		$hiddenChecked = '';
+		$privateChecked = '';
+		$publicChecked = '';
+		switch ($groupType) {
+			case 'private':
+				$privateChecked = ' checked';
+				break;
+			case 'hidden':
+				$hiddenChecked = ' checked';
+				break;
+			default:
+				$publicChecked = ' checked';
+				break;
+		}
+		$errorsArray = explode(',', $errors);
+		$descError = '';
+		$descErrorClasses = ' copr-hidden';
+		$nameError = '';
+		$nameErrorClasses = ' copr-hidden';
+		$nameInputClasses = '';
+		$descInputClasses = '';
+		if (in_array('group_name', $errorsArray)) {
+			$nameError = __('The group name cannot be blank!', 'copr-my-extension');
+			$nameErrorClasses = '';
+			$nameInputClasses = 'copr-errored';
+		}
+		if (in_array('group_desc', $errorsArray)) {
+			$descError = __('The group description cannot be blank!', 'copr-my-extension');
+			$descErrorClasses = '';
+			$descInputClasses = 'copr-errored';
+		}
 		$vars = array(
 			'$addGroupText'		=>	__( 'Add a New Group', 'copr-my-extension' ),
 			'$content'			=>	$this->props['gs_content'],
+			'$desc'				=>	$desc,
+			'$descErrorClasses'	=>	$descErrorClasses,
+			'$descError'		=>	$descError,
+			'$descInputClasses'	=>	$descInputClasses,
+			'$descLabel'		=>	__( 'Group Description', 'copr-my-extension' ),
 			'$formAction'		=>	admin_url( 'admin-ajax.php' ),
 			'$formError'		=>	__( 'Sorry, we were unable to add the group. Please try again later.', 'copr-my-extension' ),
-			'$descLabel'		=>	__( 'Group Description', 'copr-my-extension' ),
 			'$hasBP'			=>	$hasBP,
-			'$nounce'			=>	wp_nonce_field( 'add_new_group' ),
+			'$hiddenChecked'	=>	$hiddenChecked,
+			'$name'				=>	$name,
+			'$nameErrorClasses'	=> 	$nameErrorClasses,
+			'$nameError'		=>	$nameError,
+			'$nameInputClasses'	=>	$nameInputClasses,
 			'$nameLabel'		=>	__( 'Group Name','copr-my-extension' ),
+			'$nounce'			=>	wp_nonce_field( 'add_new_group' ),
 			'$optionHidden'		=>  __( 'Hidden','copr-my-extension' ),
 			'$optionPublic'		=>	__( 'Public','copr-my-extension' ),
 			'$optionPrivate'	=>	__( 'Private','copr-my-extension' ),
+			'$privateChecked'	=>	$privateChecked,
+			'$publicChecked'	=>	$publicChecked,
 			'$save'				=>	__( 'Save', 'copr-my-extension' ),
 			'$saving'			=>	__( 'Saving', 'copr-my-extension' ),
 			'$selector'			=>	$selector,

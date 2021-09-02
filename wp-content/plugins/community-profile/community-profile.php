@@ -63,6 +63,103 @@ function copr_activate_plugin()
 }
 
 /**
+ * POST: Add a new group
+ */
+function copr_add_group()
+{
+	$userId = get_current_user_id();
+	$isAjax = (isset($_POST['is_ajax'])) ? boolval($_POST['is_ajax']) : false;
+	if ((!isset($_POST)) || (!check_ajax_referer('add_new_group')) || ($userId === 0)) {
+		if ($isAjax) {
+			status_header(400, 'Invalid Request!');
+			exit;
+		} else {
+			wp_redirect($_POST['_wp_http_referer']);
+			exit;
+		}
+	}
+	$parts = explode('?', $_POST['_wp_http_referer']);
+	$returnUrl = $parts[0];
+	if (!function_exists('bp_version')) {
+		if ($isAjax) {
+			status_header(500, 'BuddyPress not Installed!');
+			exit;
+		} else {
+			wp_redirect($returnUrl);
+			exit;
+		}
+	}
+	$payload = array(
+		'data'		=>	array(
+			'id'					=>	-1,
+			'group_name'			=>	$_POST['group_name'],
+			'group_description'		=>	$_POST['group_desc'],
+			'group_type'			=>	$_POST['group_type'],
+		),
+		'errors'	=>	array(),
+		'success'	=>	false,
+	);
+	if (!$_POST['group_name']) {
+		$payload['errors'][] = array(
+			'field'	=>	'group_name',
+			'error'	=>	__('The group name cannot be blank!', 'copr-my-extension'),
+		);
+	}
+	if (!$_POST['group_desc']) {
+		$payload['errors'][] = array(
+			'field'	=>	'group_desc',
+			'error'	=>	__('The group description cannot be blank!', 'copr-my-extension'),
+		);
+	}
+	if (!$_POST['group_type']) {
+		$payload['errors'][] = array(
+			'field'	=>	'group_type',
+			'error'	=>	__('The group type cannot be blank!', 'copr-my-extension'),
+		);
+	}
+	if (count($payload['errors']) > 0) {
+		if ($isAjax) {
+			header('Content-Type: application/json');
+			echo json_encode($payload);
+			exit;
+		} else {
+			$errorFields = [];
+			foreach ($payload['errors'] as $error) {
+				$errorFields[] = $error['field'];
+			}
+			$url = $returnUrl . '?error_fields=' . join(',', $errorFields);
+			$url .= '&group_name=' . urlencode($_POST['group_name']);
+			$url .= '&group_desc=' . urlencode($_POST['group_desc']);
+			$url .= '&group_type=' . urlencode($_POST['group_type']);
+			wp_redirect($url);
+			exit;
+		}
+	}
+	$settings = array(
+		'group_id'     => 0,
+		'creator_id'   => $userId,
+		'name'         => $_POST['group_name'],
+		'description'  => $_POST['group_desc'],
+		'slug'         => '',
+		'status'       => $_POST['group_type']
+	);
+	$id = groups_create_group($settings);
+	if ($id) {
+		$payload['success'] = true;
+		$payload['data']['id'] = intval($id);
+		setcookie(COPR_GROUP_ID_COOKIE, intval($id), 0, '/', '', $secure);
+	}
+	if ($isAjax) {
+		header('Content-Type: application/json');
+		echo json_encode($payload);
+		exit;
+	} else {
+		wp_redirect($returnUrl);
+		exit;
+	}
+}
+
+/**
  * POST: Delete an answer
  *
  * @return void
@@ -255,17 +352,23 @@ function copr_select_group()
 			exit;
 		}
 	}
-	if (function_exists('bp_version')) {
-		// BuddyPress is available
-		$isMember = (groups_is_user_member($userId, $_POST['group_id']));
-		if (!$isMember) {
-			if ($isAjax) {
-				status_header(401, 'Unauthorized!');
-				exit;
-			} else {
-				wp_redirect($_POST['_wp_http_referer']);
-				exit;
-			}
+	if (!function_exists('bp_version')) {
+		if ($isAjax) {
+			status_header(500, 'BuddyPress not Installed!');
+			exit;
+		} else {
+			wp_redirect($_POST['_wp_http_referer']);
+			exit;
+		}
+	}
+	$isMember = (groups_is_user_member($userId, $_POST['group_id']));
+	if (!$isMember) {
+		if ($isAjax) {
+			status_header(401, 'Unauthorized!');
+			exit;
+		} else {
+			wp_redirect($_POST['_wp_http_referer']);
+			exit;
 		}
 	}
 	setcookie(COPR_GROUP_ID_COOKIE, intval($_POST['group_id']), 0, '/', '', $secure);
@@ -410,6 +513,7 @@ function copr_bp_tab()
 	}
 }
 
+add_action( 'wp_ajax_copr_add_group', 'copr_add_group' );
 add_action( 'wp_ajax_copr_select_group', 'copr_select_group' );
 add_action( 'wp_ajax_copr_get_template', 'copr_get_template' );
 add_action( 'wp_ajax_copr_save_answer', 'copr_save_answer' );
