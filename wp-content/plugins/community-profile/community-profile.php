@@ -36,6 +36,7 @@ if ( ! function_exists( 'copr_initialize_extension' ) ):
 
 define('COPR_ROOT_DIR', plugin_dir_path( __FILE__ ));
 define('COPR_DS', DIRECTORY_SEPARATOR);
+define('COPR_GROUP_ID_COOKIE', 'copr-group-selected');
 
 /**
  * Creates the extension's main class instance.
@@ -51,7 +52,8 @@ function copr_initialize_extension() {
  *
  * @return void
  */
-function copr_activate_plugin() {
+function copr_activate_plugin()
+{
 	global $wpdb;
 	$database = new Database($wpdb->get_charset_collate());
 	$database->addStore(new SectionStore($wpdb, $wpdb->prefix));
@@ -65,7 +67,8 @@ function copr_activate_plugin() {
  *
  * @return void
  */
-function copr_delete_answer() {
+function copr_delete_answer()
+{
 	global $wpdb;
 	$userId = get_current_user_id();
 	$groupId = $_POST['group_id'];
@@ -123,7 +126,8 @@ function copr_delete_answer() {
  *
  * @return void
  */
-function copr_get_template() {
+function copr_get_template()
+{
 	global $wpdb;
 	$repo = new AnswerRepository($wpdb, $wpdb->prefix);
 	$currentUserId = get_current_user_id();
@@ -159,7 +163,8 @@ function copr_get_template() {
  *
  * @return void
  */
-function copr_save_answer() {
+function copr_save_answer()
+{
 	global $wpdb;
 	$repo = new AnswerRepository($wpdb, $wpdb->prefix);
 	$userId = get_current_user_id();
@@ -223,11 +228,66 @@ function copr_save_answer() {
 }
 
 /**
+ * Select the specific group.
+ *
+ * @return void
+ */
+function copr_select_group()
+{
+	$userId = get_current_user_id();
+	$isAjax = (isset($_POST['is_ajax'])) ? boolval($_POST['is_ajax']) : false;
+	$secure = ((isset($_SERVER['HTTPS'])) && ($_SERVER['HTTPS'] === 'on'));
+	if ((!isset($_POST)) || (!check_ajax_referer('select_group')) || ($userId === 0)) {
+		if ($isAjax) {
+			status_header(400, 'Invalid Request!');
+			exit;
+		} else {
+			wp_redirect($_POST['_wp_http_referer']);
+			exit;
+		}
+	}
+	if (!isset($_POST['group_id']) && ($_POST['group_id'] !== '')) {
+		if ($isAjax) {
+			status_header(400, 'Invalid Request!');
+			exit;
+		} else {
+			wp_redirect($_POST['_wp_http_referer']);
+			exit;
+		}
+	}
+	if (function_exists('bp_version')) {
+		// BuddyPress is available
+		$isMember = (groups_is_user_member($userId, $_POST['group_id']));
+		if (!$isMember) {
+			if ($isAjax) {
+				status_header(401, 'Unauthorized!');
+				exit;
+			} else {
+				wp_redirect($_POST['_wp_http_referer']);
+				exit;
+			}
+		}
+	}
+	setcookie(COPR_GROUP_ID_COOKIE, intval($_POST['group_id']), 0, '/', '', $secure);
+	$payload = array(
+		'success'	=>	false,
+	);
+	if ($isAjax) {
+		header('Content-Type: application/json');
+		echo json_encode($payload);
+		exit;
+	} else {
+		wp_redirect($_POST['_wp_http_referer']);
+		exit;
+	}
+}
+/**
  * Update an answer using it's id
  *
  * @return void
  */
-function copr_update_answer_by_id() {
+function copr_update_answer_by_id()
+{
 	global $wpdb;
 	$userId = get_current_user_id();
 	$groupId = $_POST['group_id'];
@@ -285,7 +345,8 @@ function copr_update_answer_by_id() {
  *
  * @return void
  */
-function copr_bp_initialize() {
+function copr_bp_initialize()
+{
 	global $bp;
 	$user_access = false;
     $group_link = '';
@@ -319,7 +380,8 @@ function copr_bp_tab_screen_title() {
  *
  * @return string 	The content
  */
-function copr_bp_tab_screen_content() {
+function copr_bp_tab_screen_content()
+{
 	global $wpdb;
 	$currentUserId = get_current_user_id();
 	$groupId = bp_get_current_group_id();
@@ -335,7 +397,8 @@ function copr_bp_tab_screen_content() {
  * @return void
  * @link https://wordpress.stackexchange.com/a/345664
  */
-function copr_bp_tab() {
+function copr_bp_tab()
+{
 	add_action( 'bp_template_title', 'copr_bp_tab_screen_title' );
 	add_action( 'bp_template_content', 'copr_bp_tab_screen_content' );
 
@@ -347,6 +410,7 @@ function copr_bp_tab() {
 	}
 }
 
+add_action( 'wp_ajax_copr_select_group', 'copr_select_group' );
 add_action( 'wp_ajax_copr_get_template', 'copr_get_template' );
 add_action( 'wp_ajax_copr_save_answer', 'copr_save_answer' );
 add_action( 'wp_ajax_copr_delete_answer', 'copr_delete_answer' );

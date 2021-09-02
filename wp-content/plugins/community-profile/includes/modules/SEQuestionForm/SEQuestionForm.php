@@ -51,7 +51,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 					<input type="hidden" name="question_type" value="$questionType" />
 					<input type="hidden" name="question_choices" value="$questionChoices" />
 					<input type="hidden" name="question" value="$question" />
-					<input type="hidden" name="group_id" value="11" />
+					<input type="hidden" name="group_id" value="$groupId" />
 					$nounce
 					<div class="form-element-wrapper">
 						<label>$questionNumber) $question</label>
@@ -71,6 +71,64 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 				</form>
 			</div>
 		</div>';
+
+	/**
+	 * The group selector and add form
+	 *
+	 * @var string
+	 */
+	protected $groupSelectorTemplate = '
+	<div class="copr-group-selector-wrapper" data-bp-available="$hasBP">
+		<h3 class="simp-simple-header-heading">$title</h3>
+		<p>$content</p>
+		<div class="copr-align-center">
+			$selector
+			<p>
+				<a href="#" class="copr-add-group">
+					<span class="dashicons dashicons-plus"></span> $addGroupText
+				</a>
+			</p>
+		</div>
+		<div class="copr-add-group-form-wrapper">
+		<div class="copr-form-error"></div>
+		<form action="$formAction" class="copr-add-group-form" method="post" data-error-message="$formError">
+			<input type="hidden" name="action" value="copr_save_answer" />
+			$nounce
+			<div class="form-element-wrapper">
+				<label>$nameLabel</label>
+				<input type="text" name="group_name" value="" />
+				<p class="copr-hidden copr-group_name-error copr-error-message"></p>
+			</div>
+			<div class="form-element-wrapper">
+				<label>$descLabel</label>
+				<textarea type="text" name="group_desc" rows="10"></textarea>
+				<p class="copr-hidden copr-group_desc-error copr-error-message"></p>
+			</div>
+			<div class="form-element-wrapper">
+				<label>$typeLabel</label>
+				<div class="copr-radio-option"><input type="radio" name="answer" value="public" checked /><label>$optionPublic</label></div>
+				<div class="copr-radio-option"><input type="radio" name="answer" value="private" /><label>$optionPrivate</label></div>
+				<div class="copr-radio-option"><input type="radio" name="answer" value="hidden" /><label>$optionHidden</label></div>
+				<p class="copr-hidden copr-group_type-error copr-error-message"></p>
+			</div>
+			<div class="copr-align-right submit">
+				<input type="submit" name="submit" value="$save" data-save="$save" data-saving="$saving" />
+			</div>
+		</form>
+		</div>
+	</div>';
+
+	protected $groupSelectorForm = '
+		<form action="$formAction" class="copr-select-group-form" method="post">
+			<span class="dashicons dashicons-groups"></span>
+			<select name="group_id" class="copr-group-selector">$options</select>
+			<input type="hidden" name="action" value="copr_select_group" />
+			$nounce
+			<div class="submit copr-js-hide">
+				<input type="submit" name="submit" value="$save" />
+			</div>
+		</form>
+	';
 
 	/**
 	 * Initialize the module.
@@ -112,6 +170,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 				'label'				=>	esc_html__('Group Selection Content', 'copr-my-extension'),
 				'type'				=>	'tiny_mce',
 				'option_category'	=>	'basic_option',
+				'default'			=>	esc_html__('In order to begin, please select a group or add a new group.  Your answers will be saved in the group\'s community profile.', 'copr-my-extension'),
 				'description'		=>	esc_html__('Content placed under the title but above the group selector.', 'copr-my-extension'),
 				'toggle_slug'		=>	'main_content',
 			),
@@ -156,7 +215,111 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 	 */
 	public function render( $attrs, $content = null, $render_slug )
 	{
-		return '<div class="copr-questions-wrapper">' . $this->getQuestionsContent() . '</div>';
+		$selector = $this->getGroupSelector();
+		$groupId = $this->getCurrentGroupId();
+		$addGroupWrapClass = ($groupId !== -1) ? ' copr-hidden' : '';
+		$addQuestionWrapClass = ($groupId === -1) ? ' copr-hidden' : '';
+		return '
+			<div class="copr-question-form">
+				<div class="copr-group-selector-wrapper' . $addGroupWrapClass . '">
+					' . $this->getGroupSelectorContent($selector) . '
+				</div>
+				<div class="copr-questions-wrapper' . $addQuestionWrapClass . '">
+					<div class="copr-align-right">
+						' . $selector . '
+					</div>
+					' . $this->getQuestionsContent() . '
+				</div>
+			</div>
+		';
+	}
+
+	/**
+	 * Get the current selected group id.
+	 *
+	 * @var integer	The selected group (-1 if not set)
+	 */
+	protected function getCurrentGroupId()
+	{
+		if (isset($_COOKIE) && isset($_COOKIE[COPR_GROUP_ID_COOKIE])) {
+			return intval($_COOKIE[COPR_GROUP_ID_COOKIE]);
+		} else {
+			return -1;
+		}
+	}
+
+	/**
+	 * Get the group selector.
+	 *
+	 * @return string 	The selector for the user groups.
+	 */
+	protected function getGroupSelector()
+	{
+		if (!function_exists('bp_version')) {
+			return '';
+		}
+		$userId = get_current_user_id();
+		$groupIds = groups_get_user_groups($userId);
+		$currentGroupId = $this->getCurrentGroupId();
+		$groups = [];
+		foreach ($groupIds['groups'] as $id) {
+			$group = groups_get_group( array( 'group_id' => $id) );
+			$groups[] = array(
+				'id'	=>	intval($id),
+				'name'	=>	$group->name,
+			);
+		}
+		$columns = array_column($groups, 'name');
+		array_multisort($columns, SORT_ASC, $groups);
+		$defaultSelected = '';
+		if ($currentGroupId === -1) {
+			$defaultSelected = ' selected="selected"';
+		}
+		$options = '<option value="-1"' . $defaultSelected . '>' . __( 'Select a Group', 'copr-my-extension' ) . '</option>';
+		foreach ($groups as $key => $group) {
+			$selected = '';
+			if ($group['id'] === $currentGroupId) {
+				$selected = ' selected="selected"';
+			}
+			$options .= '<option value="' . $group['id'] . '"' . $selected . '>' . $group['name'] . '</option>';
+		}
+		$vars = array(
+			'$formAction'		=>	admin_url( 'admin-ajax.php' ),
+			'$nounce'			=>	wp_nonce_field( 'select_group' ),
+			'$options'			=>	$options,
+			'$save'				=>	__( 'Select', 'copr-my-extension' ),
+		);
+		return strtr($this->groupSelectorForm, $vars);
+	}
+
+	/**
+	 * Create the group selector content
+	 *
+	 * @param 	string	The HTML for the group selector
+	 * @return 	string 	The HTMl for the group selector
+	 */
+	protected function getGroupSelectorContent($selector = '')
+	{
+		$hasBP = (function_exists('bp_version')) ? 'true' : 'false';
+		$vars = array(
+			'$addGroupText'		=>	__( 'Add a New Group', 'copr-my-extension' ),
+			'$content'			=>	$this->props['gs_content'],
+			'$formAction'		=>	admin_url( 'admin-ajax.php' ),
+			'$formError'		=>	__( 'Sorry, we were unable to add the group. Please try again later.', 'copr-my-extension' ),
+			'$descLabel'		=>	__( 'Group Description', 'copr-my-extension' ),
+			'$hasBP'			=>	$hasBP,
+			'$nounce'			=>	wp_nonce_field( 'add_new_group' ),
+			'$nameLabel'		=>	__( 'Group Name','copr-my-extension' ),
+			'$optionHidden'		=>  __( 'Hidden','copr-my-extension' ),
+			'$optionPublic'		=>	__( 'Public','copr-my-extension' ),
+			'$optionPrivate'	=>	__( 'Private','copr-my-extension' ),
+			'$save'				=>	__( 'Save', 'copr-my-extension' ),
+			'$saving'			=>	__( 'Saving', 'copr-my-extension' ),
+			'$selector'			=>	$selector,
+			'$title'			=>	esc_html( $this->props['gs_title'] ),
+			'$typeLabel'		=>	__( 'Group Type','copr-my-extension' ),
+		);
+		return strtr($this->groupSelectorTemplate, $vars);
 	}
 
 	/**
@@ -220,6 +383,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 				'$formAction'		=>	admin_url('admin-ajax.php'),
 				'$formElement'		=>	$formElement,
 				'$formError'		=>	__( 'Sorry, we were unable to save your answer. Please try again later.', 'copr-my-extension' ),
+				'$groupId'			=>	$this->getCurrentGroupId(),
 				'$nextLabel'		=>	$nextLabel,
 				'$nounce'			=>	wp_nonce_field('submit_answers'),
 				'$prevLabel'		=>	$prevLabel,
@@ -250,8 +414,12 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 	{
 		global $wpdb;
 		$userId = get_current_user_id();
+		$selectedGroup = $this->getCurrentGroupId();
+		if ($selectedGroup === -1) {
+			return [];
+		}
 		$repo =  new AnswerRepository($wpdb, $wpdb->prefix);
-		$results = $repo->findAllBySectionTag($tag, 11, $userId);
+		$results = $repo->findAllBySectionTag($tag, $selectedGroup, $userId);
 		$answers = [];
 		foreach ($results as $result) {
 			$answers[$result->unique_hash] = $result->answer;

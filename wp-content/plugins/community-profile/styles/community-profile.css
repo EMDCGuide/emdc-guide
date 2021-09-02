@@ -66,3 +66,6 @@
 #copr-community-profile a:hover {
     opacity: .80;
 }
+.copr-select-group-form .submit {
+    display: inline;
+}

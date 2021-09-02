@@ -28,6 +28,9 @@
 .copr-align-right {
     text-align: right;
 }
+.copr-align-center {
+    text-align: center;
+}
 .copr-hidden {
     display: none;
 }
@@ -76,4 +79,21 @@ textarea.copr-errored {
 .copr-error-box p {
     margin: 0;
     padding: 0;
+}
+.copr-group-selector-wrapper p {
+    margin: 10px 0px;
+}
+.copr-add-group-form input[type=text],
+.copr-add-group-form textarea,
+.copr-add-group-form select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.copr-add-group-form .copr-radio-option {
+    padding-left: 30px;
 }
