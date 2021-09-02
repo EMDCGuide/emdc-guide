@@ -77,7 +77,8 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 	 *
 	 * @return void
 	 */
-	public function init() {
+	public function init()
+	{
 		$this->name = esc_html__( 'SE Question Form', 'copr-community-profile' );
 	}
 
@@ -86,7 +87,8 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 	 *
 	 * @return array 	The fields to hide
 	 */
-	public function get_advanced_fields_config() {
+	public function get_advanced_fields_config()
+	{
 		return array();
 	}
 
@@ -95,8 +97,24 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 	 *
 	 * @return array 	The fields for this module
 	 */
-	public function get_fields() {
+	public function get_fields()
+	{
 		return array(
+			'gs_title'	=>	array(
+				'label'				=>	esc_html__('Group Selection Title', 'copr-my-extension'),
+				'type'				=>	'text',
+				'option_category'	=>	'basic_option',
+				'default'           =>  esc_html__('Select a Group', 'copr-my-extension'),
+				'description'		=>	esc_html__('The title for the group selector section.', 'copr-my-extension'),
+				'toggle_slug'		=>	'main_content',
+			),
+			'gs_content'	=>	array(
+				'label'				=>	esc_html__('Group Selection Content', 'copr-my-extension'),
+				'type'				=>	'tiny_mce',
+				'option_category'	=>	'basic_option',
+				'description'		=>	esc_html__('Content placed under the title but above the group selector.', 'copr-my-extension'),
+				'toggle_slug'		=>	'main_content',
+			),
 			'title'	=>	array(
 				'label'				=>	esc_html__('Section Title', 'copr-my-extension'),
 				'type'				=>	'text',
@@ -136,7 +154,18 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 	 * @param  string $render_slug The slug of the triggering page?
 	 * @return string              What to render
 	 */
-	public function render( $attrs, $content = null, $render_slug ) {
+	public function render( $attrs, $content = null, $render_slug )
+	{
+		return '<div class="copr-questions-wrapper">' . $this->getQuestionsContent() . '</div>';
+	}
+
+	/**
+	 * Get the questions content
+	 *
+	 * @return string 	The html for all the questions
+	 */
+	protected function getQuestionsContent()
+	{
 		$lines = explode("<br />", $this->props['questions']);
 		$html = '';
 		$tag = strtolower(esc_html($this->props['tag']));
@@ -208,7 +237,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 			);
 			$html .= strtr($this->formTemplate, $vars);
 		}
-		return '<div class="copr-questions-wrapper">' . $html . '</div>';
+		return $html;
 	}
 
 	/**
