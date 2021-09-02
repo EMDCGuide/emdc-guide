@@ -57,6 +57,8 @@ jQuery(function($) {
      */
     $('.copr-question-field-wrapper form').submit(function() {
       const form = $(this);
+      const parent = form.closest('.copr-question-field-wrapper').first();
+      const errorHolder = parent.find('.copr-form-error').first();
       const payload = `${form.serialize()}&is_ajax=true`;
       const submit = form.find('input[type="submit"]').first();
       const next = form.find('.copr-next').first();
@@ -72,6 +74,7 @@ jQuery(function($) {
         if (data.success) {
           form.find(`input, textarea`).removeClass('copr-errored');
           form.find(`.copr-error-message`).addClass('copr-hidden').text('');
+          errorHolder.html('').hide();
           next.click();
         } else {
           data.errors.forEach(function(error) {
@@ -85,6 +88,12 @@ jQuery(function($) {
             }
           });
         }
+      }).fail(function() {
+        submit
+          .val(submit.attr('data-save'))
+          .prop('disabled', '')
+          .removeClass('copr-disabled');
+        errorHolder.html(`<p>${form.attr('data-error-message')}</p>`).show();
       });
       return false;
     });

@@ -41,7 +41,8 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 	protected $formTemplate = '
 		<div class="copr-wrapper-$uniqueId$wrapperClasses" data-number="$questionNumber">
 			<div class="copr-question-field-wrapper">
-				<form action="$formAction" method="post">
+				<div class="copr-form-error"></div>
+				<form action="$formAction" method="post" data-error-message="$formError">
 					<input type="hidden" name="action" value="copr_save_answer" />
 					<input type="hidden" name="section_tag" value="$tag" />
 					<input type="hidden" name="section_title" value="$title" />
@@ -189,6 +190,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 			$vars = array(
 				'$formAction'		=>	admin_url('admin-ajax.php'),
 				'$formElement'		=>	$formElement,
+				'$formError'		=>	__( 'Sorry, we were unable to save your answer. Please try again later.', 'copr-my-extension' ),
 				'$nextLabel'		=>	$nextLabel,
 				'$nounce'			=>	wp_nonce_field('submit_answers'),
 				'$prevLabel'		=>	$prevLabel,
