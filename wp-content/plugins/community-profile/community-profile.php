@@ -125,8 +125,10 @@ function copr_delete_answer() {
  */
 function copr_save_answer() {
 	global $wpdb;
+	$repo = new AnswerRepository($wpdb, $wpdb->prefix);
 	$userId = get_current_user_id();
 	$isAjax = (isset($_POST['is_ajax'])) ? boolval($_POST['is_ajax']) : false;
+	$template = (isset($_POST['template'])) ? $_POST['template'] : null;
 	if ((!isset($_POST)) || (!check_ajax_referer('submit_answers')) || ($userId === 0)) {
 		if ($isAjax) {
 			status_header(400, 'Invalid Request!');
@@ -160,7 +162,6 @@ function copr_save_answer() {
 		/**
 		 * Save the data
 		 */
-		$repo = new AnswerRepository($wpdb, $wpdb->prefix);
 		$payload['success'] = $repo->createOrUpdate(
 			intval($_POST['group_id']),
 			$userId,
@@ -174,7 +175,17 @@ function copr_save_answer() {
 			$_POST['answer']
 		);
 	}
-	if ($isAjax) {
+	if (($template === 'single-answer') && ($payload['success'])) {
+		$currentUserId = get_current_user_id();
+		$groupId = intval($_POST['group_id']);
+		$canModerate = (groups_is_user_mod($currentUserId, $groupId) || groups_is_user_admin($currentUserId, $groupId));
+		$answer = $repo->findById($repo->lastId);
+		require_once(COPR_ROOT_DIR . 'templates' . COPR_DS . '_single_answer.php');
+		exit;
+	} else if (($template === 'single-answer') && (!$payload['success'])) {
+		status_header(400, 'Invalid Request!');
+		exit;
+	} else if ($isAjax) {
 		header('Content-Type: application/json');
 		echo json_encode($payload);
 		exit;
@@ -243,16 +254,6 @@ function copr_update_answer_by_id() {
 }
 
 /**
- * Add addition css and javascript files
- */
-function copr_set_up_resource_files() {
-	wp_register_style( 'copr_plugin', plugins_url('styles' . COPR_DS . 'community-profile.css', __FILE__) );
-    wp_enqueue_style( 'copr_plugin' );
-    wp_enqueue_script( 'copr_plugin', plugins_url('scripts' . COPR_DS . 'community-profile.js', __FILE__), array( 'jquery' ) );
-	wp_enqueue_script( 'copr_plugin' );
-}
-
-/**
  * Initialization function for BuddyPress
  *
  * @return void
@@ -298,7 +299,7 @@ function copr_bp_tab_screen_content() {
 	$canModerate = (groups_is_user_mod($currentUserId, $groupId) || groups_is_user_admin($currentUserId, $groupId));
 	$repo =  new AnswerRepository($wpdb, $wpdb->prefix);
 	$answers = $repo->findAllForGroup($groupId);
-	require_once(COPR_ROOT_DIR . 'templates' . COPR_DS . 'profile-tab.php');
+	require_once(COPR_ROOT_DIR . 'templates' . COPR_DS . 'profile_tab.php');
 }
 
 /**
@@ -323,7 +324,6 @@ add_action( 'wp_ajax_copr_save_answer', 'copr_save_answer' );
 add_action( 'wp_ajax_copr_delete_answer', 'copr_delete_answer' );
 add_action( 'wp_ajax_copr_update_answer_by_id', 'copr_update_answer_by_id' );
 add_action( 'divi_extensions_init', 'copr_initialize_extension' );
-add_action( 'wp_enqueue_scripts', 'copr_set_up_resource_files' );
 register_activation_hook( __FILE__, 'copr_activate_plugin' );
 if (function_exists('bp_version')) {
 	// BuddyPress hooks

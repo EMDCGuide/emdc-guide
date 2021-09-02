@@ -1,18 +1,20 @@
 /**
  * These are scripts for the community profile feed.
+ * This file get's bundled into frontend-bundle.js and loaded on all front end pages
  */
 jQuery(function($) {
   $('.copr-js-hide').hide();
   $('.copr-js-show').show();
+  $('.copr-answer-textarea').val('');
   /**
    * Set up the deletion of answers
    */
-  $('.copr-delete-answer').on('click', function() {
-    var form = $(this).closest('form');
-    var confirmMsg = form.attr('data-really-message');
-    var payload = `${form.serialize()}&is_ajax=true`;
-    var id = form.find('input[name="answer_id"]').first().val();
-    var answerWrapper = '#copr-single-answer-' + id;
+  $(document).on('click', '.copr-delete-answer', function() {
+    const form = $(this).closest('form');
+    const confirmMsg = form.attr('data-really-message');
+    const payload = `${form.serialize()}&is_ajax=true`;
+    const id = form.find('input[name="answer_id"]').first().val();
+    const answerWrapper = '#copr-single-answer-' + id;
     if (confirm(confirmMsg)) {
       $.post(form.attr('action'), payload).done(function(data) {
         if (data.success) {
@@ -25,11 +27,11 @@ jQuery(function($) {
   /**
    * Set up the editing of answers
    */
-  $('.copr-edit-link').on('click', function() {
-    var link = $(this);
-    var parent = link.closest('.copr-single-answer');
-    var showingText = link.attr('data-showing-text');
-    var hidingText = link.attr('data-hiding-text');
+  $(document).on('click', '.copr-edit-link', function() {
+    const link = $(this);
+    const parent = link.closest('.copr-single-answer');
+    const showingText = link.attr('data-showing-text');
+    const hidingText = link.attr('data-hiding-text');
     if (parent.hasClass('is-editing')) {
       parent.find('.copr-answer-text').first().show();
       parent.find('.copr-edit-answer').first().hide();
@@ -46,13 +48,13 @@ jQuery(function($) {
   /**
    * Set up the submission of answer's editing form
    */
-  $('form.copr-edit-answer').on('submit', function() {
-    var form = $(this);
-    var parent = form.closest('.copr-single-answer');
-    var payload = `${form.serialize()}&is_ajax=true`;
-    var answerEle = form.find('input[name="answer"]').first();
-    var data = form.serializeArray();
-    var answer = '';
+  $(document).on('submit', 'form.copr-edit-answer', function() {
+    const form = $(this);
+    const parent = form.closest('.copr-single-answer');
+    const payload = `${form.serialize()}&is_ajax=true`;
+    const answerEle = form.find('input[name="answer"]').first();
+    const data = form.serializeArray();
+    let answer = '';
     for (var i = 0; i < data.length; i++) {
       if (data[i]['name'] === 'answer') {
         answer = data[i]['value'];
@@ -60,7 +62,7 @@ jQuery(function($) {
     }
     $.post(form.attr('action'), payload).done(function(data) {
       if (data.success) {
-        var text = parent.find('.copr-answer-text').first();
+        const text = parent.find('.copr-answer-text').first();
         text.text(answer);
         parent.find('.copr-edit-link').first().click();
       }
@@ -70,19 +72,71 @@ jQuery(function($) {
   /**
    * Set up the filter
    */
-  var selector = $('#copr-section-filter select');
+  const selector = $('#copr-section-filter select');
   $('.copr-section-wrapper').each(function() {
-    var title = $(this).attr('data-title');
-    var tag = $(this).attr('data-tag');
+    const title = $(this).attr('data-title');
+    const tag = $(this).attr('data-tag');
     selector.append('<option value="' + tag + '">' + title + '</option>');
   });
   selector.on('change', function() {
-    var value = $(this).val();
+    const value = $(this).val();
     if (value === 'all') {
       $('.copr-section-wrapper').show();
     } else {
       $('.copr-section-wrapper').hide();
       $('#section-' + value).show();
     }
+  });
+  /**
+   * Handle a person's response
+   */
+  $('form.copr-my-response').submit(function() {
+    const form = $(this);
+    const answerField = form.find('*[name="answer"]').first();
+    const answerErrorHolder = form.find(`.copr-answer-error`).first();
+    const parent = form.closest('.copr-my-response-wrapper');
+    const payload = `${form.serialize()}&is_ajax=true&template=single-answer`;
+    const submit = form.find('input[type="submit"]').first();
+    const data = form.serializeArray();
+    let answer = '';
+    for (var i = 0; i < data.length; i++) {
+      if (data[i]['name'] === 'answer') {
+        answer = data[i]['value'];
+      }
+    }
+    if (answer === '') {
+      if (answerField.length > 0) {
+          answerField.addClass('copr-errored');
+      }
+      if (answerErrorHolder.length > 0) {
+          answerErrorHolder.removeClass('copr-hidden');
+      }
+      return false;
+    }
+    submit
+      .val(submit.attr('data-saving'))
+      .prop('disabled', 'disabled')
+      .addClass('copr-disabled');
+    $.post(form.attr('action'), payload).done(function(data) {
+      submit
+        .val(submit.attr('data-save'))
+        .prop('disabled', '')
+        .removeClass('copr-disabled');
+      parent.slideUp('slow', function() {
+        const ele = $(data);
+        ele.find('.copr-js-hide').hide();
+        ele.find('.copr-js-show').css('display', 'block');
+        ele.find('a.copr-js-show').css('display', 'inline-block');
+        parent.replaceWith(ele);
+      });
+    }).fail(function() {
+      if (answerField.length > 0) {
+          answerField.addClass('copr-errored');
+      }
+      if (answerErrorHolder.length > 0) {
+          answerErrorHolder.removeClass('copr-hidden');
+      }
+    });
+    return false;
   });
 });

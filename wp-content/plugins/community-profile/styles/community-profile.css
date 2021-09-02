@@ -1,5 +1,6 @@
 /**
  * These are styles for the community profile feed.
+ * This file get's bundled into style.min.js and loaded on all front end pages
  */
 .copr-flex-parent {
     display: flex;
@@ -15,6 +16,11 @@
 .copr-single-answer {
     border: 1px solid #eaeaea;
     padding: 15px 15px 15px 0px;
+    margin-bottom: 5px;
+}
+.copr-my-response-wrapper {
+    border: 1px solid #eaeaea;
+    padding: 15px;
     margin-bottom: 5px;
 }
 .copr-section-title {

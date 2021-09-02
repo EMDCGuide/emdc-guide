@@ -11,6 +11,13 @@ use MissionalDigerati\CommunityProfile\Stores\SectionStore;
 class AnswerRepository
 {
     /**
+     * The last inserted answer id.
+     *
+     * @var integer
+     */
+    public $lastId = -1;
+
+    /**
      * The WordPress database
      *
      * @var object
@@ -101,13 +108,43 @@ class AnswerRepository
                 $questionType
             );
             if ($questionId) {
-                $answerId = $this->answerStore->createOrUpdate(intval($userId), intval($groupId), $questionId, $answer);
-                if ($answerId) {
+                $this->lastId = $this->answerStore->createOrUpdate(intval($userId), intval($groupId), $questionId, $answer);
+                if ($this->lastId) {
                     $success = true;
                 }
             }
         }
         return $success;
+    }
+
+    /**
+     * Find by id including the section and question.  If you only need the answer, use the AnswerStore.
+     *
+     * @param  integer  $id     The answer id
+     * @return object           The answer object
+     */
+    public function findById($id)
+    {
+        $answerTableName = $this->prefix . AnswerStore::$tableName;
+        $questionTableName = $this->prefix . QuestionStore::$tableName;
+        $sectionTableName = $this->prefix . SectionStore::$tableName;
+        $prepare = $this->db->prepare(
+            "SELECT s.title as section_title, s.tag as section_tag, s.url as section_url, q.question,
+            q.unique_hash as question_hash, q.question_number, q.question_type, q.question_choices,
+            a.id as answer_id, a.answer, a.user_id, a.group_id, a.created_at
+            FROM {$sectionTableName} as s JOIN {$questionTableName} as q ON s.id = q.copr_section_id JOIN
+            {$answerTableName} as a ON q.id = a.copr_question_id WHERE
+            a.id = %d",
+            $id
+        );
+        $answer = $this->db->get_row($prepare);
+        if ($answer) {
+            $answer->id = intval($answer->id);
+            $answer->copr_question_id = intval($answer->copr_question_id);
+            $answer->user_id = intval($answer->user_id);
+            $answer->group_id = intval($answer->group_id);
+        }
+        return $answer;
     }
 
     /**
@@ -124,7 +161,7 @@ class AnswerRepository
         $prepare = $this->db->prepare(
             "SELECT s.title as section_title, s.tag as section_tag, s.url as section_url, q.question,
             q.unique_hash as question_hash, q.question_number, q.question_type, q.question_choices,
-            a.id as answer_id, a.answer, a.user_id, a.created_at
+            a.id as answer_id, a.answer, a.user_id, a.group_id, a.created_at
             FROM {$sectionTableName} as s JOIN {$questionTableName} as q ON s.id = q.copr_section_id JOIN
             {$answerTableName} as a ON q.id = a.copr_question_id WHERE
             a.group_id = %d ORDER BY s.tag ASC, q.question_number ASC, a.created_at ASC",
