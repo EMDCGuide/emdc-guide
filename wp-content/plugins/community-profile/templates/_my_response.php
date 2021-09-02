@@ -1,6 +1,6 @@
 <div class="copr-my-response-wrapper">
     <p><?php echo __( 'Your Response', 'copr-my-extension' ); ?></p>
-    <div class="copr-error-answer"></div>
+    <div class="copr-form-error"></div>
     <form action="<?php echo admin_url('admin-ajax.php'); ?>" method="post" class="copr-my-response" data-error-message="<?php echo __( 'Sorry, we were unable to save your response. Please try again later.', 'copr-my-extension' ); ?>">
         <?php echo wp_nonce_field('submit_answers'); ?>
         <input type="hidden" name="action" value="copr_save_answer" />

@@ -21,7 +21,7 @@ jQuery(function($) {
           $(answerWrapper).slideUp('slow');
         }
       }).fail(function() {
-        const errorEle = $(answerWrapper).find('.copr-error-answer').first();
+        const errorEle = $(answerWrapper).find('.copr-form-error').first();
         const errorMsg = form.attr('data-error-message');
         errorEle.html(`<p>${errorMsg}</p>`).show();
       });
@@ -84,7 +84,7 @@ jQuery(function($) {
         .val(submit.attr('data-save'))
         .prop('disabled', '')
         .removeClass('copr-disabled');
-      const errorEle = parent.find('.copr-error-answer').first();
+      const errorEle = parent.find('.copr-form-error').first();
       const errorMsg = form.attr('data-error-message');
       errorEle.html(`<p>${errorMsg}</p>`).show();
     });
@@ -172,7 +172,7 @@ jQuery(function($) {
         .val(submit.attr('data-save'))
         .prop('disabled', '')
         .removeClass('copr-disabled');
-      const errorEle = parent.find('.copr-error-answer').first();
+      const errorEle = parent.find('.copr-form-error').first();
       const errorMsg = form.attr('data-error-message');
       errorEle.html(`<p>${errorMsg}</p>`).show();
     });

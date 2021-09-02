@@ -29,7 +29,7 @@
 .copr-question {
     margin: 20px 5px;
 }
-.copr-error-answer {
+.copr-form-error {
     color: red;
     display: none;
     font-style: italic;

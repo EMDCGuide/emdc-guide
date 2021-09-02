@@ -157,6 +157,8 @@ function copr_get_template() {
  */
 function copr_save_answer() {
 	global $wpdb;
+	status_header(400, 'Invalid Request!');
+	exit;
 	$repo = new AnswerRepository($wpdb, $wpdb->prefix);
 	$userId = get_current_user_id();
 	$isAjax = (isset($_POST['is_ajax'])) ? boolval($_POST['is_ajax']) : false;

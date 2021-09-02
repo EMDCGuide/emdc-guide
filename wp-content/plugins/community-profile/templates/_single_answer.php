@@ -1,6 +1,6 @@
 <?php $user = get_user_by( 'id', $answer->user_id); ?>
 <div class="copr-single-answer" id="copr-single-answer-<?php echo $answer->answer_id; ?>">
-    <div class="copr-error-answer"></div>
+    <div class="copr-form-error"></div>
     <div class="copr-answer-details copr-flex-parent">
         <div class="copr-flex-child copr-avatar-wrapper">
             <a href="<?php echo bp_core_get_user_domain($answer->user_id); ?>"><?php echo get_avatar($answer->user_id, 50); ?></a>
