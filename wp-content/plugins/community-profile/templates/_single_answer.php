@@ -1,5 +1,6 @@
 <?php $user = get_user_by( 'id', $answer->user_id); ?>
 <div class="copr-single-answer" id="copr-single-answer-<?php echo $answer->answer_id; ?>">
+    <div class="copr-error-answer"></div>
     <div class="copr-answer-details copr-flex-parent">
         <div class="copr-flex-child copr-avatar-wrapper">
             <a href="<?php echo bp_core_get_user_domain($answer->user_id); ?>"><?php echo get_avatar($answer->user_id, 50); ?></a>
@@ -8,7 +9,7 @@
         <div class="copr-flex-child">
             <p class="copr-js-show copr-answer-text"><?php echo $answer->answer; ?></p>
             <?php if (($canModerate) || (intval($answer->user_id) === intval($currentUserId))): ?>
-                <form action="<?php echo admin_url('admin-ajax.php'); ?>" method="post" class="copr-edit-answer copr-js-hide">
+                <form action="<?php echo admin_url('admin-ajax.php'); ?>" method="post" class="copr-edit-answer copr-js-hide" data-error-message="<?php echo __( 'Sorry, we were unable to update the answer. Please try again later.', 'copr-my-extension' ); ?>">
                     <?php echo wp_nonce_field('edit_answer'); ?>
                     <input type="hidden" name="action" value="copr_update_answer_by_id" />
                     <input type="hidden" name="group_id" value="<?php echo $answer->group_id; ?>" />
@@ -30,7 +31,7 @@
                         </div>
                     <?php endif; ?>
                     <div class="submit copr-align-right">
-                        <input type="submit" value="Save">
+                        <input type="submit" value="Save" data-save="<?php echo __( 'Save', 'copr-my-extension' ); ?>" data-saving="<?php echo __( 'Saving', 'copr-my-extension' ); ?>">
                     </div>
                 </form>
             <?php endif; ?>
@@ -41,7 +42,7 @@
             <a href="#" class="copr-js-show copr-edit-link" data-showing-text="<?php echo __( 'Hide', 'copr-my-extension' ); ?>" data-hiding-text="<?php echo __( 'Edit', 'copr-my-extension' ); ?>">
                 <span class="dashicons dashicons-edit"></span> <?php echo __( 'Edit', 'copr-my-extension' ); ?>
             </a>
-            <form action="<?php echo admin_url('admin-ajax.php'); ?>" data-really-message="<?php echo __( 'Are you sure you want to delete it?', 'copr-my-extension' ); ?>" method="post">
+            <form action="<?php echo admin_url('admin-ajax.php'); ?>" data-really-message="<?php echo __( 'Are you sure you want to delete it?', 'copr-my-extension' ); ?>" data-error-message="<?php echo __( 'Sorry, we were unable to delete the answer. Please try again later.', 'copr-my-extension' ); ?>" method="post">
                 <?php echo wp_nonce_field('delete_answer'); ?>
                 <input type="hidden" name="action" value="copr_delete_answer" />
                 <input type="hidden" name="group_id" value="<?php echo $answer->group_id; ?>" />

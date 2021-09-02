@@ -29,6 +29,12 @@
 .copr-question {
     margin: 20px 5px;
 }
+.copr-error-answer {
+    color: red;
+    display: none;
+    font-style: italic;
+    padding: 0px 10px 10px;
+}
 .copr-answer-manage {
     text-align: right;
 }

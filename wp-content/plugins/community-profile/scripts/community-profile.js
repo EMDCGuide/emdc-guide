@@ -20,6 +20,10 @@ jQuery(function($) {
         if (data.success) {
           $(answerWrapper).slideUp('slow');
         }
+      }).fail(function() {
+        const errorEle = $(answerWrapper).find('.copr-error-answer').first();
+        const errorMsg = form.attr('data-error-message');
+        errorEle.html(`<p>${errorMsg}</p>`).show();
       });
     }
     return false;
@@ -50,6 +54,7 @@ jQuery(function($) {
    */
   $(document).on('submit', 'form.copr-edit-answer', function() {
     const form = $(this);
+    const submit = form.find('input:submit').first();
     const parent = form.closest('.copr-single-answer');
     const payload = `${form.serialize()}&is_ajax=true`;
     const answerEle = form.find('input[name="answer"]').first();
@@ -60,12 +65,28 @@ jQuery(function($) {
         answer = data[i]['value'];
       }
     }
+    submit
+      .val(submit.attr('data-saving'))
+      .prop('disabled', 'disabled')
+      .addClass('copr-disabled');
     $.post(form.attr('action'), payload).done(function(data) {
+      submit
+        .val(submit.attr('data-save'))
+        .prop('disabled', '')
+        .removeClass('copr-disabled');
       if (data.success) {
         const text = parent.find('.copr-answer-text').first();
         text.text(answer);
         parent.find('.copr-edit-link').first().click();
       }
+    }).fail(function() {
+      submit
+        .val(submit.attr('data-save'))
+        .prop('disabled', '')
+        .removeClass('copr-disabled');
+      const errorEle = parent.find('.copr-error-answer').first();
+      const errorMsg = form.attr('data-error-message');
+      errorEle.html(`<p>${errorMsg}</p>`).show();
     });
     return false;
   });
@@ -123,6 +144,12 @@ jQuery(function($) {
             ele.find('a.copr-js-show').css('display', 'inline-block');
             parent.replaceWith(ele);
           });
+        }).fail(function() {
+          submit
+            .val(submit.attr('data-save'))
+            .prop('disabled', '')
+            .removeClass('copr-disabled');
+          parent.slideUp('slow');
         });
       } else {
         data.errors.forEach(function(error) {
@@ -145,6 +172,9 @@ jQuery(function($) {
         .val(submit.attr('data-save'))
         .prop('disabled', '')
         .removeClass('copr-disabled');
+      const errorEle = parent.find('.copr-error-answer').first();
+      const errorMsg = form.attr('data-error-message');
+      errorEle.html(`<p>${errorMsg}</p>`).show();
     });
     return false;
   });
