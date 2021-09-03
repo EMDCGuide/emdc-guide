@@ -217,8 +217,9 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 		$groupId = $this->getCurrentGroupId();
 		$addGroupWrapClass = ($groupId !== -1) ? ' copr-hidden' : '';
 		$addQuestionWrapClass = ($groupId === -1) ? ' copr-hidden' : '';
+		$tag = strtolower(esc_html($this->props['tag']));
 		return '
-			<div class="copr-question-form">
+			<div class="copr-question-form" data-ajax-url="' . admin_url( 'admin-ajax.php' ) . '" data-section-tag="' . $tag . '">
 				<div class="copr-form-error"></div>
 				<div class="copr-group-selector-wrapper' . $addGroupWrapClass . '">
 					' . $this->getGroupSelectorContent($selector) . '
@@ -399,7 +400,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 			$questionType = 'text';
 			$questionChoices = '';
 			if (strtolower($pieces[1]) === 'text') {
-				$formElement = '<textarea name="answer" class="copr-answer-textarea copr-question-form" rows="10">' . $answer . '</textarea>';
+				$formElement = '<textarea name="answer" class="copr-answer-textarea copr-question-textarea" rows="10" data-question-hash="' . $hash . '">' . $answer . '</textarea>';
 			} else if (strtolower($pieces[1]) === 'choice') {
 				if (count($pieces) < 3) {
 					/**
@@ -409,7 +410,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 				}
 				$questionType = 'choice';
 				$questionChoices = $pieces[2];
-				$formElement = '<div class="copr-answer-choices">';
+				$formElement = '<div class="copr-answer-choices" data-question-hash="' . $hash . '">';
 				$choices = explode(',', $questionChoices);
 				foreach ($choices as $choiceKey => $choice) {
 					$checked = '';

@@ -219,6 +219,55 @@ function copr_delete_answer()
 }
 
 /**
+ * GET: Retrieve an array keyed with the question unique hash and it's answer
+ * Each tag will have its own array. Example:
+ *
+ * [
+ * 		"c1-a": [
+ * 			"344122WWQEE223": "I love Ice Cream!"
+ * 		]
+ * ]
+ *
+ *  Tags should be comma seperated
+ *
+ * @return void
+ */
+function copr_get_answers()
+{
+	global $wpdb;
+	$repo = new AnswerRepository($wpdb, $wpdb->prefix);
+	$userId = get_current_user_id();
+	$groupId = -1;
+	if (isset($_COOKIE) && isset($_COOKIE[COPR_GROUP_ID_COOKIE])) {
+		$groupId = intval($_COOKIE[COPR_GROUP_ID_COOKIE]);
+	}
+	if ($groupId === -1) {
+		status_header(400, 'Incorrect group id!');
+		exit;
+	}
+	if (!isset($_GET['tags'])) {
+		status_header(400, 'Invalid tags!');
+		exit;
+	}
+	$tags = explode(',', $_GET['tags']);
+	if (count($tags) === 0) {
+		status_header(400, 'Missing tags!');
+		exit;
+	}
+	$answers = array();
+	foreach ($tags as $tag) {
+		$answers[$tag] = array();
+		$results = $repo->findAllBySectionTag($tag, $groupId, $userId);
+		foreach ($results as $result) {
+			$answers[$tag][$result->unique_hash] = $result->answer;
+		}
+	}
+	header('Content-Type: application/json');
+	echo json_encode($answers);
+	exit;
+}
+
+/**
  * GET: Get a HTML template.
  *
  * @return void
@@ -513,6 +562,7 @@ function copr_bp_tab()
 	}
 }
 
+add_action( 'wp_ajax_copr_get_answers', 'copr_get_answers' );
 add_action( 'wp_ajax_copr_add_group', 'copr_add_group' );
 add_action( 'wp_ajax_copr_select_group', 'copr_select_group' );
 add_action( 'wp_ajax_copr_get_template', 'copr_get_template' );

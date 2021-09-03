@@ -18,6 +18,59 @@ jQuery(function($) {
     });
     return val;
   }
+
+  /**
+   * Clear all the answers
+   *
+   * @return {void}
+   */
+  function clearAnswers() {
+    $('.copr-answer-textarea').val('');
+    $('.copr-questions-wrapper .copr-answer-choices').each(() => {
+      $children = $(this).find('input[name="answer"]');
+      $children.prop('checked', false);
+      $children.first().prop('checked', true);
+    });
+  }
+
+  /**
+   * Load the answers into the textareas
+   *
+   * @return {void}
+   */
+  function loadAnswers() {
+    let url = '';
+    const tags = [];
+    $('.copr-question-form').each(function() {
+      $ele = $(this);
+      if (url === '') {
+        url = $ele.attr('data-ajax-url');
+      }
+      tags.push($ele.attr('data-section-tag'));
+    });
+    if (url === '') {
+      console.error('Missing the data-ajax-url on .copr-question-form.');
+      return;
+    }
+    const payload = `is_ajax=true&action=copr_get_answers&tags=${tags.join(',')}`;
+    $.get(url, payload).done(function(data) {
+      for (const tag in data) {
+        for (const hash in data[tag]) {
+          const answer = data[tag][hash];
+          $element = $(`*[data-question-hash="${hash}"]`).first();
+          if ($element.hasClass('copr-answer-choices')) {
+            // Handle radio buttons
+            $element.find('input[name="answer"]').each(function() {
+              $(this).prop('checked', ($(this).val() === answer));
+            });
+          } else {
+            $element.val(answer);
+          }
+        }
+      }
+    });
+  }
+
   /**
    * Submit the form.
    *
@@ -63,15 +116,20 @@ jQuery(function($) {
     });
   }
 
-  const groupId = getCookie('copr-group-selected');
-  if (groupId) {
-    // Set all group ids
-    $('.copr-group-selector, input[name="group_id"]').val(groupId);
-  }
   if ($('.copr-questions-wrapper').length > 0) {
     /**
      * Do some prework
      */
+    $('.copr-js-hide').hide();
+    $('.copr-js-show').show();
+
+    clearAnswers();
+    loadAnswers();
+    const groupId = getCookie('copr-group-selected');
+    if (groupId) {
+     // Set all group ids
+     $('.copr-group-selector, input[name="group_id"]').val(groupId);
+    }
     $('.copr-questions-wrapper').each(function() {
       const $wrapper = $(this);
       const $children = $wrapper.children();
@@ -171,10 +229,14 @@ jQuery(function($) {
           $('.copr-group-selector, input[name="group_id"]').val(groupId);
           if ($selectorWrapper.is(':visible')) {
             $selectorWrapper.slideUp('slow', function() {
+              clearAnswers();
+              loadAnswers();
               $('.copr-questions-wrapper').slideDown('slow');
             });
+          } else {
+            clearAnswers();
+            loadAnswers();
           }
-          console.log('Load answers here');
         } else {
           $errorHolder.html(`<p>${$form.attr('data-error-message')}</p>`).show();
         }
