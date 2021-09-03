@@ -15,7 +15,7 @@
                     <input type="hidden" name="group_id" value="<?php echo $answer->group_id; ?>" />
                     <input type="hidden" name="answer_id" value="<?php echo $answer->answer_id; ?>" />
                     <?php if ($answer->question_type === 'text'): ?>
-                        <textarea name="answer" class="copr-answer-textarea" rows="5"><?php echo $answer->answer; ?></textarea>
+                        <textarea name="answer" class="copr-answer-textarea copr-question-form" rows="5"><?php echo $answer->answer; ?></textarea>
                     <?php elseif ($answer->question_type === 'choice'): ?>
                         <?php $choices = explode(',', $answer->question_choices); ?>
                         <div class="copr-answer-choices">
