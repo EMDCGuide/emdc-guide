@@ -36,9 +36,10 @@ jQuery(function($) {
   /**
    * Load the answers into the textareas
    *
+   * @param callback  A callback fired when completed.
    * @return {void}
    */
-  function loadAnswers() {
+  function loadAnswers(callback) {
     let url = '';
     const tags = [];
     $('.copr-question-form').each(function() {
@@ -67,6 +68,9 @@ jQuery(function($) {
             $element.val(answer);
           }
         }
+      }
+      if (callback) {
+        callback();
       }
     });
   }
@@ -215,10 +219,12 @@ jQuery(function($) {
     $('select.copr-group-selector').on('change', function() {
       const groupId = parseInt($(this).find(":selected").val(), 10);
       const $form = $(this).closest('form.copr-select-group-form').first();
+      $('.copr-group-loading').removeClass('copr-hidden');
       const $parent = $form.closest('.copr-question-form').first();
       const $errorHolder = $parent.find('.copr-form-error').first();
       if (groupId === -1) {
         $errorHolder.html(`<p>${$form.attr('data-required-message')}</p>`).show();
+        $('.copr-group-loading').addClass('copr-hidden');
         return false;
       }
       const payload = `${$form.serialize()}&is_ajax=true`;
@@ -230,12 +236,18 @@ jQuery(function($) {
           if ($selectorWrapper.is(':visible')) {
             $selectorWrapper.slideUp('slow', function() {
               clearAnswers();
-              loadAnswers();
-              $('.copr-questions-wrapper').slideDown('slow');
+              const callback = function() {
+                $('.copr-group-loading').addClass('copr-hidden');
+                $('.copr-questions-wrapper').slideDown('slow');
+              };
+              loadAnswers(callback);
             });
           } else {
             clearAnswers();
-            loadAnswers();
+            const callback = function() {
+              $('.copr-group-loading').addClass('copr-hidden');
+            };
+            loadAnswers(callback);
           }
         } else {
           $errorHolder.html(`<p>${$form.attr('data-error-message')}</p>`).show();

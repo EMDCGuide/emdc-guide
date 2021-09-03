@@ -118,6 +118,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 
 	protected $groupSelectorForm = '
 		<form action="$formAction" class="copr-select-group-form" method="post" data-error-message="$formError" data-required-message="$requiredMessage">
+			<span class="copr-group-loading copr-hidden"><img src="/wp-admin/images/loading.gif" alt="loading" /></span>
 			<span class="dashicons dashicons-groups"></span>
 			<select name="group_id" class="copr-group-selector">$options</select>
 			<input type="hidden" name="action" value="copr_select_group" />
