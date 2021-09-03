@@ -343,7 +343,7 @@ function copr_select_group()
 			exit;
 		}
 	}
-	if (!isset($_POST['group_id']) && ($_POST['group_id'] !== '')) {
+	if ((!isset($_POST['group_id'])) || (intval($_POST['group_id']) === -1)) {
 		if ($isAjax) {
 			status_header(400, 'Invalid Request!');
 			exit;
@@ -373,7 +373,7 @@ function copr_select_group()
 	}
 	setcookie(COPR_GROUP_ID_COOKIE, intval($_POST['group_id']), 0, '/', '', $secure);
 	$payload = array(
-		'success'	=>	false,
+		'success'	=>	true,
 	);
 	if ($isAjax) {
 		header('Content-Type: application/json');

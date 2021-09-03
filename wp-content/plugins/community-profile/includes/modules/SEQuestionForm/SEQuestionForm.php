@@ -41,7 +41,6 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 	protected $formTemplate = '
 		<div class="copr-wrapper-$uniqueId$wrapperClasses" data-number="$questionNumber">
 			<div class="copr-question-field-wrapper">
-				<div class="copr-form-error"></div>
 				<form action="$formAction" method="post" data-error-message="$formError">
 					<input type="hidden" name="action" value="copr_save_answer" />
 					<input type="hidden" name="section_tag" value="$tag" />
@@ -90,7 +89,6 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 			</p>
 		</div>
 		<div class="copr-add-group-form-wrapper">
-		<div class="copr-form-error"></div>
 		<form action="$formAction" class="copr-add-group-form" method="post" data-error-message="$formError">
 			<input type="hidden" name="action" value="copr_add_group" />
 			$nounce
@@ -119,7 +117,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 	</div>';
 
 	protected $groupSelectorForm = '
-		<form action="$formAction" class="copr-select-group-form" method="post">
+		<form action="$formAction" class="copr-select-group-form" method="post" data-error-message="$formError" data-required-message="$requiredMessage">
 			<span class="dashicons dashicons-groups"></span>
 			<select name="group_id" class="copr-group-selector">$options</select>
 			<input type="hidden" name="action" value="copr_select_group" />
@@ -221,6 +219,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 		$addQuestionWrapClass = ($groupId === -1) ? ' copr-hidden' : '';
 		return '
 			<div class="copr-question-form">
+				<div class="copr-form-error"></div>
 				<div class="copr-group-selector-wrapper' . $addGroupWrapClass . '">
 					' . $this->getGroupSelectorContent($selector) . '
 				</div>
@@ -285,8 +284,10 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 		}
 		$vars = array(
 			'$formAction'		=>	admin_url( 'admin-ajax.php' ),
+			'$formError'		=>	__( 'Sorry, we were unable to select the group.  Please try again later.', 'copr-my-extension' ),
 			'$nounce'			=>	wp_nonce_field( 'select_group' ),
 			'$options'			=>	$options,
+			'$requiredMessage'	=>	__( 'You must select a valid group.', 'copr-my-extension' ),
 			'$save'				=>	__( 'Select', 'copr-my-extension' ),
 		);
 		return strtr($this->groupSelectorForm, $vars);

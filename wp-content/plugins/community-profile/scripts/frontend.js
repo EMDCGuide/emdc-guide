@@ -11,7 +11,7 @@ jQuery(function($) {
    */
   function submitForm($form, $submit, success) {
     const payload = `${$form.serialize()}&is_ajax=true`;
-    const $parent = $form.closest('.copr-question-field-wrapper').first();
+    const $parent = $form.closest('.copr-question-form').first();
     const $errorHolder = $parent.find('.copr-form-error').first();
     $submit
       .val($submit.attr('data-saving'))
@@ -42,7 +42,7 @@ jQuery(function($) {
         .val($submit.attr('data-save'))
         .prop('disabled', '')
         .removeClass('copr-disabled');
-      $errorHolder.html(`<p>${form.attr('data-error-message')}</p>`).show();
+      $errorHolder.html(`<p>${$form.attr('data-error-message')}</p>`).show();
     });
   }
 
@@ -127,6 +127,38 @@ jQuery(function($) {
         });
       };
       submitForm($form, $submit, success);
+      return false;
+    });
+    /**
+     * Handle group selection
+     */
+    $('select.copr-group-selector').on('change', function() {
+      const groupId = parseInt($(this).find(":selected").val(), 10);
+      const $form = $(this).closest('form.copr-select-group-form').first();
+      const $parent = $form.closest('.copr-question-form').first();
+      const $errorHolder = $parent.find('.copr-form-error').first();
+      if (groupId === -1) {
+        $errorHolder.html(`<p>${$form.attr('data-required-message')}</p>`).show();
+        return false;
+      }
+      const payload = `${$form.serialize()}&is_ajax=true`;
+      $.post($form.attr('action'), payload).done(function(data) {
+        if (data.success) {
+          $errorHolder.html('').hide();
+          const $selectorWrapper = $('.copr-group-selector-wrapper');
+          $('.copr-group-selector, input[name="group_id"]').val(groupId);
+          if ($selectorWrapper.is(':visible')) {
+            $selectorWrapper.slideUp('slow', function() {
+              $('.copr-questions-wrapper').slideDown('slow');
+            });
+          }
+          console.log('Load answers here');
+        } else {
+          $errorHolder.html(`<p>${$form.attr('data-error-message')}</p>`).show();
+        }
+      }).fail(function() {
+        $errorHolder.html(`<p>${$form.attr('data-error-message')}</p>`).show();
+      });
       return false;
     });
   }
