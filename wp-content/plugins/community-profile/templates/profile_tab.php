@@ -39,7 +39,10 @@
             <?php endif; ?>
                 <?php require('_single_answer.php'); ?>
                 <?php
-                    $userAnswered = (!$userAnswered) ? (intval($answer->user_id) === intval($currentUserId)) : false;
+                    if (!$userAnswered) {
+                        // Is this their answer?
+                        $userAnswered = (intval($answer->user_id) === intval($currentUserId));
+                    }
                     $nextKey = $key + 1;
                     if ((!array_key_exists($nextKey, $answers)) && (!$userAnswered)) {
                         // The last pass
