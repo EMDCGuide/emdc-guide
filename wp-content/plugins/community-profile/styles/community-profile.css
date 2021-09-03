@@ -2,6 +2,9 @@
  * These are styles for the community profile feed.
  * This file get's bundled into style.min.js and loaded on all front end pages
  */
+article.bp_group {
+    margin-top: 65px;
+}
 .copr-flex-parent {
     display: flex;
 }

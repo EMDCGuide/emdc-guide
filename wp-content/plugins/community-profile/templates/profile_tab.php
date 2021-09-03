@@ -60,3 +60,28 @@
     </div><!-- Last div for the final section title. -->
     </div>
 </div>
+<style media="print">
+    /* Define print styles.  We do not want these throughout the site */
+    .et_pb_row--with-menu > .et_pb_column_1_5,
+    .lwp_divi_breadcrumbs,
+    #sidebar,
+    #item-header,
+    #item-nav,
+    #copr-section-filter,
+    .et_section_transparent,
+    .et_pb_section--fixed,
+    .copr-answer-manage {
+        display: none !important;
+    }
+    .entry-title .main_title {
+        display: block;
+    }
+    .et-db #et-boc .et-l .et_pb_section_1_tb_footer.et_pb_section {
+        background-color: #ffffff !important;
+    }
+    .et-db #et-boc .et-l .et_pb_section_1_tb_footer {
+        border-color: #ffffff !important;
+        border: 0px !important;
+        box-shadow: none !important;
+    }
+</style>
