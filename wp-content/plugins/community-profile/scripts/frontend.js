@@ -2,6 +2,23 @@
 
 jQuery(function($) {
   /**
+   * Find the cookie by name
+   *
+   * @param  {string} name The cookie name
+   * @return {string}      The value
+   */
+  function getCookie(name) {
+    const pieces = document.cookie.split(';');
+    let val = '';
+    pieces.forEach(function(piece) {
+      const pair = piece.split('=');
+      if (name == pair[0].trim()) {
+        val = decodeURIComponent(pair[1]);
+      }
+    });
+    return val;
+  }
+  /**
    * Submit the form.
    *
    * @param  {object}   $form     The JQuery form object
@@ -46,6 +63,11 @@ jQuery(function($) {
     });
   }
 
+  const groupId = getCookie('copr-group-selected');
+  if (groupId) {
+    // Set all group ids
+    $('.copr-group-selector, input[name="group_id"]').val(groupId);
+  }
   if ($('.copr-questions-wrapper').length > 0) {
     /**
      * Do some prework
