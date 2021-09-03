@@ -562,6 +562,23 @@ function copr_bp_tab()
 	}
 }
 
+/**
+ * Prepare for the new user.
+ *
+ * @param  string $userLogin The username
+ * @param  object $user      The user
+ * @return void
+ */
+function copr_user_login($userLogin, $user) {
+	// Remove our cookie to protect from cookies with a different account
+	// Wanted to do this on logout but the method never called.
+	if (isset($_COOKIE[COPR_GROUP_ID_COOKIE])) {
+	    unset($_COOKIE[COPR_GROUP_ID_COOKIE]);
+	    setcookie(COPR_GROUP_ID_COOKIE, null, -1, '/');
+	}
+}
+
+add_action('wp_login', 'copr_user_login', 10, 2);
 add_action( 'wp_ajax_copr_get_answers', 'copr_get_answers' );
 add_action( 'wp_ajax_copr_add_group', 'copr_add_group' );
 add_action( 'wp_ajax_copr_select_group', 'copr_select_group' );
