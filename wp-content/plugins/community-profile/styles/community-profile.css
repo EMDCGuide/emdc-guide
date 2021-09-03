@@ -69,3 +69,9 @@
 .copr-select-group-form .submit {
     display: inline;
 }
+.copr-date {
+    font-size: 10px;
+}
+.copr-date .dashicons, .copr-date .dashicons-before:before {
+    font-size: 17px !important;
+}

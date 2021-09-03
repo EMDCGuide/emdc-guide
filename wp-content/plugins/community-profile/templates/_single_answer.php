@@ -7,7 +7,21 @@
             <p><a href="<?php echo bp_core_get_user_domain($answer->user_id); ?>"><?php echo $user->display_name; ?></a></p>
         </div>
         <div class="copr-flex-child">
-            <p class="copr-js-show copr-answer-text"><?php echo $answer->answer; ?></p>
+            <?php $additionalClass = (($canModerate) || (intval($answer->user_id) === intval($currentUserId))) ? ' copr-js-show' : ''; ?>
+            <div class="copr-answer-text-wrapper<?php echo $additionalClass; ?>">
+                <p class="copr-answer-text"><?php echo $answer->answer; ?></p>
+                <p class="copr-date">
+                    <span class="dashicons dashicons-calendar"></span>
+                    <?php
+                        if ($answer->updated_at !== '0000-00-00 00:00:00') {
+                            $date = DateTime::createFromFormat('Y-m-d G:i:s', $answer->updated_at);
+                        } else {
+                            $date = DateTime::createFromFormat('Y-m-d G:i:s', $answer->created_at);
+                        }
+                        echo $date->format('M d, Y') . ' ' . __('at', 'copr-my-extension') . ' ' . $date->format('g:i A');
+                    ?>
+                </p>
+            </div>
             <?php if (($canModerate) || (intval($answer->user_id) === intval($currentUserId))): ?>
                 <form action="<?php echo admin_url('admin-ajax.php'); ?>" method="post" class="copr-edit-answer copr-js-hide" data-error-message="<?php echo __( 'Sorry, we were unable to update the answer. Please try again later.', 'copr-my-extension' ); ?>">
                     <?php echo wp_nonce_field('edit_answer'); ?>
