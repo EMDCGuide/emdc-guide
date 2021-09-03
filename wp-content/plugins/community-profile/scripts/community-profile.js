@@ -5,7 +5,7 @@
 jQuery(function($) {
   $('.copr-js-hide').hide();
   $('.copr-js-show').show();
-  $('.copr-answer-textarea').val('');
+  $('.copr-answer-textarea').not('.copr-question-form').val('');
   /**
    * Set up the deletion of answers
    */

@@ -398,7 +398,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 			$questionType = 'text';
 			$questionChoices = '';
 			if (strtolower($pieces[1]) === 'text') {
-				$formElement = '<textarea name="answer" class="copr-answer-textarea" rows="10">' . $answer . '</textarea>';
+				$formElement = '<textarea name="answer" class="copr-answer-textarea copr-question-form" rows="10">' . $answer . '</textarea>';
 			} else if (strtolower($pieces[1]) === 'choice') {
 				if (count($pieces) < 3) {
 					/**
