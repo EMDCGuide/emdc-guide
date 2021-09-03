@@ -129,6 +129,11 @@ jQuery(function($) {
 
     clearAnswers();
     loadAnswers();
+    const totalGroups = $('.copr-group-selector').first().find('option').length;
+    if (totalGroups === 1) {
+      // There are no groups
+      $('.copr-selector-or-wrapper').hide();
+    }
     const groupId = getCookie('copr-group-selected');
     if (groupId) {
      // Set all group ids
@@ -234,14 +239,14 @@ jQuery(function($) {
           const $selectorWrapper = $('.copr-group-selector-wrapper');
           $('.copr-group-selector, input[name="group_id"]').val(groupId);
           if ($selectorWrapper.is(':visible')) {
-            $selectorWrapper.slideUp('slow', function() {
-              clearAnswers();
-              const callback = function() {
+            clearAnswers();
+            const callback = function() {
+              $selectorWrapper.slideUp('slow', function() {
                 $('.copr-group-loading').addClass('copr-hidden');
                 $('.copr-questions-wrapper').slideDown('slow');
-              };
-              loadAnswers(callback);
-            });
+              });
+            };
+            loadAnswers(callback);
           } else {
             clearAnswers();
             const callback = function() {

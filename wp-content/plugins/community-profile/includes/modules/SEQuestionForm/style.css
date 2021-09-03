@@ -97,3 +97,9 @@ textarea.copr-errored, input.copr-errored {
 .copr-add-group-form .copr-radio-option {
     padding-left: 30px;
 }
+.copr-or-text {
+    text-transform: uppercase;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-size: 30px;
+}

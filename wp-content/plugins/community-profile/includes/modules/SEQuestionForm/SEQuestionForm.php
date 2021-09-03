@@ -78,41 +78,38 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 	 */
 	protected $groupSelectorTemplate = '
 	<div class="copr-group-selector-wrapper" data-bp-available="$hasBP">
-		<h3 class="simp-simple-header-heading">$title</h3>
+		<h3>$title</h3>
 		<p>$content</p>
-		<div class="copr-align-center">
+		<div class="copr-align-center copr-selector-or-wrapper">
 			$selector
-			<p>
-				<a href="#" class="copr-add-group">
-					<span class="dashicons dashicons-plus"></span> $addGroupText
-				</a>
-			</p>
+			<div class="copr-or-text">$orText</div>
 		</div>
 		<div class="copr-add-group-form-wrapper">
-		<form action="$formAction" class="copr-add-group-form" method="post" data-error-message="$formError">
-			<input type="hidden" name="action" value="copr_add_group" />
-			$nounce
-			<div class="form-element-wrapper">
-				<label>$nameLabel</label>
-				<input type="text" name="group_name" value="$name" class="$nameInputClasses" />
-				<p class="copr-group_name-error copr-error-message$nameErrorClasses">$nameError</p>
-			</div>
-			<div class="form-element-wrapper">
-				<label>$descLabel</label>
-				<textarea type="text" name="group_desc" rows="10" class="$descInputClasses">$desc</textarea>
-				<p class="copr-group_desc-error copr-error-message$descErrorClasses">$descError</p>
-			</div>
-			<div class="form-element-wrapper">
-				<label>$typeLabel</label>
-				<div class="copr-radio-option"><input type="radio" name="group_type" value="public"$publicChecked /><label>$optionPublic</label></div>
-				<div class="copr-radio-option"><input type="radio" name="group_type" value="private"$privateChecked /><label>$optionPrivate</label></div>
-				<div class="copr-radio-option"><input type="radio" name="group_type" value="hidden"$hiddenChecked /><label>$optionHidden</label></div>
-				<p class="copr-hidden copr-group_type-error copr-error-message"></p>
-			</div>
-			<div class="copr-align-right submit">
-				<input type="submit" name="submit" value="$save" data-save="$save" data-saving="$saving" />
-			</div>
-		</form>
+			<h4>$addGroupText</h4>
+			<form action="$formAction" class="copr-add-group-form" method="post" data-error-message="$formError">
+				<input type="hidden" name="action" value="copr_add_group" />
+				$nounce
+				<div class="form-element-wrapper">
+					<label>$nameLabel</label>
+					<input type="text" name="group_name" value="$name" class="$nameInputClasses" />
+					<p class="copr-group_name-error copr-error-message$nameErrorClasses">$nameError</p>
+				</div>
+				<div class="form-element-wrapper">
+					<label>$descLabel</label>
+					<textarea type="text" name="group_desc" rows="10" class="$descInputClasses">$desc</textarea>
+					<p class="copr-group_desc-error copr-error-message$descErrorClasses">$descError</p>
+				</div>
+				<div class="form-element-wrapper">
+					<label>$typeLabel</label>
+					<div class="copr-radio-option"><input type="radio" name="group_type" value="public"$publicChecked /><label>$optionPublic</label></div>
+					<div class="copr-radio-option"><input type="radio" name="group_type" value="private"$privateChecked /><label>$optionPrivate</label></div>
+					<div class="copr-radio-option"><input type="radio" name="group_type" value="hidden"$hiddenChecked /><label>$optionHidden</label></div>
+					<p class="copr-hidden copr-group_type-error copr-error-message"></p>
+				</div>
+				<div class="copr-align-right submit">
+					<input type="submit" name="submit" value="$save" data-save="$save" data-saving="$saving" />
+				</div>
+			</form>
 		</div>
 	</div>';
 
@@ -359,6 +356,7 @@ class COPR_SEQuestionForm extends ET_Builder_Module {
 			'$nounce'			=>	wp_nonce_field( 'add_new_group' ),
 			'$optionHidden'		=>  __( 'Hidden','copr-my-extension' ),
 			'$optionPublic'		=>	__( 'Public','copr-my-extension' ),
+			'$orText'			=>	__( 'or', 'copr-my-extension' ),
 			'$optionPrivate'	=>	__( 'Private','copr-my-extension' ),
 			'$privateChecked'	=>	$privateChecked,
 			'$publicChecked'	=>	$publicChecked,
