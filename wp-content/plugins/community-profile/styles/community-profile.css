@@ -6,10 +6,10 @@ article.bp_group {
     margin-top: 65px;
 }
 .copr-flex-parent {
-    display: flex;
+    display: flex !important;
 }
 .copr-flex-child {
-    flex: 1;
+    flex: 1 !important;
 }
 .copr-avatar-wrapper {
     flex: none;
@@ -61,6 +61,12 @@ article.bp_group {
     margin-bottom: 10px;
 }
 #copr-section-filter {
+    margin-top: 20px;
+}
+#copr-section-filter .copr-print {
+    text-align: left;
+}
+#copr-section-filter .copr-filter {
     text-align: right;
 }
 #copr-community-profile a {

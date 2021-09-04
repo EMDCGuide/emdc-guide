@@ -1,8 +1,13 @@
 <div id="item-body">
     <h2 class="bp-screen-reader-text"><?php echo __( 'Community Profile', 'copr-my-extension' ); ?></h2>
     <div id="copr-community-profile">
-        <div id="copr-section-filter" class="copr-js-show">
-            <span class="dashicons dashicons-filter"></span> <?php echo __( 'Filter By:', 'copr-my-extension' ); ?> <select name="copr-section-filter"><option value="all"><?php echo __( 'Display All', 'copr-my-extension' ); ?></option></select>
+        <div id="copr-section-filter" class="copr-flex-parent copr-js-show">
+            <div class="copr-flex-child copr-print">
+                <a href="#" onClick="window.print()"><span class="dashicons dashicons-printer"></span> <?php echo __( 'Print', 'copr-my-extension' ); ?></a>
+            </div>
+            <div class="copr-flex-child copr-filter">
+                <span class="dashicons dashicons-filter"></span> <?php echo __( 'Filter By:', 'copr-my-extension' ); ?> <select name="copr-section-filter"><option value="all"><?php echo __( 'Display All', 'copr-my-extension' ); ?></option></select>
+            </div>
         </div>
         <?php $currentTag = ''; ?>
         <?php $currentQuestion = ''; ?>
