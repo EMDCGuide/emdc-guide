@@ -12,7 +12,7 @@ article.bp_group {
     flex: 1 !important;
 }
 .copr-avatar-wrapper {
-    flex: none;
+    flex: none !important;
     text-align: center;
     width: 100px;
 }
