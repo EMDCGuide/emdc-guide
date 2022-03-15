@@ -243,10 +243,14 @@ class PostController extends Controller {
 					}
 
 				} elseif ($postRestictMode == 'excerpt') {
+					
+					$percent = Settings::getOption(Settings::OPTION_RESTRICT_PARTIALLY_CONTENT_PERCENT);
+					if($percent === '' || $percent === 0) { $percent = 20; }
 
 					$totalWordsCount = str_word_count($content);
 					$excerpt = strip_shortcodes($content);
-					$excerptLength = $totalWordsCount / 5; // 20% of post
+					//$excerptLength = $totalWordsCount / 5; // 20% of post
+					$excerptLength = ($totalWordsCount * $percent / 100);
 					$excerpt = wp_trim_words( $excerpt, $excerptLength, '...' );
 					$content = '<div class="cmacc-excerpt">';
 					$content .= $excerpt;

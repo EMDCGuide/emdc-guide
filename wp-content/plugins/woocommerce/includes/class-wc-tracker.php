@@ -151,6 +151,9 @@ class WC_Tracker {
 		// Payment gateway info.
 		$data['gateways'] = self::get_active_payment_gateways();
 
+		// WcPay settings info.
+		$data['wcpay_settings'] = self::get_wcpay_settings();
+
 		// Shipping method info.
 		$data['shipping_methods'] = self::get_active_shipping_methods();
 
@@ -160,14 +163,14 @@ class WC_Tracker {
 		// Template overrides.
 		$data['template_overrides'] = self::get_all_template_overrides();
 
-		// Template overrides.
-		$data['admin_user_agents'] = self::get_admin_user_agents();
-
 		// Cart & checkout tech (blocks or shortcodes).
 		$data['cart_checkout'] = self::get_cart_checkout_info();
 
 		// WooCommerce Admin info.
 		$data['wc_admin_disabled'] = apply_filters( 'woocommerce_admin_disabled', false ) ? 'yes' : 'no';
+
+		// Mobile info.
+		$data['wc_mobile_usage'] = self::get_woocommerce_mobile_usage();
 
 		return apply_filters( 'woocommerce_tracker_data', $data );
 	}
@@ -301,6 +304,15 @@ class WC_Tracker {
 			'active_plugins'   => $active_plugins,
 			'inactive_plugins' => $plugins,
 		);
+	}
+
+	/**
+	 * Get the settings of WooCommerce Payments plugin
+	 *
+	 * @return array
+	 */
+	private static function get_wcpay_settings() {
+		return get_option( 'woocommerce_woocommerce_payments_settings' );
 	}
 
 	/**
@@ -589,6 +601,7 @@ class WC_Tracker {
 		return $active_gateways;
 	}
 
+
 	/**
 	 * Get a list of all active shipping methods.
 	 *
@@ -619,6 +632,8 @@ class WC_Tracker {
 			'version'                               => WC()->version,
 			'currency'                              => get_woocommerce_currency(),
 			'base_location'                         => WC()->countries->get_base_country(),
+			'base_state'                            => WC()->countries->get_base_state(),
+			'base_postcode'                         => WC()->countries->get_base_postcode(),
 			'selling_locations'                     => WC()->countries->get_allowed_countries(),
 			'api_enabled'                           => get_option( 'woocommerce_api_enabled' ),
 			'weight_unit'                           => get_option( 'woocommerce_weight_unit' ),
@@ -673,15 +688,6 @@ class WC_Tracker {
 			}
 		}
 		return $override_data;
-	}
-
-	/**
-	 * When an admin user logs in, there user agent is tracked in user meta and collected here.
-	 *
-	 * @return array
-	 */
-	private static function get_admin_user_agents() {
-		return array_filter( (array) get_option( 'woocommerce_tracker_ua', array() ) );
 	}
 
 	/**
@@ -765,6 +771,15 @@ class WC_Tracker {
 			'checkout_page_contains_checkout_block'     => $checkout_block_data['page_contains_block'],
 			'checkout_block_attributes'                 => $checkout_block_data['block_attributes'],
 		);
+	}
+
+	/**
+	 * Get info about WooCommerce Mobile App usage
+	 *
+	 * @return array
+	 */
+	public static function get_woocommerce_mobile_usage() {
+		return get_option( 'woocommerce_mobile_app_usage' );
 	}
 }
 

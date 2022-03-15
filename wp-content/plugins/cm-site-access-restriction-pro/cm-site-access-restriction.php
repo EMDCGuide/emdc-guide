@@ -4,7 +4,7 @@ Plugin Name: CM Site Access Restriction Pro
 Plugin URI: https://www.cminds.com/wordpress-plugins-library/membership-plugin-for-wordpress
 Description: A gated content powerful solution and restricted content plugin for WordPress. Support restricted content access by role on your WP site.
 Author: CreativeMindsSolutions
-Version: 1.5.9
+Version: 1.6.1
 */
 
 if (version_compare('5.3', PHP_VERSION, '>')) {

@@ -1,13 +1,8 @@
 <?php
 /**
- * This file belongs to the YITH Plugin Framework.
+ * Plugin installation functions
  *
- * This source file is subject to the GNU GENERAL PUBLIC LICENSE (GPL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://www.gnu.org/licenses/gpl-3.0.txt
- *
- * @package YITH WooCommerce Catalog Mode
+ * @package YITH\CatalogMode
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( defined( 'YWCTM_PREMIUM' ) && YWCTM_PREMIUM ) {
 
-	if ( '' !== get_option( 'ywctm_enable_plugin' ) ) {
+	if ( '' !== (string) get_option( 'ywctm_enable_plugin' ) ) {
 		include_once YWCTM_DIR . 'includes/actions/update-2.0.0/ywctm-update-premium.php';
 	} else {
 		include_once YWCTM_DIR . 'includes/actions/update-2.0.0/ywctm-default-buttons.php';

@@ -1,8 +1,8 @@
-/* global bp, BP_Uploader, _, Backbone */
+/* global BP_Uploader, _, Backbone */
 
 window.bp = window.bp || {};
 
-( function( exports, $ ) {
+( function( bp, $ ) {
 
 	// Bail if not set.
 	if ( typeof BP_Uploader === 'undefined' ) {
@@ -193,25 +193,31 @@ window.bp = window.bp || {};
 		},
 
 		uploadResult: function( model ) {
-			var message, type;
+			var feedbackCode, feedbackViews = [];
 
 			if ( ! _.isUndefined( model.get( 'url' ) ) ) {
+				feedbackCode = model.get( 'feedback_code' );
 
 				// Image is too small.
-				if ( 0 === model.get( 'feedback_code' ) ) {
-					message = BP_Uploader.strings.cover_image_warnings.dimensions;
-					type    = 'warning';
-
-				// Success, Rock n roll!
-				} else {
-					message = BP_Uploader.strings.feedback_messages[ model.get( 'feedback_code' ) ];
-					type = 'success';
+				if ( 0 === feedbackCode ) {
+					feedbackCode = 1;
+					feedbackViews.push(
+						new bp.Views.CoverImageStatus( {
+							value : BP_Uploader.strings.cover_image_warnings.dimensions,
+							type  : 'warning'
+						} )
+					);
 				}
 
-				this.views.set( '.bp-uploader-progress', new bp.Views.CoverImageStatus( {
-					value : message,
-					type  : type
-				} ) );
+				feedbackViews.unshift(
+					new bp.Views.CoverImageStatus( {
+						value : BP_Uploader.strings.feedback_messages[ feedbackCode ],
+						type  : 'success'
+					} )
+				);
+
+				// Success, Rock n roll!
+				this.views.set( '.bp-uploader-progress', feedbackViews );
 
 				// Update the header of the page.
 				$( '#header-cover-image' ).css( {
@@ -274,4 +280,4 @@ window.bp = window.bp || {};
 
 	bp.CoverImage.start();
 
-})( bp, jQuery );
+})( window.bp, jQuery );

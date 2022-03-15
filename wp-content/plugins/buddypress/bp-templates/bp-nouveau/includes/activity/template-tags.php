@@ -3,7 +3,7 @@
  * Activity Template tags
  *
  * @since 3.0.0
- * @version 5.0.0
+ * @version 10.0.0
  */
 
 // Exit if accessed directly.
@@ -64,6 +64,15 @@ function bp_nouveau_after_activity_directory_content() {
 }
 
 /**
+ * Prints the JS Templates used to render the Activity Post Form.
+ *
+ * @since 10.0.0
+ */
+function bp_nouveau_activity_print_post_form_templates() {
+	bp_get_template_part( 'common/js-templates/activity/form' );
+}
+
+/**
  * Enqueue needed scripts for the Activity Post Form
  *
  * @since 3.0.0
@@ -72,6 +81,13 @@ function bp_nouveau_after_activity_directory_content() {
 function bp_nouveau_before_activity_post_form() {
 	if ( bp_nouveau_current_user_can( 'publish_activity' ) ) {
 		wp_enqueue_script( 'bp-nouveau-activity-post-form' );
+
+		/**
+		 * Get the templates to manage Group Members using the BP REST API.
+		 *
+		 * @since 10.0.0 Hook to the `wp_footer` action to print the JS templates.
+		 */
+		add_action( 'wp_footer', 'bp_nouveau_activity_print_post_form_templates' );
 	}
 }
 
@@ -81,10 +97,6 @@ function bp_nouveau_before_activity_post_form() {
  * @since 3.0.0
  */
 function bp_nouveau_after_activity_post_form() {
-	if ( bp_nouveau_current_user_can( 'publish_activity' ) ) {
-		bp_get_template_part( 'common/js-templates/activity/form' );
-	}
-
 	/**
 	 * Fires after the activity post form.
 	 *
@@ -144,6 +156,30 @@ function bp_nouveau_activity_hook( $when = '', $suffix = '' ) {
 	}
 
 	bp_nouveau_hook( $hook );
+}
+
+/**
+ * Output the `data-bp-activity-id` or `data-bp-activity-comment-id` attribute
+ * according to the activity type.
+ *
+ * @since 10.0.0
+ */
+function bp_nouveau_activity_data_attribute_id() {
+	$attribute  = 'data-bp-%1$s-id="%2$s"';
+	$type       = 'activity';
+	$id         = (int) bp_get_activity_id();
+	$comment_id = (int) bp_get_activity_comment_id();
+
+	if ( 'activity_comment' === bp_get_activity_type() || $comment_id ) {
+		$type = 'activity-comment';
+
+
+		if ( $comment_id ) {
+			$id = $comment_id;
+		}
+	}
+
+	printf( $attribute, $type, $id );
 }
 
 /**
@@ -236,10 +272,13 @@ function bp_nouveau_activity_entry_buttons( $args = array() ) {
 }
 
 	/**
-	 * Get the action buttons inside an Activity Loop,
+	 * Get the action buttons inside an Activity Loop.
 	 *
 	 * @todo This function is too large and needs refactoring and reviewing.
 	 * @since 3.0.0
+	 *
+	 * @param array $args See bp_nouveau_wrapper() for the description of parameters.
+	 * @return array      Activity action buttons used into an Activity Loop.
 	 */
 	function bp_nouveau_get_activity_entry_buttons( $args ) {
 		$buttons = array();
@@ -514,7 +553,7 @@ function bp_nouveau_activity_entry_buttons( $args = array() ) {
 			}
 
 			$buttons['activity_spam']['button_attr'][ $data_element ] = wp_nonce_url(
-				bp_get_root_domain() . '/' . bp_get_activity_slug() . '/spam/' . $activity_id . '/',
+				bp_get_root_domain() . '/' . bp_nouveau_get_component_slug( 'activity' ) . '/spam/' . $activity_id . '/',
 				'bp_activity_akismet_spam_' . $activity_id
 			);
 		}
@@ -530,7 +569,7 @@ function bp_nouveau_activity_entry_buttons( $args = array() ) {
 		$buttons_group = apply_filters( 'bp_nouveau_get_activity_entry_buttons', $buttons, $activity_id );
 
 		if ( ! $buttons_group ) {
-			return $buttons;
+			return array();
 		}
 
 		// It's the first entry of the loop, so build the Group and sort it
@@ -842,7 +881,7 @@ function bp_nouveau_activity_comment_buttons( $args = array() ) {
 			}
 
 			$buttons['activity_comment_spam']['button_attr'][ $data_element ] = wp_nonce_url(
-				bp_get_root_domain() . '/' . bp_get_activity_slug() . '/spam/' . $activity_comment_id . '/?cid=' . $activity_comment_id,
+				bp_get_root_domain() . '/' . bp_nouveau_get_component_slug( 'activity' ) . '/spam/' . $activity_comment_id . '/?cid=' . $activity_comment_id,
 				'bp_activity_akismet_spam_' . $activity_comment_id
 			);
 		}
@@ -911,4 +950,106 @@ function bp_nouveau_activity_comment_buttons( $args = array() ) {
 		do_action_ref_array( 'bp_nouveau_return_activity_comment_buttons', array( &$return, $activity_comment_id, $activity_id ) );
 
 		return $return;
+	}
+
+/**
+ * Outputs the Activity RSS link.
+ *
+ * @since 8.0.0
+ */
+function bp_nouveau_activity_rss_link() {
+	echo esc_url( bp_nouveau_activity_get_rss_link() );
+}
+
+	/**
+	 * Returns the Activity RSS link.
+	 *
+	 * @since 8.0.0
+	 *
+	 * @return string The Activity RSS link.
+	 */
+	function bp_nouveau_activity_get_rss_link() {
+		$bp_nouveau = bp_nouveau();
+		$link       = '';
+
+		if ( isset( $bp_nouveau->activity->current_rss_feed['link'] ) ) {
+			$link = $bp_nouveau->activity->current_rss_feed['link'];
+		}
+
+		/**
+		 * Filter here to edit the Activity RSS link.
+		 *
+		 * @since 8.0.0
+		 *
+		 * @param string The Activity RSS link.
+		 */
+		return apply_filters( 'bp_nouveau_activity_get_rss_link', $link );
+	}
+
+/**
+ * Outputs the Activity RSS Tooltip.
+ *
+ * @since 8.0.0
+ */
+function bp_nouveau_activity_rss_tooltip() {
+	echo esc_attr( bp_nouveau_activity_get_rss_tooltip() );
+}
+
+	/**
+	 * Returns the Activity RSS Tooltip.
+	 *
+	 * @since 8.0.0
+	 *
+	 * @return string The Activity RSS Tooltip.
+	 */
+	function bp_nouveau_activity_get_rss_tooltip() {
+		$bp_nouveau = bp_nouveau();
+		$tooltip       = '';
+
+		if ( isset( $bp_nouveau->activity->current_rss_feed['tooltip'] ) ) {
+			$tooltip = $bp_nouveau->activity->current_rss_feed['tooltip'];
+		}
+
+		/**
+		 * Filter here to edit the Activity RSS Tooltip.
+		 *
+		 * @since 8.0.0
+		 *
+		 * @param string The Activity RSS Tooltip.
+		 */
+		return apply_filters( 'bp_nouveau_activity_get_rss_tooltip', $tooltip );
+	}
+
+/**
+ * Outputs the Activity RSS screen reader text.
+ *
+ * @since 8.0.0
+ */
+function bp_nouveau_activity_rss_screen_reader_text() {
+	echo esc_attr( bp_nouveau_activity_get_rss_screen_reader_text() );
+}
+
+	/**
+	 * Returns the Activity RSS screen reader text.
+	 *
+	 * @since 8.0.0
+	 *
+	 * @return string The Activity RSS screen reader text.
+	 */
+	function bp_nouveau_activity_get_rss_screen_reader_text() {
+		$bp_nouveau         = bp_nouveau();
+		$screen_reader_text = '';
+
+		if ( isset( $bp_nouveau->activity->current_rss_feed['tooltip'] ) ) {
+			$screen_reader_text = $bp_nouveau->activity->current_rss_feed['tooltip'];
+		}
+
+		/**
+		 * Filter here to edit the Activity RSS screen reader text.
+		 *
+		 * @since 8.0.0
+		 *
+		 * @param string The Activity RSS screen reader text.
+		 */
+		return apply_filters( 'bp_nouveau_activity_get_rss_screen_reader_text', $screen_reader_text );
 	}

@@ -47,7 +47,7 @@ defined( 'ABSPATH' ) || exit;
 			<?php
 		}
 		?>
-		<input type="hidden" name="variable_post_id[<?php echo esc_attr( $loop ); ?>]" value="<?php echo esc_attr( $variation_id ); ?>" />
+		<input type="hidden" class="variable_post_id" name="variable_post_id[<?php echo esc_attr( $loop ); ?>]" value="<?php echo esc_attr( $variation_id ); ?>" />
 		<input type="hidden" class="variation_menu_order" name="variation_menu_order[<?php echo esc_attr( $loop ); ?>]" value="<?php echo esc_attr( $variation_object->get_menu_order( 'edit' ) ); ?>" />
 
 		<?php
@@ -57,8 +57,9 @@ defined( 'ABSPATH' ) || exit;
 		 * @since 3.6.0
 		 *
 		 * @param WP_Post $variation Post data.
+		 * @param int     $loop      Position in the loop.
 		 */
-		do_action( 'woocommerce_variation_header', $variation );
+		do_action( 'woocommerce_variation_header', $variation, $loop );
 		?>
 	</h3>
 	<div class="woocommerce_variable_attributes wc-metabox-content" style="display: none;">

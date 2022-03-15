@@ -12,11 +12,49 @@ import './editor.scss';
 import Block from './block.js';
 import edit from './edit.js';
 
+const attributes = {
+	/**
+	 * Whether to show the field label.
+	 */
+	hasLabel: {
+		type: 'boolean',
+		default: true,
+	},
+
+	/**
+	 * Search field label.
+	 */
+	label: {
+		type: 'string',
+		default: __( 'Search', 'woocommerce' ),
+	},
+
+	/**
+	 * Search field placeholder.
+	 */
+	placeholder: {
+		type: 'string',
+		default: __( 'Search products…', 'woocommerce' ),
+	},
+
+	/**
+	 * Store the instance ID.
+	 */
+	formId: {
+		type: 'string',
+		default: '',
+	},
+};
+
 registerBlockType( 'woocommerce/product-search', {
 	title: __( 'Product Search', 'woocommerce' ),
 	icon: {
-		src: <Icon srcElement={ search } />,
-		foreground: '#96588a',
+		src: (
+			<Icon
+				srcElement={ search }
+				className="wc-block-editor-components-block-icon"
+			/>
+		),
 	},
 	category: 'woocommerce',
 	keywords: [ __( 'WooCommerce', 'woocommerce' ) ],
@@ -32,45 +70,7 @@ registerBlockType( 'woocommerce/product-search', {
 			hasLabel: true,
 		},
 	},
-	attributes: {
-		/**
-		 * Whether to show the field label.
-		 */
-		hasLabel: {
-			type: 'boolean',
-			default: true,
-		},
-
-		/**
-		 * Search field label.
-		 */
-		label: {
-			type: 'string',
-			default: __( 'Search', 'woocommerce' ),
-			source: 'text',
-			selector: 'label',
-		},
-
-		/**
-		 * Search field placeholder.
-		 */
-		placeholder: {
-			type: 'string',
-			default: __( 'Search products…', 'woocommerce' ),
-			source: 'attribute',
-			selector: 'input.wc-block-product-search__field',
-			attribute: 'placeholder',
-		},
-
-		/**
-		 * Store the instance ID.
-		 */
-		formId: {
-			type: 'string',
-			default: '',
-		},
-	},
-
+	attributes,
 	transforms: {
 		from: [
 			{
@@ -89,19 +89,20 @@ registerBlockType( 'woocommerce/product-search', {
 			},
 		],
 	},
-
+	deprecated: [
+		{
+			attributes,
+			save( props ) {
+				return (
+					<div>
+						<Block { ...props } />
+					</div>
+				);
+			},
+		},
+	],
 	edit,
-
-	/**
-	 * Save the props to post content.
-	 *
-	 * @param {Object} attributes Props to pass to block.
-	 */
-	save( attributes ) {
-		return (
-			<div>
-				<Block { ...attributes } />
-			</div>
-		);
+	save() {
+		return null;
 	},
 } );

@@ -77,19 +77,24 @@ function pfd_admin_show_onboarding_form() {
 	}
 
 	if ( ! defined( 'DIVI_POPUP_ONBOARDING_CAP' ) ) {
-		// By default display the onboarding notice to all users who can
+		// By default, display the onboarding notice to all users who can
 		// activate plugins (i.e. administrators).
 		define( 'DIVI_POPUP_ONBOARDING_CAP', 'activate_plugins' );
 	}
 
 	$user = wp_get_current_user();
 
-	if (
-		$user
-		&& $user->has_cap( DIVI_POPUP_ONBOARDING_CAP )
-		&& 'done' === $user->get( '_pfd_onboarding' )
-	) {
-		$discarded = true;
+	if ( ! $user ) {
+		$show_notice = false;
+		$discarded   = true;
+	} else {
+		if ( $user->has_cap( DIVI_POPUP_ONBOARDING_CAP ) ) {
+			// Check, if the user discarded the message already.
+			$discarded = 'done' === $user->get( '_pfd_onboarding' );
+		} else {
+			// Never show the notice to users without sufficient permissions.
+			$show_notice = false;
+		}
 	}
 
 	/**

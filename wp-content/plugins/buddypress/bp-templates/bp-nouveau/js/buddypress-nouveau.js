@@ -1,12 +1,12 @@
-/* global wp, bp, BP_Nouveau, JSON */
+/* global wp, BP_Nouveau, JSON */
 /* jshint devel: true */
 /* jshint browser: true */
 /* @since 3.0.0 */
-/* @version 7.0.0 */
+/* @version 10.0.0 */
 window.wp = window.wp || {};
 window.bp = window.bp || {};
 
-( function( exports, $ ) {
+( function( bp, $ ) {
 
 	// Bail if not set.
 	if ( typeof BP_Nouveau === 'undefined' ) {
@@ -306,7 +306,15 @@ window.bp = window.bp || {};
 					return;
 				}
 
-				$( self.objectNavParent + ' [data-bp-scope="' + data.scope + '"]' ).removeClass( 'loading' );
+				var selectedObjectNavParent = $( self.objectNavParent + ' [data-bp-scope="' + data.scope + '"]' );
+
+				selectedObjectNavParent.removeClass( 'loading' );
+
+				if ( response.data && response.data.totalItems && response.data.navLabel ) {
+					selectedObjectNavParent.find( 'a' ).first().html(
+						response.data.navLabel + '&nbsp;'
+					).append( $( '<span></span>' ).addClass( 'count' ).html( response.data.totalItems ) );
+				}
 
 				if ( 'reset' !== data.method ) {
 					self.inject( data.target, response.data.contents, data.method );
@@ -460,6 +468,11 @@ window.bp = window.bp || {};
 
 			// Pagination.
 			$( '#buddypress [data-bp-list]' ).on( 'click', '[data-bp-pagination] a', this, this.paginateAction );
+
+			// Password updates.
+			if ( BP_Nouveau.bpPasswordVerify && BP_Nouveau.bpPasswordVerify.requiredPassStrength ) {
+				$( '#pass1' ).on( 'input pwupdate', this.checkPassStrength );
+			}
 		},
 
 		/** Event Callbacks ***********************************************************/
@@ -661,16 +674,13 @@ window.bp = window.bp || {};
 				return false;
 			}
 
-			// Find the required wpnonce string.
-			// if  button element set we'll have our nonce set on a data attr
-			// Check the value & if exists split the string to obtain the nonce string
-			// if no value, i.e false, null then the href attr is used.
-			if ( nonceUrl ) {
-				nonce = nonceUrl.split('?_wpnonce=');
-				nonce = nonce[1];
-			} else {
-				nonce = self.getLinkParams( target.prop( 'href' ), '_wpnonce' );
+			// If the nonceUrl is not set, use the `href` attribute.
+			if ( ! nonceUrl ) {
+				nonceUrl = target.prop( 'href' );
 			}
+
+			// Set the nonce.
+			nonce = self.getLinkParams( nonceUrl, '_wpnonce' );
 
 			// Unfortunately unlike groups
 			// Friends actions does not match the wpnonce
@@ -818,10 +828,58 @@ window.bp = window.bp || {};
 
 			// Request the page.
 			self.objectRequest( queryData );
+		},
+
+		checkPassStrength: function( event ) {
+			var bpPasswordVerify = BP_Nouveau.bpPasswordVerify, strength,
+			    requiredStrength = parseInt( bpPasswordVerify.requiredPassStrength, 10 ),
+			    pass1 = $( event.currentTarget ).val(), pass2 = $( '#pass2' ).val(),
+			    currentForm = $( event.currentTarget ).closest( 'form' );
+
+
+			// wp.passwordStrength.userInputBlacklist() has been deprecated in WP 5.5.0.
+			if ( 'function' === typeof wp.passwordStrength.userInputDisallowedList ) {
+				strength = wp.passwordStrength.meter( pass1, wp.passwordStrength.userInputDisallowedList(), pass2 );
+			} else {
+				strength = wp.passwordStrength.meter( pass1, wp.passwordStrength.userInputBlacklist(), pass2 );
+			}
+
+			if ( requiredStrength && 4 >= requiredStrength ) {
+				var passwordWarningContainer = $( currentForm ).find( '#password-warning' );
+
+				if ( strength < requiredStrength ) {
+					if ( ! $( passwordWarningContainer ).length ) {
+						$( event.currentTarget ).before(
+							$( '<p></p>' ).prop( 'id', 'password-warning' )
+										  .addClass( 'description' )
+						);
+					}
+
+					$( passwordWarningContainer ).html( bpPasswordVerify.tooWeakPasswordWarning );
+				} else if ( $( passwordWarningContainer ).length ) {
+					$( passwordWarningContainer ).remove();
+				}
+
+				if ( ! $( currentForm ).find( '#password-strength-score' ).length ) {
+					$( currentForm ).prepend(
+						$('<input></input>').prop( {
+							id: 'password-strength-score',
+							type: 'hidden',
+							'name': '_password_strength_score'
+						} )
+					);
+				}
+
+				$( '#password-strength-score' ).val( strength );
+
+				if ( requiredStrength > strength ) {
+					$( '.pw-weak' ).remove();
+				}
+			}
 		}
 	};
 
 	// Launch BP Nouveau.
 	bp.Nouveau.start();
 
-} )( bp, jQuery );
+} )( window.bp, jQuery );

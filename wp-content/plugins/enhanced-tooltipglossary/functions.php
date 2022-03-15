@@ -501,7 +501,7 @@ if (!function_exists('cminds_cmtt_admin_tooltip_preview')) {
         // Tooltip styling
         $minw = (int) \CM\CMTT_Settings::get('cmtt_tooltipWidthMin', 200);
         $maxw = (int) \CM\CMTT_Settings::get('cmtt_tooltipWidthMax', 400);
-        $endalpha = (int) \CM\CMTT_Settings::get('cmtt_tooltipOpacity');
+        $endalpha = (int) \CM\CMTT_Settings::get('cmtt_tooltipOpacity', 100);
         $borderStyle = \CM\CMTT_Settings::get('cmtt_tooltipBorderStyle');
         $borderWidth = \CM\CMTT_Settings::get('cmtt_tooltipBorderWidth') . 'px';
         $borderColor = \CM\CMTT_Settings::get('cmtt_tooltipBorderColor');
@@ -543,7 +543,7 @@ if (!function_exists('cminds_cmtt_admin_tooltip_preview')) {
         }
         ?>
 
-        <div id="tt" class="admin-tt-wraper" role="tooltip">
+        <div id="tt" class="admin-tt-wraper" role="tooltip" aria-label="Tooltip preview">
             <div class="admin-tt" id="ttcont">
                 <div id="tttop">
                     <span id="tt-btn-close"

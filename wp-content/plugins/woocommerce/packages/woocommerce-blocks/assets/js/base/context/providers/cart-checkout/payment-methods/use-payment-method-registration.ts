@@ -9,6 +9,13 @@ import {
 import { useState, useEffect, useRef, useCallback } from '@wordpress/element';
 import { useShallowEqual } from '@woocommerce/base-hooks';
 import { CURRENT_USER_IS_ADMIN, getSetting } from '@woocommerce/settings';
+import type {
+	PaymentMethods,
+	ExpressPaymentMethods,
+	PaymentMethodConfigInstance,
+	ExpressPaymentMethodConfigInstance,
+} from '@woocommerce/type-defs/payments';
+import { useDebouncedCallback } from 'use-debounce';
 
 /**
  * Internal dependencies
@@ -16,16 +23,10 @@ import { CURRENT_USER_IS_ADMIN, getSetting } from '@woocommerce/settings';
 import { useEditorContext } from '../../editor-context';
 import { useShippingDataContext } from '../shipping';
 import { useCustomerDataContext } from '../customer';
-import type {
-	PaymentMethodsDispatcherType,
-	PaymentMethods,
-	ExpressPaymentMethods,
-	PaymentMethodConfig,
-	ExpressPaymentMethodConfig,
-} from './types';
 import { useStoreCart } from '../../../hooks/cart/use-store-cart';
 import { useStoreNotices } from '../../../hooks/use-store-notices';
 import { useEmitResponse } from '../../../hooks/use-emit-response';
+import type { PaymentMethodsDispatcherType } from './types';
 
 /**
  * This hook handles initializing registered payment methods and exposing all
@@ -51,12 +52,15 @@ const usePaymentMethodRegistration = (
 	const { billingData, shippingAddress } = useCustomerDataContext();
 	const selectedShippingMethods = useShallowEqual( selectedRates );
 	const paymentMethodsOrder = useShallowEqual( paymentMethodsSortOrder );
+	const cart = useStoreCart();
 	const {
 		cartTotals,
+		cartIsLoading,
 		cartNeedsShipping,
 		paymentRequirements,
-	} = useStoreCart();
+	} = cart;
 	const canPayArgument = useRef( {
+		cart,
 		cartTotals,
 		cartNeedsShipping,
 		billingData,
@@ -68,6 +72,7 @@ const usePaymentMethodRegistration = (
 
 	useEffect( () => {
 		canPayArgument.current = {
+			cart,
 			cartTotals,
 			cartNeedsShipping,
 			billingData,
@@ -76,6 +81,7 @@ const usePaymentMethodRegistration = (
 			paymentRequirements,
 		};
 	}, [
+		cart,
 		cartTotals,
 		cartNeedsShipping,
 		billingData,
@@ -88,7 +94,9 @@ const usePaymentMethodRegistration = (
 		let availablePaymentMethods = {};
 
 		const addAvailablePaymentMethod = (
-			paymentMethod: PaymentMethodConfig | ExpressPaymentMethodConfig
+			paymentMethod:
+				| PaymentMethodConfigInstance
+				| ExpressPaymentMethodConfigInstance
 		) => {
 			availablePaymentMethods = {
 				...availablePaymentMethods,
@@ -113,7 +121,7 @@ const usePaymentMethodRegistration = (
 							)
 					  );
 
-				if ( !! canPay ) {
+				if ( canPay ) {
 					if (
 						typeof canPay === 'object' &&
 						canPay !== null &&
@@ -127,7 +135,7 @@ const usePaymentMethodRegistration = (
 			} catch ( e ) {
 				if ( CURRENT_USER_IS_ADMIN || isEditor ) {
 					const errorText = sprintf(
-						/* translators: %s the id of the payment method being registered (bank transfer, Stripe...) */
+						/* translators: %s the id of the payment method being registered (bank transfer, cheque...) */
 						__(
 							`There was an error registering the payment method with id '%s': `,
 							'woo-gutenberg-products-block'
@@ -145,8 +153,7 @@ const usePaymentMethodRegistration = (
 		// Re-dispatch available payment methods to store.
 		dispatcher( availablePaymentMethods );
 
-		// Note: some payment methods use the `canMakePayment` callback to initialize / setup.
-		// Example: Stripe CC, Stripe Payment Request.
+		// Note: Some 4rd party payment methods use the `canMakePayment` callback to initialize / setup.
 		// That's why we track "is initialized" state here.
 		setIsInitialized( true );
 	}, [
@@ -158,16 +165,27 @@ const usePaymentMethodRegistration = (
 		registeredPaymentMethods,
 	] );
 
+	const debouncedRefreshCanMakePayments = useDebouncedCallback(
+		refreshCanMakePayments,
+		500,
+		{
+			leading: true,
+		}
+	);
+
 	// Determine which payment methods are available initially and whenever
-	// shipping methods or cart totals change.
+	// shipping methods, cart or the billing data change.
 	// Some payment methods (e.g. COD) can be disabled for specific shipping methods.
 	useEffect( () => {
-		refreshCanMakePayments();
+		if ( ! cartIsLoading ) {
+			debouncedRefreshCanMakePayments();
+		}
 	}, [
-		refreshCanMakePayments,
-		cartTotals,
+		debouncedRefreshCanMakePayments,
+		cart,
 		selectedShippingMethods,
-		paymentRequirements,
+		billingData,
+		cartIsLoading,
 	] );
 
 	return isInitialized;

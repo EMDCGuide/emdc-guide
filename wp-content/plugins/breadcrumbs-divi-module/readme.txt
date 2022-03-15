@@ -2,7 +2,7 @@
 Contributors: themeythemes
 Tags: divi, divi breadcrumbs, breadcrumbs
 Requires at least: 5.0
-Tested up to: 5.7
+Tested up to: 5.8
 Requires PHP: 5.6
 Stable tag: 1.2
 License: GPLv2 or later
@@ -23,10 +23,11 @@ This plugin adds a new Breadcrumbs module in the Divi Builder. Once you activate
 [Breadcrumbs Demo Page](https://www.learnhowwp.com/divi-breadcrumbs-module/)
 
 **Other Free Divi Plugins**
-[Divi Flip Cards Module](https://wordpress.org/plugins/flip-cards-module-divi/)
-[Divi Image Carousel](https://wordpress.org/plugins/image-carousel-divi/)
 [Divi Overlay on Images Module](https://wordpress.org/plugins/overlay-image-divi-module/)
 [Divi Post Carousel Module](https://wordpress.org/plugins/post-carousel-divi/)
+[Divi Menu Cart Module](https://wordpress.org/plugins/menu-cart-divi/)
+[Divi Flip Cards Module](https://wordpress.org/plugins/flip-cards-module-divi/)
+[Divi Image Carousel](https://wordpress.org/plugins/image-carousel-divi/)
 
 The content generated in the Visual Builder is only for preview. Part of the Breadcrumbs in the Visual Builder is dummy data but don't worry you will see the correct breadcrumbs on the front end after you exit the builder. 
 

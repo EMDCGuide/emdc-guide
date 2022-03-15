@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
 import { ValidatedTextInput } from '@woocommerce/base-components/text-input';
 import {
 	BillingCountryInput,
@@ -14,7 +13,7 @@ import {
 import { useValidationContext } from '@woocommerce/base-context';
 import { useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { withInstanceId } from '@woocommerce/base-hocs/with-instance-id';
+import { withInstanceId } from '@wordpress/compose';
 import { useShallowEqual } from '@woocommerce/base-hooks';
 import {
 	AddressField,
@@ -58,28 +57,27 @@ const validateShippingCountry = (
 };
 
 interface AddressFormProps {
-	id: string;
+	// Id for component.
+	id?: string;
+	// Unique id for form.
 	instanceId: string;
+	// Array of fields in form.
 	fields: ( keyof AddressFields )[];
-	fieldConfig: Record< keyof AddressFields, Partial< AddressField > >;
+	// Field configuration for fields in form.
+	fieldConfig?: Record< keyof AddressFields, Partial< AddressField > >;
+	// Function to all for an form onChange event.
 	onChange: ( newValue: EnteredAddress ) => void;
-	type: AddressType;
+	// Type of form.
+	type?: AddressType;
+	// Values for fields.
 	values: EnteredAddress;
 }
+
 /**
  * Checkout address form.
- *
- * @param {Object} props Incoming props for component.
- * @param {string} props.id Id for component.
- * @param {Array}  props.fields Array of fields in form.
- * @param {Object} props.fieldConfig Field configuration for fields in form.
- * @param {string} props.instanceId Unique id for form.
- * @param {function(any):any} props.onChange Function to all for an form onChange event.
- * @param {string} props.type Type of form.
- * @param {Object} props.values Values for fields.
  */
 const AddressForm = ( {
-	id,
+	id = '',
 	fields = ( Object.keys(
 		defaultAddressFields
 	) as unknown ) as ( keyof AddressFields )[],
@@ -111,6 +109,18 @@ const AddressForm = ( {
 			values.country
 		);
 	}, [ currentFields, fieldConfig, values.country ] );
+
+	// Clear values for hidden fields.
+	useEffect( () => {
+		addressFormFields.forEach( ( field ) => {
+			if ( field.hidden && values[ field.key ] ) {
+				onChange( {
+					...values,
+					[ field.key ]: '',
+				} );
+			}
+		} );
+	}, [ addressFormFields, onChange, values ] );
 
 	useEffect( () => {
 		if ( type === 'shipping' ) {
@@ -161,8 +171,6 @@ const AddressForm = ( {
 									...values,
 									country: newValue,
 									state: '',
-									city: '',
-									postcode: '',
 								} )
 							}
 							errorId={
@@ -229,16 +237,6 @@ const AddressForm = ( {
 			} ) }
 		</div>
 	);
-};
-
-AddressForm.propTypes = {
-	onChange: PropTypes.func.isRequired,
-	values: PropTypes.object.isRequired,
-	fields: PropTypes.arrayOf(
-		PropTypes.oneOf( Object.keys( defaultAddressFields ) )
-	),
-	fieldConfig: PropTypes.object,
-	type: PropTypes.oneOf( [ 'billing', 'shipping' ] ),
 };
 
 export default withInstanceId( AddressForm );

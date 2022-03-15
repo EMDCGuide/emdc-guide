@@ -3,7 +3,7 @@
  * Common template tags
  *
  * @since 3.0.0
- * @version 7.0.0
+ * @version 10.0.0
  */
 
 // Exit if accessed directly.
@@ -41,7 +41,7 @@ function bp_nouveau_hook( $pieces = array() ) {
  *
  * @since 3.0.0
  *
- * @param string The suffix of the hook.
+ * @param string $suffix The suffix of the hook.
  */
 function bp_nouveau_plugin_hook( $suffix = '' ) {
 	if ( ! $suffix ) {
@@ -65,7 +65,7 @@ function bp_nouveau_plugin_hook( $suffix = '' ) {
  *
  * @since 3.0.0
  *
- * @param string The suffix of the hook.
+ * @param string $suffix The suffix of the hook.
  */
 function bp_nouveau_friend_hook( $suffix = '' ) {
 	if ( ! $suffix ) {
@@ -97,7 +97,6 @@ function bp_nouveau_template_message_classes() {
 	$classes[] = bp_nouveau_get_template_message_type();
 	echo join( ' ', array_map( 'sanitize_html_class', $classes ) );
 }
-
 	/**
 	 * Get the template notice/feedback message type
 	 *
@@ -276,7 +275,7 @@ function bp_nouveau_template_notices() {
  *
  * @since 3.0.0
  *
- * @param string $feedback_id The ID of the message to display
+ * @param string $feedback_id The ID of the message to display.
  */
 function bp_nouveau_user_feedback( $feedback_id = '' ) {
 	if ( ! isset( $feedback_id ) ) {
@@ -379,9 +378,9 @@ function bp_nouveau_after_loop() {
 /**
  * Pagination for loops
  *
- * @param string $position
- *
  * @since 3.0.0
+ *
+ * @param string $position Pagination for loops.
  */
 function bp_nouveau_pagination( $position ) {
 	$screen          = 'dir';
@@ -529,13 +528,10 @@ function bp_nouveau_pagination( $position ) {
  * Display the component's loop classes
  *
  * @since 3.0.0
- *
- * @return string CSS class attributes (escaped).
  */
 function bp_nouveau_loop_classes() {
 	echo esc_attr( bp_nouveau_get_loop_classes() );
 }
-
 	/**
 	 * Get the component's loop classes
 	 *
@@ -659,8 +655,7 @@ function bp_nouveau_loop_is_grid() {
 function bp_nouveau_loop_get_grid_columns() {
 	$bp_nouveau = bp_nouveau();
 	$component  = sanitize_key( bp_current_component() );
-
-	$columns = 1;
+	$columns    = 1;
 
 	if ( ! empty( $bp_nouveau->{$component}->loop_layout ) ) {
 		$columns = (int) $bp_nouveau->{$component}->loop_layout;
@@ -914,7 +909,6 @@ function bp_nouveau_nav_item() {
 function bp_nouveau_nav_id() {
 	echo esc_attr( bp_nouveau_get_nav_id() );
 }
-
 	/**
 	 * Retrieve the ID attribute of the current nav item.
 	 *
@@ -954,7 +948,6 @@ function bp_nouveau_nav_id() {
 function bp_nouveau_nav_classes() {
 	echo esc_attr( bp_nouveau_get_nav_classes() );
 }
-
 	/**
 	 * Retrieve a space separated list of classes for the current nav item.
 	 *
@@ -1030,7 +1023,6 @@ function bp_nouveau_nav_classes() {
 function bp_nouveau_nav_scope() {
 	echo bp_nouveau_get_nav_scope();  // Escaped by bp_get_form_field_attributes().
 }
-
 	/**
 	 * Retrieve the specific scope for the current nav item.
 	 *
@@ -1077,7 +1069,6 @@ function bp_nouveau_nav_scope() {
 function bp_nouveau_nav_link() {
 	echo esc_url( bp_nouveau_get_nav_link() );
 }
-
 	/**
 	 * Retrieve the URL for the current nav item.
 	 *
@@ -1122,7 +1113,6 @@ function bp_nouveau_nav_link() {
 function bp_nouveau_nav_link_id() {
 	echo esc_attr( bp_nouveau_get_nav_link_id() );
 }
-
 	/**
 	 * Retrieve the id attribute of the link for the current nav item.
 	 *
@@ -1165,7 +1155,6 @@ function bp_nouveau_nav_link_id() {
 function bp_nouveau_nav_link_title() {
 	echo esc_attr( bp_nouveau_get_nav_link_title() );
 }
-
 	/**
 	 * Retrieve the title attribute of the link for the current nav item.
 	 *
@@ -1209,7 +1198,6 @@ function bp_nouveau_nav_link_title() {
 function bp_nouveau_nav_link_text() {
 	echo esc_html( bp_nouveau_get_nav_link_text() );
 }
-
 	/**
 	 * Retrieve the html text of the link for the current nav item.
 	 *
@@ -1285,7 +1273,6 @@ function bp_nouveau_nav_has_count() {
 function bp_nouveau_nav_count() {
 	echo esc_html( number_format_i18n( bp_nouveau_get_nav_count() ) );
 }
-
 	/**
 	 * Retrieve the count attribute for the current nav item.
 	 *
@@ -1338,7 +1325,6 @@ function bp_nouveau_nav_count() {
 function bp_nouveau_directory_type_navs_class() {
 	echo esc_attr( bp_nouveau_get_directory_type_navs_class() );
 }
-
 	/**
 	 * Provides default nav wrapper classes.
 	 *
@@ -1395,7 +1381,6 @@ function bp_nouveau_directory_type_navs_class() {
 function bp_nouveau_directory_list_class() {
 	echo esc_attr( bp_nouveau_get_directory_list_class() );
 }
-
 	/**
 	 * Gets the directory nav item list class.
 	 *
@@ -1419,7 +1404,6 @@ function bp_nouveau_directory_nav_object() {
 		echo esc_attr( $obj );
 	}
 }
-
 	/**
 	 * Gets the directory nav item object.
 	 *
@@ -1515,7 +1499,7 @@ function bp_nouveau_container_classes() {
 		}
 
 		// Provide a class token to acknowledge additional extended profile fields added to default account reg screen
-		if ( 'register' === bp_current_component() && bp_is_active( 'xprofile' ) && bp_nouveau_base_account_has_xprofile()) {
+		if ( 'register' === bp_current_component() && bp_is_active( 'xprofile' ) && bp_nouveau_has_signup_xprofile_fields()) {
 			$classes[] = 'extended-default-reg';
 		}
 
@@ -1545,8 +1529,10 @@ function bp_nouveau_container_classes() {
 			}
 		}
 
-		$global_alignment = bp_nouveau_get_temporary_setting( 'global_alignment', bp_nouveau_get_appearance_settings( 'global_alignment' ) );
-		if ( $global_alignment && 'alignnone' !== $global_alignment && current_theme_supports( 'align-wide' ) ) {
+		$global_alignment  = bp_nouveau_get_temporary_setting( 'global_alignment', bp_nouveau_get_appearance_settings( 'global_alignment' ) );
+		$layout_widths     = bp_nouveau_get_theme_layout_widths();
+
+		if ( $global_alignment && 'alignnone' !== $global_alignment && $layout_widths ) {
 			$classes[] = $global_alignment;
 		}
 
@@ -1569,19 +1555,16 @@ function bp_nouveau_container_classes() {
  * Output single item nav container classes
  *
  * @since 3.0.0
- *
- * @return string CSS classes
  */
 function bp_nouveau_single_item_nav_classes() {
 	echo esc_attr( bp_nouveau_get_single_item_nav_classes() );
 }
-
 	/**
 	 * Returns the single item nav container classes
 	 *
 	 * @since 3.0.0
 	 *
-	 * @return string CSS classes
+	 * @return string CSS classes.
 	 */
 	function bp_nouveau_get_single_item_nav_classes() {
 		$classes    = array( 'main-navs', 'no-ajax', 'bp-navs', 'single-screen-navs' );
@@ -1646,19 +1629,16 @@ function bp_nouveau_single_item_nav_classes() {
  * Output single item subnav container classes.
  *
  * @since 3.0.0
- *
- * @return string CSS classes
  */
 function bp_nouveau_single_item_subnav_classes() {
 	echo esc_attr( bp_nouveau_get_single_item_subnav_classes() );
 }
-
 	/**
 	 * Returns the single item subnav container classes.
 	 *
 	 * @since 3.0.0
 	 *
-	 * @return string CSS classes
+	 * @return string CSS classes.
 	 */
 	function bp_nouveau_get_single_item_subnav_classes() {
 		$classes = array( 'bp-navs', 'bp-subnavs', 'no-ajax' );
@@ -1706,19 +1686,16 @@ function bp_nouveau_single_item_subnav_classes() {
  * Output the groups create steps classes.
  *
  * @since 3.0.0
- *
- * @return string CSS classes
  */
 function bp_nouveau_groups_create_steps_classes() {
 	echo esc_attr( bp_nouveau_get_group_create_steps_classes() );
 }
-
 	/**
 	 * Returns the groups create steps customizer option choice class.
 	 *
 	 * @since 3.0.0
 	 *
-	 * @return string CSS classes
+	 * @return string CSS classes.
 	 */
 	function bp_nouveau_get_group_create_steps_classes() {
 		$classes  = array( 'bp-navs', 'group-create-links', 'no-ajax' );
@@ -1751,7 +1728,7 @@ function bp_nouveau_groups_create_steps_classes() {
  *
  * @since 3.0.0
  *
- * @param string $object Optional. The primary object.
+ * @param string $object (Optional) The primary object.
  *
  * @return string The primary object.
  */
@@ -1782,7 +1759,7 @@ function bp_nouveau_get_search_primary_object( $object = '' ) {
  *
  * @since 3.0.0
  *
- * @param array $objects Optional. The list of objects.
+ * @param array $objects (Optional) The list of objects.
  *
  * @return array The list of objects.
  */
@@ -1866,8 +1843,6 @@ function bp_nouveau_search_object_data_attr( $attr = '' ) {
  *
  * @param string $suffix Optional. A string to append at the end of the ID.
  * @param string $sep    Optional. The separator to use between each token.
- *
- * @return string The selector ID.
  */
 function bp_nouveau_search_selector_id( $suffix = '', $sep = '-' ) {
 	$id = join( $sep, array_merge( bp_nouveau_get_search_objects(), (array) $suffix ) );
@@ -1881,8 +1856,6 @@ function bp_nouveau_search_selector_id( $suffix = '', $sep = '-' ) {
  *
  * @param  string $suffix Optional. A string to append at the end of the name.
  * @param  string $sep    Optional. The separator to use between each token.
- *
- * @return string The name attribute of a selector.
  */
 function bp_nouveau_search_selector_name( $suffix = '', $sep = '_' ) {
 	$objects = bp_nouveau_get_search_objects();
@@ -1899,15 +1872,13 @@ function bp_nouveau_search_selector_name( $suffix = '', $sep = '_' ) {
 /**
  * Output the default search text for the search object
  *
+ * @todo 28/09/17 added  'empty( $text )' check to $object query as it wasn't returning output as expected & not returning user set params
+ * This may require further examination - hnla
+ *
  * @since 3.0.0
  *
  * @param  string $text    Optional. The default search text for the search object.
- * @param  string $is_attr Optional. True if it's to be output inside an attribute. False Otherwise.
- *
- * @return string The default search text.
- *
- * @todo 28/09/17 added  'empty( $text )' check to $object query as it wasn't returning output as expected & not returning user set params
- * This may require further examination - hnla
+ * @param  string $is_attr Optional. True if it's to be output inside an attribute. False otherwise.
  */
 function bp_nouveau_search_default_text( $text = '', $is_attr = true ) {
 	$objects = bp_nouveau_get_search_objects();
@@ -2027,7 +1998,6 @@ function bp_nouveau_search_form() {
 	}
 }
 
-
 // Template tags for the directory & user/group screen filters.
 
 /**
@@ -2068,14 +2038,21 @@ function bp_nouveau_current_object() {
 		}
 
 	} else {
-		$data_filter = bp_current_component();
+		$component_id = bp_current_component();
+		if ( ! bp_is_directory() ) {
+			$component_id = bp_core_get_active_components( array( 'slug' => $component_id ) );
+			$component_id = reset( $component_id );
+		}
+
+		$data_filter  = $component_id;
+
 		if ( 'friends' === $data_filter && bp_is_user_friend_requests() ) {
 			$data_filter = 'friend_requests';
 		}
 
 		$component['members_select']   = 'members-order-select';
 		$component['members_order_by'] = 'members-order-by';
-		$component['object']           = bp_current_component();
+		$component['object']           = $component_id;
 		$component['data_filter']      = $data_filter;
 	}
 
@@ -2090,7 +2067,6 @@ function bp_nouveau_current_object() {
 function bp_nouveau_filter_container_id() {
 	echo esc_attr( bp_nouveau_get_filter_container_id() );
 }
-
 	/**
 	 * Get data filter container's ID attribute value.
 	 *
@@ -2133,13 +2109,12 @@ function bp_nouveau_filter_container_id() {
 function bp_nouveau_filter_id() {
 	echo esc_attr( bp_nouveau_get_filter_id() );
 }
-
 	/**
 	 * Get data filter's ID attribute value.
 	 *
 	 * @since 3.0.0
 	 *
-	 * @param string
+	 * @return string
 	 */
 	function bp_nouveau_get_filter_id() {
 		$component = bp_nouveau_current_object();
@@ -2176,13 +2151,12 @@ function bp_nouveau_filter_id() {
 function bp_nouveau_filter_label() {
 	echo esc_html( bp_nouveau_get_filter_label() );
 }
-
 	/**
 	 * Get data filter's label.
  	 *
 	 * @since 3.0.0
 	 *
-	 * @param string
+	 * @return string
 	 */
 	function bp_nouveau_get_filter_label() {
 		$component = bp_nouveau_current_object();
@@ -2232,7 +2206,7 @@ function bp_nouveau_filter_options() {
 	function bp_nouveau_get_filter_options() {
 		$output = '';
 
-		if ( 'notifications' === bp_current_component() ) {
+		if ( bp_nouveau_get_component_slug( 'notifications' ) === bp_current_component() ) {
 			$output = bp_nouveau_get_notifications_filters();
 
 		} else {
@@ -2263,13 +2237,17 @@ function bp_nouveau_filter_options() {
  * @return string HTML.
  */
 function bp_nouveau_get_customizer_link( $args = array() ) {
-	$r = bp_parse_args( $args, array(
-		'capability' => 'bp_moderate',
-		'object'     => 'user',
-		'item_id'    => 0,
-		'autofocus'  => '',
-		'text'       => '',
-	), 'nouveau_get_customizer_link' );
+	$r = bp_parse_args(
+		$args,
+		array(
+			'capability' => 'bp_moderate',
+			'object'     => 'user',
+			'item_id'    => 0,
+			'autofocus'  => '',
+			'text'       => '',
+		),
+		'nouveau_get_customizer_link'
+	);
 
 	if ( empty( $r['capability'] ) || empty( $r['autofocus'] ) || empty( $r['text'] ) ) {
 		return '';
@@ -2392,6 +2370,10 @@ function bp_nouveau_signup_form( $section = 'account_details' ) {
 		if ( 'signup_password' === $name ) {
 			?>
 			<label for="pass1"><?php esc_html_e( 'Choose a Password (required)', 'buddypress' ); ?></label>
+			<?php if ( isset( buddypress()->signup->errors['signup_password'] ) ) :
+				nouveau_error_template( buddypress()->signup->errors['signup_password'] );
+			endif; ?>
+
 			<div class="user-pass1-wrap">
 				<div class="wp-pwd">
 					<div class="password-input-wrapper">
@@ -2634,14 +2616,19 @@ function bp_nouveau_submit_button( $action, $object_id = 0 ) {
 		printf( '<div class="submit">%s</div>', $submit_input );
 	}
 
+	$nonce = $submit_data['nonce'];
+	if ( isset( $submit_data['nonce_placeholder_value'] ) ) {
+		$nonce = sprintf( $nonce, $submit_data['nonce_placeholder_value'] );
+	}
+
 	if ( empty( $submit_data['nonce_key'] ) ) {
-		wp_nonce_field( $submit_data['nonce'] );
+		wp_nonce_field( $nonce );
 	} else {
 		if ( $object_id ) {
 			$submit_data['nonce_key'] .= '_' . (int) $object_id;
 		}
 
-		wp_nonce_field( $submit_data['nonce'], $submit_data['nonce_key'] );
+		wp_nonce_field( $nonce, $submit_data['nonce_key'] );
 	}
 
 	if ( ! empty( $submit_data['after'] ) ) {
@@ -2682,4 +2669,68 @@ function nouveau_error_template( $message = '', $type = '' ) {
 	</div>
 
 	<?php
+}
+
+/**
+ * Checks whether the Activity RSS links should be output.
+ *
+ * @since 8.0.0
+ *
+ * @return bool True to output the Activity RSS link. False otherwise.
+ */
+function bp_nouveau_is_feed_enable() {
+	$retval     = false;
+	$bp_nouveau = bp_nouveau();
+
+	if ( bp_is_active( 'activity' ) && 'activity' === bp_current_component() ) {
+		if ( isset( $bp_nouveau->activity->current_rss_feed ) ) {
+			$bp_nouveau->activity->current_rss_feed = array(
+				'link'               => '',
+				'tooltip'            => _x( 'RSS Feed', 'BP RSS Tooltip', 'buddypress' ),
+				'screen_reader_text' => _x( 'RSS', 'BP RSS screen reader text', 'buddypress' ),
+			);
+
+			if ( ! bp_is_user() && ! bp_is_group() ) {
+				$retval = bp_activity_is_feed_enable( 'sitewide' );
+
+				if ( $retval ) {
+					$bp_nouveau->activity->current_rss_feed['link'] = bp_get_sitewide_activity_feed_link();
+				}
+			} elseif ( bp_is_user_activity() ) {
+				$retval = bp_activity_is_feed_enable( 'personal' );
+
+				if ( $retval ) {
+					$bp_nouveau->activity->current_rss_feed['link'] = trailingslashit( bp_displayed_user_domain() . bp_nouveau_get_component_slug( 'activity' ) . '/feed' );
+				}
+
+				if ( bp_is_active( 'friends' ) && bp_is_current_action( bp_nouveau_get_component_slug( 'friends' ) ) ) {
+					$retval = bp_activity_is_feed_enable( 'friends' );
+
+					if ( $retval ) {
+						$bp_nouveau->activity->current_rss_feed['link'] = trailingslashit( bp_displayed_user_domain() . bp_nouveau_get_component_slug( 'activity' ) . '/' . bp_nouveau_get_component_slug( 'friends' ) . '/feed' );
+					}
+				} elseif ( bp_is_active( 'groups' ) && bp_is_current_action( bp_nouveau_get_component_slug( 'groups' ) ) ) {
+					$retval = bp_activity_is_feed_enable( 'mygroups' );
+
+					if ( $retval ) {
+						$bp_nouveau->activity->current_rss_feed['link'] = trailingslashit( bp_displayed_user_domain() . bp_nouveau_get_component_slug( 'activity' ) . '/' . bp_nouveau_get_component_slug( 'groups' ) . '/feed' );
+					}
+				} elseif ( bp_activity_do_mentions() && bp_is_current_action( 'mentions' ) ) {
+					$retval = bp_activity_is_feed_enable( 'mentions' );
+
+					if ( $retval ) {
+						$bp_nouveau->activity->current_rss_feed['link'] = trailingslashit( bp_displayed_user_domain() . bp_nouveau_get_component_slug( 'activity' ) . '/mentions/feed' );
+					}
+				} elseif ( bp_activity_can_favorite() && bp_is_current_action( 'favorites' ) ) {
+					$retval = bp_activity_is_feed_enable( 'mentions' );
+
+					if ( $retval ) {
+						$bp_nouveau->activity->current_rss_feed['link'] = trailingslashit( bp_displayed_user_domain() . bp_nouveau_get_component_slug( 'activity' ) . '/favorites/feed' );
+					}
+				}
+			}
+		}
+	}
+
+	return $retval;
 }

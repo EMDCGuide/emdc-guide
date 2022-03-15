@@ -1,118 +1,142 @@
-=== Logo Slider WP - Unlimited Logo Showcase & Logo Carousel Slider Plugin ===
+=== Logo Slider - Logo Carousel, Logo Showcase & Client Logo Slider WordPress Plugin ===
 Contributors: LogicHunt, themearth, vaskarjewel, sudarshan955
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=vaspal%2ekt%40gmail%2ecom&lc=US&item_name=LogicHunt&item_number=wp&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted
-Tags: logo, brand slider, carousel, sponsors,  slider, our brand, logo showcase, client slider, logo carousel slider, logo slider, wordpress logo slider, wordpress logo slider carousel plugin, clients, clients logo slider, clients logos show, image carousel, image slider, logo, logo carousel, logo carousel slider, logo showcase, logo slide, logo slider, logo slideshow, logos, partners, sponsors, sponsors logo slider
-Requires at least: 4.1
-Tested up to: 5.7.1
-Stable tag: 2.4.0
+Tags: logo slider, logo carousel, logo showcase, logo grid, client slider, brand slider, sponsors slider, logo carousel slider, wordpress logo slider, wordpress logo slider, wordpress logo slider, clients, clients logo slider, clients logos show, image carousel, image slider, logo slideshow, partners, sponsors, sponsors logo slider, brands logo carousel, affiliates, supporters
+Requires at least: 4.3
+Tested up to: 5.9.1
+Stable tag: 3.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Logo Slider WP is The Best Responsive Logo Showcase Carousel Slider. This Logo Carousel Slider Can Display Unlimited Logo with Infinity Slides Loop.
+Logo Slider WP is The Best Responsive Logo Showcase & Carousel Slider WordPress Plugin. This Logo Carousel Slider Can Display Unlimited Logo with Infinity Slides Loop.
 
 == Description ==
 
-### Logo Slider by [LogicHunt.com](https://logichunt.com)
+It's a very simple, lightweight & easy to implement responsive logo carousel slider. No need for any coding skills to showcase your company or client's brand logo.
 
->[ Plugin Page](https://logichunt.com/product/wordpress-logo-slider) | [ Live Demo](http://logichunt.net/wpdemo/wordpress-logo-slider) | [Get Support](http://logichunt.com/support) | [Paid Support](https://logichunt.com/product/wordpress-logo-slider)
+### Logo Slider WP by [LogicHunt.com](https://logichunt.com)
+
+>[__Demo__](http://logichunt.net/wpdemo/wordpress-logo-slider) | [__Documentation__](http://logichunt.net/docs/wordpress-logo-slider) | [__Support__](https://logichunt.com/support/)  | [__Premium Version__](https://logichunt.com/product/wordpress-logo-slider)
 
 = The Best WordPress Logo Showcase Carousel Slider with Unlimited Brand Logo with Infinity Slides Loop. Full Responsive, Multi-usage & Easy to Use. =
 
-Logo Slider is a responsive and easy to implement Logo Showcase carousel slider plugin for wordpress. With this Logo Slider plugin you can display a list of clients, supporters, partners or sponsors logos in your website. You can Create a grid of images with suitable links. This logo showcase plugin works great on mobiles and tablets.
-
+Logo Slider is a responsive and easy to use Logo Showcase carousel slider plugin for wordpress. With this Logo Slider plugin you can display a list of clients, supporters, partners or sponsors logos in your website. You can Create a grid of images with suitable links. This logo showcase plugin works great on mobiles and tablets.
 
 This Logo Carousel plugin allows you to add a logo showcase to any page of your wordPress site using an easy to use shortcodes. This Logo Carousel Slider Can Display Unlimited Logo with Infinity Slides Loop.
 
 
-Available Shortcode Options : [Plugin Homepage](http://logichunt.com/product/wordpress-logo-slider/)
+= Basic Input Fields =
+
+*   Logo Image
+*   Brand or Company Name
+*   Tooltip Text
+*   Brand URL
+*   Item Description
+
+
+= What’s New? =
+
+*   One-Click Shortcode Generator.
+*   Grid and Slider Layouts.
+*   Unlimited Showcase and Logo Item.
+*   Separate Settings for Each Shortcode/Showcase.
+*   100+ Hover Animation and Effect.
+*   Custom Tooltip Text for Each Logo.
+*   Smooth Ticker Enabled Carousel Slider.
+*   Coverflow Transition Effect.
+*   Lazy Loading Carousel Slider.
+*   Full True RTL Supported. 
+*   Fully Customizable Title and Subtitle of the Showcase Area Header.
+*   Set tooltip text, background, border and arrows color and dimension.
+*   Adjust Item title & description font size, color, weight and  bottom margin.
+*   Set Showcase Area Background IMAGE/COLOR, Overlay Color, Width, Padding, Margin etc. 
+
 
 = Features of the plugin includes =
 
-*   Custom Logo Order by Drag & Drop . (NEW - Enjoy Pro Feature Free)
-*   Brand Description.(NEW)
-*   Working External Company URL.(NEW)
-*   Multiple Instances on One Page.
-*   Unlimited Logos Clients
-*   CSS3 Animation Effects
-*   Touch swipe navigation.
-*   Infinity Slides loop.
-*   Control Displayable Slides Item According Device Width( Viewport ).
-*   Responsive & Touch Friendly Slides.
-*   Strong Administrator Settings
-*   Background color for slider area.
-*   Shortcode System.
-*   Fully responsive and mobile ready.
-*   Strong Settings Options Panel
-*   One-Click Shortcode Button.
-*   Carousel Options.
-*   Touch Enabled Navigation.
-*   Mouse Drag Enabled.
+*   Show unlimited logos.
+*   Reorder logos by Drag & Drop.
+*   Easy To Use – no coding required.
+*   User-friendly Shortcode Generator.
+*   100% Responsive and Mobile friendly.
+*   Generate unlimited showcase shortcode.  
+*   Control the number of showcase columns on different Device Viewport.
+*   Fastest Support By Core Developer Team.
+*   Image, Link, Title, Tooltip Text  & Description option for each item.
+*   Enable/disable full item or logo image border-color, width, radius & hover color.   
+*   Enable/Disable section header.
+*   CSS3 based animation effects.
+*   Custom Link for each item.
+*   Use multiple instances on same Page.
+*   Infinity slides loop.
+*   Smooth auto-play/ Ticker Carousel Slider.
+*   Enable/Disable auto-play.
+*   Control carousel sliding speed.
+*   Customize slider pagination & dots color.
+*   Show Nav/ Dot on Over.
+*   Slider auto pause On Hover.
+*   Infinite loop for the slider.
+*   Control slider transition Speed & Delay.
+*   Carousel item vertically top and middle alignment.
+*   Icon & text based navigation button.
+*   Lazy load enabled carousel slider.
+*   Pagination and active color.
+*   Show/hide pagination on mobile.
+*   Set a maximum number of item to show.
+*   Show/hide navigation arrows & pagination dots.
+*   Control slider pagination speed.
+*   Responsive & touch friendly slides.
+*   Touch and Swipe enabled navigation.
+*   Mouse Draggable & Grab Cursor style.
+*   Preloader Settings
+*   Control Tooltip position. 
+*   Five tooltip animation.
+*   Set tooltip animation duration & delay. 
+*   Hover and click tooltip trigger type.
+*   Background image & overlay color for slider area.
+*   100+ hover animation and Effect for showcase.
+*   Works on iOS, Android and latest Desktop browsers
 
 
-= How to use =
+= For fast support, features request, and bug reporting =
 
-1. First installed and active the plugin
-2. To add new logo, go to Logo Slider WP >> Add New
-3. Add company name, link and image. To get best result please try to use logo with same dimension.
-4. To display multiple Slider, create categories under "Logo Slider WP >> Logo Categories" and create categories according your demand.
-5. Use the shortcode on any post, page, widget or theme to display the Logo Slider WP.
-6. Set default options from plugin settings menu & enjoy.
+If you have any problem or feature request for this plugin, please feel free to contact us!
+ [__Contact Us!__](https://logichunt.com/contact-us) | [__Get Support__](https://logichunt.com/support/) 
 
 
+= PREMIUM UPGRADE =
 
-= For use in post or page :- =
-<code>[logo-slider]</code>
-
-= For specific category please use category slug in shortcode as :- =
-<code>[logo-slider cat="your-cat-slug" ]</code>
-
-= For use template php file:- =
-<code><?php echo do_shortcode('[logo-slider]'); ?></code>
-
-= Available Shortcode Options =
-
-Visit Product Page for All Shortcode Options: [ Logo Slider Page.](https://logichunt.com/product/wordpress-logo-slider/)
-
-Report a Bug or Request a Feature:  [Contact Now](https://logichunt.com/contact-us/)
+For premium upgrade, please go  [__here__](https://logichunt.com/product/wordpress-logo-slider)
 
 
 == Installation ==
 
-### Uploading in WordPress Dashboard
+= Using The WordPress Dashboard =
 
-1. First download the plugin ZIP file from wordpress.org
-2. Log in to your website administrator panel
-3. Go to the 'Add New' in the plugins dashboard, click “Upload Plugin”
-4. Upload [Logo Slider WP](http://wordpress.org/plugins/logo-slider-wp) ZIP file by choosing it from your download location
-5. Click Install Now button
-6. Then click Activate the Plugin button.
-7. You can see the plugin installed on Wordpress left menu.
+This is the simplest method of installing a plugin.
 
-### Using The WordPress Plugin Dashboard
+1. Log in to your WordPress dashboard
+2. Navigate to "Plugins > Add New"  
+3. Find the search form in the top-right and type "logo-slider-wp"
+4. To install the plugin click the "Install Now"
+5. Click "Activate" to activate the plugin
 
-1. Go to the 'Add New' in the plugins dashboard
-2. Search for 'logo-slider-wp' or 'Logo Slider WP'
-3. Click Install Now button
-4. Then click Activate Plugin button
-5. You can see the plugin installed on Wordpress left menu.
+= Uploading in WordPress Dashboard =
 
-Now you can configure your Plugins options from settings.
+1. Download the "logo-slider-wp.zip" from WordPress.org
+1. Log in to your WordPress dashboard
+1. Navigate to "Plugins > Add New"  
+2. Click the "Upload Plugin" at the top of the screen.
+3. Select "logo-slider-wp.zip" from your computer
+4. Click 'Install Now'
+5. Activate the plugin in the Plugin dashboard
 
 
-= For use in post or page :- =
-<code>[logo-slider]</code>
 
-= For specific category please use category slug in shortcode as :- =
-<code>[logo-slider cat="your-cat-slug" ]</code>
+== Frequently Asked Questions ==
 
-= For use template php file:- =
-<code><?php echo do_shortcode('[logo-slider]'); ?></code>
-
-= Available Shortcode Options =
-
-Visit Product Page for All Shortcode Options: [ Logo Slider Page.](https://logichunt.com/product/wordpress-logo-slider/)
-
-Report a Bug or Request a Feature:  [Contact Now](https://logichunt.com/contact-us/)
+= How Can I Manage Logo Order ? =
+It's very simple. You can easily do it by drag and drop and you don't need to pay to get the feature.
 
 
 
@@ -130,6 +154,50 @@ Report a Bug or Request a Feature:  [Contact Now](https://logichunt.com/contact-
 10. Demo Preview
 
 == Changelog ==
+
+= 3.1.3 =
+* Added Categories column to  the all logos list
+* Single Carousel multiple instances issue solved
+
+= 3.1.2 =
+* Added New Options
+* Update General Style
+
+= 3.1.1 =
+* fixed dynamic style loading issue for multiple layout
+
+
+= 3.0.0 =
+* Added Shortcode Generator
+* Core System Upgraded
+* File Structure Rearranged
+
+= 2.8.0 =
+* Double slash removed from assets URL
+
+= 2.7.0 =
+* Check Latest Compatibility
+
+= 2.6.0 =
+* File Structure Rearranged
+* Check Latest Compatibility
+
+= 2.5.0 =
+*Added Ticker Layout
+*Added Autoplay timeout Speed
+*Removed Slider Deprecated Settings
+
+= 2.4.4 =
+*Removed Item Order from default settings
+*Removed Order By from default settings
+*Improved Usage Guidelines
+*Managed assets enqueue only for the shortcode pages.
+
+= 2.4.3 =
+*Compatible with WordPress 5.8
+
+= 2.4.2 =
+* Add Vertical Align Center Support
 
 = 2.4.1 =
 * Exclude jetpack lazy load from logo

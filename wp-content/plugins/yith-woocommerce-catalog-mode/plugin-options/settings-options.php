@@ -1,18 +1,13 @@
 <?php
 /**
- * This file belongs to the YITH Plugin Framework.
+ * Base settings options tab
  *
- * This source file is subject to the GNU GENERAL PUBLIC LICENSE (GPL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://www.gnu.org/licenses/gpl-3.0.txt
- *
- * @package YITH WooCommerce Catalog Mode
+ * @package YITH\CatalogMode
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-} // Exit if accessed directly
+	exit; // Exit if accessed directly.
+}
 
 return array(
 	'settings' => array(
@@ -24,7 +19,7 @@ return array(
 			'name'      => esc_html__( 'Catalog mode for administrators', 'yith-woocommerce-catalog-mode' ),
 			'type'      => 'yith-field',
 			'yith-type' => 'onoff',
-			'desc'      => esc_html__( 'Choose to enable the Catalog Mode for admins.', 'yith-woocommerce-catalog-mode' ),
+			'desc'      => esc_html__( 'If enabled, the Catalog Mode rules will also work for admin users.', 'yith-woocommerce-catalog-mode' ),
 			'id'        => 'ywctm_admin_view',
 			'default'   => 'yes',
 		),
@@ -38,8 +33,8 @@ return array(
 		),
 		'hide_add_to_cart'        => array(
 			'type'      => 'yith-field',
-			'yith-type' => 'yith-multiple-field',
-			'name'      => esc_html__( 'Hide "Add to Cart" in:', 'yith-woocommerce-catalog-mode' ),
+			'yith-type' => 'inline-fields',
+			'name'      => esc_html__( '"Add to Cart" settings in Catalog Mode', 'yith-woocommerce-catalog-mode' ),
 			'desc'      => esc_html__( 'Choose where to hide "Add to Cart".', 'yith-woocommerce-catalog-mode' ),
 			'id'        => 'ywctm_hide_add_to_cart_settings',
 			'fields'    => array(
@@ -72,7 +67,7 @@ return array(
 			'name'      => esc_html__( 'Hide product variations', 'yith-woocommerce-catalog-mode' ),
 			'type'      => 'yith-field',
 			'yith-type' => 'onoff',
-			'desc'      => esc_html__( 'Use this option to hide product variations where "add to cart" is hidden.', 'yith-woocommerce-catalog-mode' ),
+			'desc'      => esc_html__( 'Use this option to hide product variations where "Add to cart" is hidden.', 'yith-woocommerce-catalog-mode' ),
 			'id'        => 'ywctm_hide_variations',
 			'default'   => 'no',
 		),

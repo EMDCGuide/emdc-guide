@@ -35,3 +35,12 @@
 .inside .cmacc-restriction-settings .access_restricted_by_specificdate_con span.from span { width: 25px; display: inline-block; text-align:right; padding-right:10px; }
 .inside .cmacc-restriction-settings .access_restricted_by_specificdate_con span.to { display:block; margin-top:10px; }
 .inside .cmacc-restriction-settings .access_restricted_by_specificdate_con span.to span { width: 25px; display: inline-block; text-align:right; padding-right:10px; }
+
+.cmsar_menu_options { clear:both; float:left; width:100%; }
+.cmsar_menu_options .blocker { width:100%; background:#eee; height:0px; position:absolute; margin-left:-10px; opacity:0.5; margin-top:38px; }
+.cmsar_menu_options select { width:100%; }
+.cmsar_menu_options .is_logout_url { margin-top:10px; clear:both; float:left; width:100%; margin-bottom:10px; }
+.cmsar_menu_options .visible_for { clear:both; float:left; width:100%; margin-bottom:10px; }
+.cmsar_menu_options .cmsar_menu_all_selected_roles { margin-top:10px; }
+.cmsar_menu_options .cmsar_menu_all_selected_roles .cmsar_menu_roles { margin-top:10px; }
+.cmsar_menu_options .cmsar_menu_all_selected_roles .cmsar_menu_roles > div { width:33.33%; float:left; margin-bottom:5px; }

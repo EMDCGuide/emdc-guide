@@ -7,8 +7,8 @@
  * @link       http://logichunt.com
  * @since      1.0.0
  *
- * @package    logosliderwpcarousel
- * @subpackage logosliderwpcarousel/admin/partials
+ * @package    lgxowlcarousel
+ * @subpackage lgxowlcarousel/admin/partials
  */
 if (!defined('WPINC')) {
     die;
@@ -19,8 +19,7 @@ if (!defined('WPINC')) {
 
 <div class="wrap">
     <div id="icon-options-general" class="icon32"></div>
-    <h2><?php _e('Logo Slider WP: Default Settings', 'logo-slider-wp'); ?></h2>
-    <h3><?php _e('Important: Plugin default settings override by shortcode parameter.', 'logo-slider-wp'); ?></h3>
+    <h2><?php _e('Logo Slider: Settings', 'logo-slider-wp'); ?></h2>
 
     <div id="poststuff">
 

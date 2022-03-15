@@ -24,9 +24,11 @@ class InstalledExtensions {
 		$automatewoo = self::get_automatewoo_extension_data();
 		$mailchimp   = self::get_mailchimp_extension_data();
 		$facebook    = self::get_facebook_extension_data();
+		$pinterest   = self::get_pinterest_extension_data();
 		$google      = self::get_google_extension_data();
 		$hubspot     = self::get_hubspot_extension_data();
 		$amazon_ebay = self::get_amazon_ebay_extension_data();
+		$mailpoet    = self::get_mailpoet_extension_data();
 
 		if ( $automatewoo ) {
 			$data[] = $automatewoo;
@@ -40,6 +42,10 @@ class InstalledExtensions {
 			$data[] = $facebook;
 		}
 
+		if ( $pinterest ) {
+			$data[] = $pinterest;
+		}
+
 		if ( $google ) {
 			$data[] = $google;
 		}
@@ -50,6 +56,10 @@ class InstalledExtensions {
 
 		if ( $amazon_ebay ) {
 			$data[] = $amazon_ebay;
+		}
+
+		if ( $mailpoet ) {
+			$data[] = $mailpoet;
 		}
 
 		return $data;
@@ -66,9 +76,11 @@ class InstalledExtensions {
 			'mailchimp-for-woocommerce',
 			'creative-mail-by-constant-contact',
 			'facebook-for-woocommerce',
+			'pinterest-for-woocommerce',
 			'google-listings-and-ads',
 			'hubspot-for-woocommerce',
 			'woocommerce-amazon-ebay-integration',
+			'mailpoet',
 		];
 	}
 
@@ -153,6 +165,37 @@ class InstalledExtensions {
 	}
 
 	/**
+	 * Get Pinterest extension data.
+	 *
+	 * @return array|bool
+	 */
+	protected static function get_pinterest_extension_data() {
+		$slug = 'pinterest-for-woocommerce';
+
+		if ( ! PluginsHelper::is_plugin_installed( $slug ) ) {
+			return false;
+		}
+
+		$data         = self::get_extension_base_data( $slug );
+		$data['icon'] = plugins_url( 'images/marketing/pinterest.svg', WC_ADMIN_PLUGIN_FILE );
+
+		// TODO: Finalise docs url.
+		$data['docsUrl'] = 'https://woocommerce.com/document/pinterest-for-woocommerce/?utm_medium=product';
+
+		if ( 'activated' === $data['status'] && class_exists( 'Pinterest_For_Woocommerce' ) ) {
+			$pinterest_onboarding_completed = Pinterest_For_Woocommerce()::is_setup_complete();
+			if ( $pinterest_onboarding_completed ) {
+				$data['status']      = 'configured';
+				$data['settingsUrl'] = admin_url( 'admin.php?page=wc-admin&path=/pinterest/settings' );
+			} else {
+				$data['settingsUrl'] = admin_url( 'admin.php?page=wc-admin&path=/pinterest/landing' );
+			}
+		}
+
+		return $data;
+	}
+
+	/**
 	 * Get Google extension data.
 	 *
 	 * @return array|bool
@@ -178,7 +221,7 @@ class InstalledExtensions {
 				$data['settingsUrl'] = admin_url( 'admin.php?page=wc-admin&path=/google/start' );
 			}
 
-			$data['docsUrl'] = 'https://docs.woocommerce.com/document/google-listings-and-ads/';
+			$data['docsUrl'] = 'https://woocommerce.com/document/google-listings-and-ads/?utm_medium=product';
 		}
 
 		return $data;
@@ -238,7 +281,39 @@ class InstalledExtensions {
 			}
 
 			$data['settingsUrl'] = admin_url( 'admin.php?page=codisto-settings' );
-			$data['docsUrl']     = 'https://docs.woocommerce.com/document/getting-started-with-woocommerce-amazon-ebay-integration/';
+			$data['docsUrl']     = 'https://woocommerce.com/document/multichannel-for-woocommerce-google-amazon-ebay-walmart-integration/?utm_medium=product';
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Get MailPoet extension data.
+	 *
+	 * @return array|bool
+	 */
+	protected static function get_mailpoet_extension_data() {
+		$slug = 'mailpoet';
+
+		if ( ! PluginsHelper::is_plugin_installed( $slug ) ) {
+			return false;
+		}
+
+		$data         = self::get_extension_base_data( $slug );
+		$data['icon'] = plugins_url( 'images/marketing/mailpoet.svg', WC_ADMIN_PLUGIN_FILE );
+
+		if ( 'activated' === $data['status'] && class_exists( '\MailPoet\API\API' ) ) {
+			$mailpoet_api = \MailPoet\API\API::MP( 'v1' );
+
+			if ( ! method_exists( $mailpoet_api, 'isSetupComplete' ) || $mailpoet_api->isSetupComplete() ) {
+				$data['status']      = 'configured';
+				$data['settingsUrl'] = admin_url( 'admin.php?page=mailpoet-settings' );
+			} else {
+				$data['settingsUrl'] = admin_url( 'admin.php?page=mailpoet-newsletters' );
+			}
+
+			$data['docsUrl']    = 'https://kb.mailpoet.com/';
+			$data['supportUrl'] = 'https://www.mailpoet.com/support/';
 		}
 
 		return $data;
@@ -265,7 +340,7 @@ class InstalledExtensions {
 			'status'      => $status,
 			'name'        => $plugin_data['Name'],
 			'description' => html_entity_decode( wp_trim_words( $plugin_data['Description'], 20 ) ),
-			'supportUrl'  => 'https://woocommerce.com/my-account/create-a-ticket/',
+			'supportUrl'  => 'https://woocommerce.com/my-account/create-a-ticket/?utm_medium=product',
 		];
 	}
 

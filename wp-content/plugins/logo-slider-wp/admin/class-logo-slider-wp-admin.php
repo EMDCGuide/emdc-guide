@@ -56,6 +56,17 @@ class Logo_Slider_WP_Admin {
 
     private $version;
 
+
+    /**
+     * The version of this plugin.
+     *
+     * @since    1.0.0
+     * @access   private
+     * @var      string    $version    The current version of this plugin.
+     */
+    private $meta_form;
+
+
     /**
      * Initialize the class and set its properties.
      *
@@ -70,11 +81,24 @@ class Logo_Slider_WP_Admin {
         $this->version = $version;
         $this->settings_api = new Lgx_Carousel_Settings_API($plugin_name, $version);
 
+        $this->init_meta_form();
 
+        //For Sidebar: -pro.php
         $this->plugin_base_file = plugin_basename(plugin_dir_path(__FILE__).'../' . $this->plugin_name . '.php');
 
     }
 
+
+    /**
+     *
+     * Initialized Meta field
+     *
+     */
+    private function init_meta_form() {
+        //wp_die( trailingslashit( dirname(  ) )  );
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/LgxMetaForm.php';
+        $this->meta_form = new LogoSLiderWpMetaForm();
+    }
 
 
 
@@ -82,9 +106,12 @@ class Logo_Slider_WP_Admin {
     /**
      * Declare Custom Post Type For Carousal
      * @since 1.0.0
+     *  previous: logosliderwp_initialize
+     * New:
+     *
      */
 
-    public function logosliderwp_initialize() {
+    public function register_post_type_for_logo_slider() {
 
         //custom post type labels
         $labels_logosliderwp = array(
@@ -111,7 +138,7 @@ class Logo_Slider_WP_Admin {
             'public'              => true,
             'show_ui'             => true,
             'show_in_menu'        => true,
-            'menu_position'       => 20, // OLD 5
+            'menu_position'       => 80, // OLD 5, 21
             'menu_icon'   			=> 'dashicons-images-alt',
             'show_in_nav_menus'   => true,
             'show_in_admin_bar'   => true,
@@ -133,7 +160,6 @@ class Logo_Slider_WP_Admin {
             'label'          => __('Categories', 'logo-slider-wp'),
             'show_ui'        => true,
             'query_var'      => true,
-            'show_admin_column' => true,
             'singular_label' => __('Logo Category', 'logo-slider-wp'),
         );
         register_taxonomy('logosliderwpcat', array('logosliderwp'), $logosliderwp_cat_args);
@@ -145,13 +171,13 @@ class Logo_Slider_WP_Admin {
      *
      * @since    1.0.0
      */
-    public function add_meta_boxes_metabox() {
+    public function adding_meta_boxes_for_logosliderwp() {
 
-        //portfoliopro meta box
+        //v_logo_metabox_logosliderwp //metabox_logosliderwp_display
         add_meta_box(
-            'v_logo_metabox_logosliderwp', __( 'Company Information', $this->plugin_name ), array(
+            'lgx_logosliderwp_metabox_postbox', __( 'Company Information', $this->plugin_name ), array(
             $this,
-            'metabox_logosliderwp_display'
+            'meta_fields_display_for_logosliderwp'
         ), 'logosliderwp', 'normal', 'high'
         );
 
@@ -169,57 +195,9 @@ class Logo_Slider_WP_Admin {
      *
      */
 
-    public function metabox_logosliderwp_display( $post ) {
+    public function meta_fields_display_for_logosliderwp( $post ) {
 
-        $fieldValues = get_post_meta( $post->ID, '_logosliderwpmeta', true );
-
-        wp_nonce_field( 'metaboxlogosliderwp', 'metaboxlogosliderwp[nonce]' );
-
-        echo '<div id="logosliderwp_metabox_wrapper">';
-
-        $company_url        = isset( $fieldValues['company_url'] ) ? $fieldValues['company_url'] : '';
-        $company_name       = isset( $fieldValues['company_name'] ) ? $fieldValues['company_name'] : '';
-        $company_desc        = isset( $fieldValues['company_desc'] ) ? $fieldValues['company_desc'] : '';
-        ?>
-
-
-        <table class="form-table">
-            <tbody>
-
-            <?php do_action( 'logosliderwp_meta_fields_before_start', $fieldValues ); ?>
-
-            <tr valign="top">
-                <td><?php _e( 'Brand Name', $this->plugin_name ) ?></td>
-                <td>
-                    <input type="text" name="metaboxlogosliderwp[company_name]" value='<?php echo $company_name; ?>'/>
-                </td>
-            </tr>
-
-            <tr valign="top">
-                <td><?php _e( 'Brand URL', $this->plugin_name ) ?></td>
-                <td>
-                    <input type="url" name="metaboxlogosliderwp[company_url]" value='<?php echo $company_url; ?>'/>
-                </td>
-            </tr>
-
-            <tr valign="top">
-                <td><?php _e( 'Brand Description', $this->plugin_name ) ?></td>
-                <td>
-                    <textarea rows="5" cols="45"  name="metaboxlogosliderwp[company_desc]" placeholder="Brand description"><?php echo $company_desc; ?></textarea>
-                </td>
-            </tr>
-
-            <?php
-            //allow others to show more custom fields at end
-            do_action( 'logosliderwp_meta_fields_after_start', $fieldValues );
-            ?>
-
-            </tbody>
-        </table>
-
-        <?php
-        echo '</div>';
-
+        require_once plugin_dir_path( __FILE__ ) . 'partials/meta_fields_display_for_logosliderwp.php';
 
     }
 
@@ -232,7 +210,7 @@ class Logo_Slider_WP_Admin {
      * @param        int $post_id //The ID of the post being save
      * @param         bool //Whether or not the user has the ability to save this post.
      */
-    public function save_post_metabox_logosliderwp( $post_id, $post ) {
+    public function save_post_metadata_of_logosliderwp( $post_id, $post ) {
 
         $post_type = 'logosliderwp';
 
@@ -245,15 +223,16 @@ class Logo_Slider_WP_Admin {
 
             $postData = $_POST['metaboxlogosliderwp'];
 
-            $saveableData = array();
+            $savable_Data = array();
 
-            if ( $this->user_can_save( $post_id, 'metaboxlogosliderwp', $postData['nonce'] ) ) {
+            if ( $this->user_can_save_for_logo_slider_meta( $post_id, 'metaboxlogosliderwp', $postData['nonce'] ) ) {
 
-                $saveableData['company_url']  = esc_url( $postData['company_url'] );
-                $saveableData['company_name']  = sanitize_text_field( $postData['company_name'] );
-                $saveableData['company_desc']  = sanitize_textarea_field( $postData['company_desc'] );
+                $savable_Data['company_url']   = esc_url( $postData['company_url'] );
+                $savable_Data['company_name']  = sanitize_text_field( $postData['company_name'] );
+                $savable_Data['tooltip_text']  = sanitize_text_field( $postData['tooltip_text'] );
+                $savable_Data['company_desc']  = sanitize_textarea_field( $postData['company_desc'] );
 
-                update_post_meta( $post_id, '_logosliderwpmeta', $saveableData );
+                update_post_meta( $post_id, '_logosliderwpmeta', $savable_Data );
             }
         }
     }// End  Meta Save
@@ -262,14 +241,14 @@ class Logo_Slider_WP_Admin {
     /**
      * Determines whether or not the current user has the ability to save meta data associated with this post.
      *
-     * user_can_save
+     * user_can_save_for_logo_slider_meta
      *
      * @param        int $post_id // The ID of the post being save
      * @param        bool /Whether or not the user has the ability to save this post.
      *
      * @since 1.0
      */
-    public function user_can_save( $post_id, $action, $nonce ) {
+    public function user_can_save_for_logo_slider_meta( $post_id, $action, $nonce ) {
 
         $is_autosave    = wp_is_post_autosave( $post_id );
         $is_revision    = wp_is_post_revision( $post_id );
@@ -290,15 +269,17 @@ class Logo_Slider_WP_Admin {
      */
     public function add_plugin_admin_menu() {
 
-        $this->plugin_screen_hook_suffix  = add_submenu_page('edit.php?post_type=logosliderwp', __('Logo Slider Default Settings', 'logo-slider-wp'), __('Default Settings', 'logo-slider-wp'), 'manage_options', 'logosliderwpsettings', array($this, 'display_plugin_admin_settings'));
+        //  $this->plugin_screen_hook_suffix  = add_submenu_page('edit.php?post_type=logosliderwp', __('Logo Slider Default Settings', 'logo-slider-wp'), __('Default Settings', 'logo-slider-wp'), 'manage_options', 'logosliderwpsettings', array($this, 'display_plugin_admin_settings_dep'));
         $this->plugin_screen_hook_suffix  = add_submenu_page('edit.php?post_type=logosliderwp', __('Usage & Help', 'logo-slider-wp'), __('Usage & Help', 'logo-slider-wp'), 'manage_options', 'logosliderwphelpuage', array($this, 'display_plugin_admin_usage_help'));
 
     }
 
     /**
-     * Change Feature iamge input Position
+     * Change Feature image input Position
+     * old: logo_slider_wp_img_box
+     * new: changing_meta_box_position_of_brand_logo
      */
-    public  function logo_slider_wp_img_box(){
+    public  function changing_meta_box_position_of_brand_logo(){
         remove_meta_box( 'postimagediv', 'logosliderwp', 'side' );
         add_meta_box('postimagediv', __('Brand Logo'), 'post_thumbnail_meta_box', 'logosliderwp', 'normal', 'high');
     }
@@ -312,10 +293,10 @@ class Logo_Slider_WP_Admin {
      */
     public function add_links_admin_plugin_page_title( $links ) {
         return array_merge( array(
-            'settings' => '<a style="color:#00a500; font-weight: bold;" href="' . admin_url( 'edit.php?post_type=logosliderwp&page=logosliderwpsettings' ) . '">' . esc_html__( 'Settings', 'logo-slider-wp') . '</a>',
-            // 'demo' => '<a href="' .esc_url('http://logichunt.net/wpdemo/wordpress-logo-slider/') . '" target="_blank">' . esc_html__( 'Demo', 'logo-slider-wp') . '</a>',
-            //'support' => '<a style="color:#ff4b39; font-weight: bold;" target="_blank" href="' .esc_url('https://logichunt.com/support/') . '" target="_blank">' . esc_html__( 'Get Support', 'logo-slider-wp') . '</a>',
-            'usage' => '<a style="color:#ff4b39; font-weight: bold;"  href="' . admin_url( 'edit.php?post_type=logosliderwp&page=logosliderwphelpuage' ) . '">' . esc_html__( 'Usage', 'logo-slider-wp') . '</a>',
+            'create' => '<a href="' . admin_url( 'post-new.php?post_type=lgx_lsp_shortcodes' ) . '" >' . esc_html__( 'Create Showcase', 'logo-slider-wp') . '</a>',
+            'docs'    => '<a style="font-weight: bold;" href="' .esc_url('http://logichunt.net/docs/wordpress-logo-slider//') . '" target="_blank">' . esc_html__( 'Docs', 'logo-slider-wp') . '</a>',
+            //'support' => '<a style="color:#00a500;" target="_blank" href="' .esc_url('https://logichunt.com/support/') . '" target="_blank">' . esc_html__( 'Support', 'logo-slider-wp') . '</a>',
+            'get_pro' => '<a style="color:#ff4b39; font-weight: bold;" href="https://logichunt.com/product/wordpress-logo-slider/">' . esc_html__( 'Get Pro!', 'logo-slider-wp') . '</a>'
         ), $links );
 
     }//end plugin_listing_setting_link
@@ -330,7 +311,7 @@ class Logo_Slider_WP_Admin {
      *
      * @return array
      */
-    public function logo_slider_wp_support_link($plugin_meta, $plugin_file) {
+    public function add_links_admin_plugin_page_description($plugin_meta, $plugin_file) {
 
         if ($this->plugin_base_file == $plugin_file) {
             $plugin_meta[] = sprintf(
@@ -352,8 +333,11 @@ class Logo_Slider_WP_Admin {
     }
 
 
+    /**
+     *
+     */
 
-    public function display_plugin_admin_settings() {
+    public function display_plugin_admin_settings_dep() {
         /*	$test = $this->settings_api->get_option('logosliderwp_settings_cat', 'logosliderwp_config', 'test');
             var_dump($test);*/
 
@@ -367,10 +351,10 @@ class Logo_Slider_WP_Admin {
     /**
      * Settings init
      */
-    public function logo_slider_wp_setting_init() {
+    public function logo_slider_wp_setting_init_dep() {
         //set the settings
-        $this->settings_api->set_sections($this->get_settings_sections());
-        $this->settings_api->set_fields($this->get_settings_fields());
+        $this->settings_api->set_sections($this->get_settings_sections_dep());
+        $this->settings_api->set_fields($this->get_settings_fields_dep());
 
         //initialize settings
         $this->settings_api->admin_init();
@@ -384,7 +368,7 @@ class Logo_Slider_WP_Admin {
     /**
      * Ensure post thumbnail support is turned on.
      */
-    public function add_thumbnail_support_logo_slider() {
+    public function add_thumbnail_support() {
         if ( ! current_theme_supports( 'post-thumbnails' ) ) {
             add_theme_support( 'post-thumbnails' );
         }
@@ -397,7 +381,7 @@ class Logo_Slider_WP_Admin {
      * @return array|mixed|void
      */
 
-    public function get_settings_sections() {
+    public function get_settings_sections_dep() {
 
         $sections = array(
             array(
@@ -435,405 +419,12 @@ class Logo_Slider_WP_Admin {
      * Returns all the settings fields
      *
      * @return array settings fields
+     *
+     *  Note : will be deprecated v 4.0.0
      */
-    public  function get_settings_fields() {
+    public  function get_settings_fields_dep() {
 
-
-        $settings_fields = array(
-
-            'logosliderwp_basic' => array(
-
-
-                array(
-                    'name'     => 'logosliderwp_settings_show_company',
-                    'label'         => __('Show Brand Name', 'logo-slider-wp'),
-                    'type'          => 'radio',
-                    'required'      => false,
-                    'default'  => 'no',
-                    'options' => array(
-                        'yes' => __('Yes','logo-slider-wp'),
-                        'no' => __('No','logo-slider-wp')
-                    )
-                ),
-
-
-                array(
-                    'name'     => 'logosliderwp_settings_show_company_desc',
-                    'label'         => __('Show Brand Description', 'logo-slider-wp'),
-                    'type'          => 'radio',
-                    'required'      => false,
-                    'default'  => 'no',
-                    'options' => array(
-                        'yes' => __('Yes','logo-slider-wp'),
-                        'no' => __('No','logo-slider-wp')
-                    )
-                ),
-
-
-                array(
-                    'name'     => 'logosliderwp_settings_height',
-                    'label'    => __('Logo Height(px)', 'logo-slider-wp'),
-                    'desc'     => __('Set Maximum Logo Height in px', 'logo-slider-wp'),
-                    'type'     => 'number',
-                    'default'  => '350',
-                    'desc_tip' => true,
-                ),
-
-
-                array(
-                    'name'     => 'logosliderwp_settings_width',
-                    'label'    => __('Logo Width(px)', 'logo-slider-wp'),
-                    'desc'     => __('Set Maximum Logo Width in px', 'logo-slider-wp'),
-                    'type'     => 'number',
-                    'default'  => '350',
-                    'desc_tip' => true,
-                )
-
-
-            ),// Single
-
-
-            'logosliderwp_adv' => array(
-
-                array(
-                    'name'     => 'logosliderwp_settings_cat',
-                    'label'    => __('Default Categories(slug)', 'logo-slider-wp'),
-                    'desc'     => __('Please input category slug with comma( , ). Example: categoey1, category2 ', 'logo-slider-wp'),
-                    'type'     => 'text',
-                    'default'  => '',
-                    'desc_tip' => true,
-                ),
-
-                array(
-                    'name'             => 'logosliderwp_settings_order',
-                    'label'            => __('Item Order', 'logo-slider-wp'),
-                    'desc'             => __('Direction to sort item.', 'logo-slider-wp'),
-                    'type'             => 'select',
-                    'default'          => 'DESC',
-                    'options'          => array(
-                        'ASC' => __( 'Ascending', 'logo-slider-wp' ),
-                        'DESC'   => __( 'Descending', 'logo-slider-wp' ),
-                    ),
-                ),
-
-                array(
-                    'name'             => 'logosliderwp_settings_orderby',
-                    'label'            => __('Item Order By', 'logo-slider-wp'),
-                    'desc'             => __('Sort retrieved item.', 'logo-slider-wp'),
-                    'type'             => 'select',
-                    'default'          => 'date',
-                    'options'          => array(
-                        'date'      => __( 'Date', 'logo-slider-wp' ),
-                        'ID'        => __( 'ID', 'logo-slider-wp' ),
-                        'title'     => __( 'Title', 'logo-slider-wp' ),
-                        'modified'  => __( 'Modified', 'logo-slider-wp' ),
-                        'rand'      => __( 'Random', 'logo-slider-wp' ),
-                    ),
-                ),
-
-
-                array(
-                    'name'     => 'logosliderwp_settings_limit',
-                    'label'    => __('Item Limit', 'logo-slider-wp'),
-                    'desc'     => __('Please input total number of item, that want to display front end. -1 means all published post.', 'logo-slider-wp'),
-                    'type'     => 'number',
-                    'default'  => '-1',
-                    'desc_tip' => true,
-                ),
-
-            ),// Single
-
-
-            // Style Settings
-            'logosliderwp_style' => array(
-
-                array(
-                    'name'     => 'logosliderwp_settings_nav_position',
-                    'label'         => __('Nav Position', 'logo-slider-wp'),
-                    'type'          => 'radio',
-                    'required'      => false,
-                    'default'       => 'b-center',
-                    'options' => array(
-                        'b-center' => __('Bottom Center','logo-slider-wp'),
-                        'v-mid' => __('Vertically Middle','logo-slider-wp'),
-                        'v-mid-hover' => __('Vertically Middle (On Over)','logo-slider-wp'),
-
-                    )
-                ),
-
-                array(
-                    'name'     => 'logosliderwp_settings_hover_type',
-                    'label'         => __('Hover Effect', 'logo-slider-wp'),
-                    'type'          => 'radio',
-                    'required'      => false,
-                    'default'       => 'default',
-                    'options' => array(
-                        'default' => __('Default','logo-slider-wp'),
-                        'grayscale'   => __('Gray Scale','logo-slider-wp'),
-                        'hblur'   => __('Blur','logo-slider-wp'),
-                        'zoomin'  => __('Zoom In','logo-slider-wp'),
-                        'none'    => __('None','logo-slider-wp'),
-                    )
-                ),
-
-                array(
-                    'name'     => 'logosliderwp_settings_bgcolor_en',
-                    'label'         => __('Enabled  Background Color', 'logo-slider-wp'),
-                    'type'          => 'radio',
-                    'required'      => false,
-                    'options' => array(
-                        'yes' => __('Yes','logo-slider-wp'),
-                        'no' => __('No','logo-slider-wp')
-                    )
-                ),
-
-                array(
-                    'name'    => 'logosliderwp_settings_bgcolor',
-                    'label'   => __('Background  Color', 'lgxcarousel-domain'),
-                    'desc'    => __('Please select Carousel Background color.', 'lgxcarousel-domain'),
-                    'type'    => 'color',
-                    'default' => '#f1f1f1'
-                ),
-
-                array(
-                    'name'     => 'logosliderwp_settings_border_en',
-                    'label'         => __('Enabled Border', 'logo-slider-wp'),
-                    'type'          => 'radio',
-                    'required'      => false,
-                    'options' => array(
-                        'yes' => __('Yes','logo-slider-wp'),
-                        'no' => __('No','logo-slider-wp')
-                    )
-                ),
-
-                array(
-                    'name'    => 'logosliderwp_settings_bordercolor',
-                    'label'   => __('Border Color', 'lgxcarousel-domain'),
-                    'type'    => 'color',
-                    'default' => '#d02c21'
-                ),
-
-            ),// Single
-
-            //Responsive Settings
-            'logosliderwp_responsive' => array(
-
-                // View Port Large Desktop
-                array(
-                    'name'     => 'logosliderwp_settings_largedesktop_item',
-                    'label'    => __('Item in Large Desktops', 'logo-slider-wp'),
-                    'desc'     => __('Item in Large Desktops Devices (1200px and Up)', 'logo-slider-wp'),
-                    'type'     => 'number',
-                    'default'  => '5',
-                    'desc_tip' => true,
-                ),
-
-                array(
-                    'name'     => 'logosliderwp_settings_largedesktop_nav',
-                    'label'         => __('Show Nav(Large Desktops)', 'logo-slider-wp'),
-                    'desc'          => __( 'Show Nav in Large Desktops', 'logo-slider-wp' ),
-                    'type'          => 'radio',
-                    'tooltip'       => __('Enabled by default','logo-slider-wp'),
-                    'required'      => false,
-                    'default'       => 'yes',
-                    'options' => array(
-                        'yes' => __('yes','logo-slider-wp'),
-                        'no' => __('No','logo-slider-wp')
-                    )
-                ),
-
-                // View Port Desktop
-                array(
-                    'name'     => 'logosliderwp_settings_desktop_item',
-                    'label'    => __('Item in Desktops', 'logo-slider-wp'),
-                    'desc'     => __('Item in Desktops Devices (Desktops 992px).', 'logo-slider-wp'),
-                    'type'     => 'number',
-                    'default'  => '4',
-                    'desc_tip' => true,
-                ),
-
-                array(
-                    'name'     => 'logosliderwp_settings_desktop_nav',
-                    'label'         => __('Show Nav(Desktops)', 'logo-slider-wp'),
-                    'desc'          => __( 'Show Nav in Desktops', 'logo-slider-wp' ),
-                    'type'          => 'radio',
-                    'tooltip'       => __('Enabled by default','logo-slider-wp'),
-                    'required'      => false,
-                    'default'       => 'yes',
-                    'options' => array(
-                        'yes' => __('yes','logo-slider-wp'),
-                        'no' => __('No','logo-slider-wp')
-                    )
-                ),
-
-                // View Port Tab
-                array(
-                    'name'     => 'logosliderwp_settings_tablet_item',
-                    'label'    => __('Item in Tablets', 'logo-slider-wp'),
-                    'desc'     => __('Item in Tablets Devices (768px and Up)', 'logo-slider-wp'),
-                    'type'     => 'number',
-                    'default'  => '3',
-                    'desc_tip' => true,
-                ),
-
-                array(
-                    'name'     => 'logosliderwp_settings_tablet_nav',
-                    'label'         => __('Enabled largedesktop Nav', 'logo-slider-wp'),
-                    'desc'          => __( 'Show Nav(Tablet)', 'logo-slider-wp' ),
-                    'type'          => 'radio',
-                    'tooltip'       => __('Show Nav in Large Tablet','logo-slider-wp'),
-                    'required'      => false,
-                    'default'       => 'yes',
-                    'options' => array(
-                        'yes' => __('yes','logo-slider-wp'),
-                        'no' => __('No','logo-slider-wp')
-                    )
-                ),
-
-
-                // View Port Mobile
-                array(
-                    'name'     => 'logosliderwp_settings_mobile_item',
-                    'label'    => __('Item in Mobile', 'logo-slider-wp'),
-                    'desc'     => __('Item in Mobile Devices (Less than 768px)', 'logo-slider-wp'),
-                    'type'     => 'number',
-                    'default'  => '2',
-                    'desc_tip' => true,
-                ),
-
-                array(
-                    'name'     => 'logosliderwp_settings_mobile_nav',
-                    'label'         => __('Show Nav(Mobile)', 'logo-slider-wp'),
-                    'desc'          => __( 'Show next/prev buttons.', 'logo-slider-wp' ),
-                    'type'          => 'radio',
-                    'tooltip'       => __('Show Nav in Mobile"','logo-slider-wp'),
-                    'required'      => false,
-                    'default'       => 'yes',
-                    'options' => array(
-                        'yes' => __('yes','logo-slider-wp'),
-                        'no' => __('No','logo-slider-wp')
-                    )
-                ),
-
-
-            ),
-
-
-            // OWL CONFIG
-            'logosliderwp_config'   => array(
-
-                array(
-                    'name'     => 'logosliderwp_settings_loop',
-                    'label'         => __('Enabled Loop', 'logo-slider-wp'),
-                    'desc'          => __( 'Infinity loop. Duplicate last and first items to get loop illusion.', 'logo-slider-wp' ),
-                    'type'          => 'radio',
-                    'tooltip'       => __('Enabled by default','logo-slider-wp'),
-                    'required'      => false,
-                    'default'       => 'yes',
-                    'options' => array(
-                        'yes' => __('Yes','logo-slider-wp'),
-                        'no' => __('No','logo-slider-wp')
-                    )
-                ),
-
-                array(
-                    'name'     => 'logosliderwp_settings_dots',
-                    'label'         => __('Enabled Dots', 'logo-slider-wp'),
-                    'desc'          => __( 'Show dots navigation.', 'logo-slider-wp' ),
-                    'type'          => 'radio',
-                    'tooltip'       => __('Enabled by default','logo-slider-wp'),
-                    'required'      => false,
-                    'default'       => 'yes',
-                    'options' => array(
-                        'yes' => __('yes','logo-slider-wp'),
-                        'no' => __('No','logo-slider-wp')
-                    )
-                ),
-
-
-                array(
-                    'name'     => 'logosliderwp_settings_margin',
-                    'label'    => __('Margin', 'logo-slider-wp'),
-                    'desc'     => __('margin-right(px) on item.', 'logo-slider-wp'),
-                    'type'     => 'number',
-                    'default'  => '10',
-                    'desc_tip' => true,
-                ),
-
-
-                array(
-                    'name'     => 'logosliderwp_settings_autoplay',
-                    'label'         => __('Enabled Autoplay', 'logo-slider-wp'),
-                    'desc'          => __( 'Carousel item autoplay by default.', 'logo-slider-wp' ),
-                    'type'          => 'radio',
-                    'tooltip'       => __('Enabled by default','logo-slider-wp'),
-                    'required'      => false,
-                    'default'       => 'yes',
-                    'options' => array(
-                        'yes' => __('Yes','logo-slider-wp'),
-                        'no' => __('No','logo-slider-wp')
-                    )
-                ),
-
-                array(
-                    'name'     => 'logosliderwp_settings_autoplay_timeout',
-                    'label'    => __('Autoplay Timeout', 'logo-slider-wp'),
-                    'desc'     => __('autoplayTimeout', 'logo-slider-wp'),
-                    'type'     => 'number',
-                    'default'  => '2000',
-                    'desc_tip' => true,
-                ),
-
-                array(
-                    'name'     => 'logosliderwp_settings_hover_pause',
-                    'label'         => __('Autoplay Hover Pause', 'logo-slider-wp'),
-                    'desc'          => __('Pause on mouse hover.', 'logo-slider-wp' ),
-                    'type'          => 'radio',
-                    'tooltip'       => __('Disabled by default','logo-slider-wp'),
-                    'required'      => false,
-                    'default'       => 'no',
-                    'options' => array(
-                        'yes' => __('Yes','logo-slider-wp'),
-                        'no' => __('No','logo-slider-wp')
-                    )
-                ),
-
-
-
-
-                array(
-                    'name'     => 'logosliderwp_settings_autoplay_slidespeed',
-                    'label'    => __('Slide Speed', 'logo-slider-wp'),
-                    'desc'     => __('Set Slide Speed', 'logo-slider-wp'),
-                    'type'     => 'number',
-                    'default'  => '200',
-                    'desc_tip' => true,
-                ),
-
-
-                array(
-                    'name'     => 'logosliderwp_settings_autoplay_paginationspeed',
-                    'label'    => __('Pagination Speed', 'logo-slider-wp'),
-                    'desc'     => __('Set Pagination Speed', 'logo-slider-wp'),
-                    'type'     => 'number',
-                    'default'  => '800',
-                    'desc_tip' => true,
-                ),
-
-                array(
-                    'name'     => 'logosliderwp_settings_autoplay_rewindspeed',
-                    'label'    => __('Rewind Speed', 'logo-slider-wp'),
-                    'desc'     => __('Set Rewind Speed', 'logo-slider-wp'),
-                    'type'     => 'number',
-                    'default'  => '1000',
-                    'desc_tip' => true,
-                )
-
-
-            ),//single
-
-
-        );//Filed
+        include('admin-deps/settings-fields.php');
 
         $settings_fields = apply_filters('logo_slider_settings_fields', $settings_fields);
 
@@ -841,15 +432,16 @@ class Logo_Slider_WP_Admin {
     }
 
 
-/**
+    /**
      * Modified get post for post type order
+     *
      */
     public function modify_query_get_posts($query) {
 
         if ( ! is_admin() && ( isset( $query->query_vars['post_type'] ) &&  ( is_array( $query->query_vars['post_type'] ) && in_array( 'logosliderwp', $query->query_vars['post_type'] ) ) ) ) {
 
             //$order  =   isset( $query->query_vars['order'] )  ?  $query->query_vars['order'] : '';
-            
+
             //var_dump( '<pre>', $query );
             //wp_die(  );
             $query->set( 'orderby', 'menu_order' );
@@ -881,8 +473,9 @@ class Logo_Slider_WP_Admin {
 
         // unset( $default_columns['date'] );
 
+        $new_columns['lgx_ls_logo']         = __( 'Brand Logo', 'logo-slider-wp' );
         $new_columns['lgx_ls_brand']        = __( 'Brand Name', 'logo-slider-wp' );
-        $new_columns['lgx_ls_logo']         = __( 'Brand Logo Image', 'logo-slider-wp' );
+        $new_columns['lgx_ls_category']     = __( 'Categories', 'logo-slider-wp' );
 
         return array_slice( $default_columns, 0, 2, true ) + $new_columns + array_slice( $default_columns, 1, null, true );
 
@@ -897,21 +490,37 @@ class Logo_Slider_WP_Admin {
      */
     public function define_admin_column_value_for_logosliderwp($column, $post_id) {
         switch ($column) {
+            case 'lgx_ls_category': 
+
+                    $lgx_logo_categories = get_the_terms( $post_id, 'logosliderwpcat' );
+
+                    if ( ! empty( $lgx_logo_categories ) && ! is_wp_error( $lgx_logo_categories ) ) {
+
+                        $lgx_categories_name = wp_list_pluck( $lgx_logo_categories, 'name' );
+                
+                        foreach ($lgx_categories_name as $lgx_cat_name) {
+                            echo '<span class="button button-secondary" style="margin: 0 2px 2px 0; border-color:#a5adc3; color:#2c3338">' . $lgx_cat_name . '</span>';
+                          }
+
+                    }
+                    break;
+
             case 'lgx_ls_brand':
                 $metavalues         = get_post_meta( $post_id, '_logosliderwpmeta', true );
                 echo  ( (!empty($metavalues['company_name'] ) ? $metavalues['company_name']: '' ));
                 break;
 
             case 'lgx_ls_logo':
-                if( function_exists('the_post_thumbnail') ){
 
+                if( has_post_thumbnail( $post_id) ){
                     $post_thumbnail_id = get_post_thumbnail_id($post_id);
                     $post_thumbnail_img = wp_get_attachment_image_src($post_thumbnail_id, 'thumbnail');
-                    $post_thumbnail_img= $post_thumbnail_img[0];
-                    if($post_thumbnail_img !='')
+                    if(!empty($post_thumbnail_img)) {
+                        $post_thumbnail_img= $post_thumbnail_img[0];
                         echo '<img src="' . $post_thumbnail_img . '" />';
-                    else
-                        echo 'No logo added.';
+                    } else {
+                        echo '-';
+                    }
                 }
                 else{
                     echo 'No logo added.';
@@ -923,18 +532,19 @@ class Logo_Slider_WP_Admin {
                 break;
         }
     }
+   
 
 
     /**
      *  Save post for re ordering
      * @since    2.3.0
      */
-    
+
     public function save_post_reorder_for_logosliderwp() {
         global $wpdb;
         $result = array(
-                'type' => 'error',
-                'message' => 'Action required.',
+            'type' => 'error',
+            'message' => 'Action required.',
         );
 
         $result_json = json_encode( $result );
@@ -988,13 +598,16 @@ class Logo_Slider_WP_Admin {
          * class.
          */
 
+        wp_enqueue_style( $this->plugin_name . '-admin-icon', plugin_dir_url( __FILE__ ) . 'css/lgx-icon.css', array(), $this->version, 'all' );
+        wp_enqueue_style( $this->plugin_name . '-admin-reset', plugin_dir_url( __FILE__ ) . 'css/logo-slider-wp-admin-reset.min.css', array(), $this->version, 'all' );
+
         $currentScreen = get_current_screen();
 
-        if( $currentScreen->id === "edit-logosliderwp" && $currentScreen->post_type == 'logosliderwp' ) {
-            wp_enqueue_style( 'admin-icon-' . $this->plugin_name, plugin_dir_url( __FILE__ ) . 'assets/css/lgx-icon.css', array(), $this->version, 'all' );
-            wp_enqueue_style( 'alertify-' . $this->plugin_name, plugin_dir_url( __FILE__ ) . 'assets/css/alertify.css', array(), $this->version, 'all' );
+        if( ( $currentScreen->post_type == 'logosliderwp' ) || ( $currentScreen->post_type == 'lgx_lsp_shortcodes' ) ) {
 
-            wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'assets/css/logo-slider-wp-admin.css', array(), $this->version, 'all' );
+            wp_enqueue_style( $this->plugin_name . '-alertify', plugin_dir_url( __FILE__ ) . 'css/alertify.css', array(), $this->version, 'all' );
+            wp_enqueue_style( $this->plugin_name . '-admin-slider', plugin_dir_url( __FILE__ ) . 'css/logo-slider-wp-admin.min.css', array( 'wp-color-picker' ), $this->version, 'all' );
+
         }
 
     }
@@ -1019,30 +632,34 @@ class Logo_Slider_WP_Admin {
          * class.
          */
 
-        //wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'assets/js/logo-slider-wp-admin.js', array( 'jquery' ), $this->version, false );
-
-
-
-
 
         $currentScreen = get_current_screen();
+        /*   echo '<pre>';
+           print_r($currentScreen);
+           echo '</pre>';*/
+        if( ( $currentScreen->post_type == 'logosliderwp' ) || ( $currentScreen->post_type == 'lgx_lsp_shortcodes' ) ) {
 
-        if( $currentScreen->id === "edit-logosliderwp" && $currentScreen->post_type == 'logosliderwp' ) {
             $translation_array = array(
-                'add_leftimg_title'  => __('Add Previous Arrow Image', 'wpnextpreviouslinkaddon'),
-                'add_rightimg_title' => __('Add Next Arrow Image', 'wpnextpreviouslinkaddon'),
+                //'add_leftimg_title'  => __('Add Previous Arrow Image', 'logo-slider-wp'),
+                //'add_rightimg_title' => __('Add Next Arrow Image', 'logo-slider-wp'),
                 'ajax_url' => admin_url('admin-ajax.php'),
-                'check_nonce' => wp_create_nonce('save_logosliderwp_nonce')
+                'check_nonce' => wp_create_nonce('save_logosliderwp_nonce'),
             );
 
-            wp_register_script( 'admin-' . $this->plugin_name, plugin_dir_url( __FILE__ ) . 'assets/js/logo-slider-wp-admin.js', array( 'jquery', 'jquery-ui-sortable' ), $this->version, true );
-            wp_localize_script( 'admin-' . $this->plugin_name, 'wpnpaddon', $translation_array);
-            wp_enqueue_script( 'admin-' . $this->plugin_name );
-            wp_enqueue_script( 'alertify-' . $this->plugin_name, plugin_dir_url( __FILE__ ) . 'assets/js/alertify.min.js', array(), $this->version, true );
+
+            wp_register_script($this->plugin_name . '-alertify', plugin_dir_url( __FILE__ ) . 'js/alertify.min.js', array(), $this->version, true );
+            wp_register_script($this->plugin_name . '-wp-color-picker-alpha' , plugin_dir_url( __FILE__ ) . 'js/wp-color-picker-alpha.js', array( 'wp-color-picker' ), $this->version, true );
+            wp_register_script($this->plugin_name . '-admin', plugin_dir_url( __FILE__ ) . 'js/logo-slider-wp-admin.js', array( 'jquery', 'jquery-ui-sortable', $this->plugin_name . '-wp-color-picker-alpha', $this->plugin_name . '-alertify' ), $this->version, true );
+
+            wp_localize_script($this->plugin_name . '-admin', 'wpnpaddon', $translation_array);
+
+            wp_enqueue_script( $this->plugin_name . '-admin' );
 
             if ( ! did_action( 'wp_enqueue_media' ) ) {
                 wp_enqueue_media();
             }
+
+
         }
     }
 
@@ -1082,7 +699,7 @@ class Logo_Slider_WP_Admin {
     }
 
     public function pro_version_activation_checking_notice_warning() {
-        $plugin_base = LSWP_PLUGIN_BASE_NAME;
+        $plugin_base = LGX_LS_PLUGIN_BASE;
         $plugin_free = 'logo-slider-wp/logo-slider-wp.php';
         $plugin_pro = 'logo-slider-wp-pro/logo-slider-wp-pro.php';
         $lswp_pro_active = get_transient( 'lswp_pro_active' );
@@ -1099,7 +716,7 @@ class Logo_Slider_WP_Admin {
 
             unset( $_GET['activate'] );
             $class = 'notice notice-warning is-dismissible';
-            $message = __( 'Logo Slider Pro version already activated. For more please contact our support at <a href="https://logichunt.com/support/" target="_blank">LogicHunt.com.</a>', LSWP_PLUGIN_TEXT_DOMAIN );
+            $message = __( 'Logo Slider Pro version already activated. For more please contact our support at <a href="https://logichunt.com/support/" target="_blank">LogicHunt.com.</a>', 'logo-slider-wp' );
 
             printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), $message );
         }
@@ -1107,4 +724,367 @@ class Logo_Slider_WP_Admin {
 
     }
 
+    /*************************************************************************
+     *
+     *
+     *
+     *  Newly Added: 2021
+     *
+     *
+     *
+     *
+     * **************************************************************************/
+
+
+    /**
+     * Register post type for shortcode Post Type
+     *
+     *
+     */
+    public function register_post_type_for_lgx_logo_slider_shortcodes() {
+
+        $labels = array(
+            'name'               => _x( 'All Logo Slider', 'Logo Showcase', 'logo-slider-wp' ),
+            'singular_name'      => _x( 'Logo Slider', 'Showcase Items', 'logo-slider-wp' ),
+            'menu_name'          => __( 'Shortcode Generator', 'logo-slider-wp' ),
+            'view_item'          => __( 'View Items', 'logo-slider-wp' ),
+            'add_new_item'       => __( 'Add New Slider', 'logo-slider-wp' ),
+            'add_new'            => __( 'Add New Slider', 'logo-slider-wp' ),
+            'edit_item'          => __( 'Edit Item', 'logo-slider-wp' ),
+            'update_item'        => __( 'Update Item', 'logo-slider-wp' ),
+            'search_items'       => __( 'Search In Item', 'logo-slider-wp' ),
+            'not_found'          => __( 'No Showcase found', 'logo-slider-wp' ),
+            'not_found_in_trash' => __( 'No Showcase found in trash', 'logo-slider-wp' )
+        );
+
+        $args   = array(
+            'label'               => __( 'Logo Slider Shortcode', 'logo-slider-wp' ),
+            'description'         => __( 'Generate Shortcode for Logo Slider', 'logo-slider-wp' ),
+            'labels'              => $labels,
+            'public'          => false,
+            'show_ui'         => true,
+            'show_in_menu'    => 'edit.php?post_type=logosliderwp',
+            'hierarchical'    => false,
+            'query_var'       => false,
+            'supports'        => array( 'title' ),
+            'capability_type' => 'post',
+        );
+
+        register_post_type( 'lgx_lsp_shortcodes', $args);
+    }
+
+
+
+    /**
+     * Add meta box for custom post type
+     *
+     * @since    1.0.0
+     */
+    public function adding_meta_boxes_for_lgx_lsp_shortcodes() {
+        add_meta_box(
+            'lgx_lsp_shortcodes_meta_box_panel',
+            __( 'Logo Slider Shortcode Meta Field Panel', 'logo-slider-wp'),
+            array(
+                $this,
+                'meta_fields_display_for_lgx_lsp_shortcodes' //Pattern --> meta_box_panel_display_for_{post_type}
+            ),
+            'lgx_lsp_shortcodes',
+            'normal',
+            'high'
+        );
+    }
+
+
+
+    /**
+     * Render Meta Box under logosliderwp
+     *
+     * logosliderwp meta field
+     *
+     * @param $post
+     *
+     * @since 1.0
+     *
+     */
+    public function meta_fields_display_for_lgx_lsp_shortcodes( $post ) {
+
+        require_once plugin_dir_path( __FILE__ ) . 'partials/shortcode_meta_display/meta_fields_display_for_lgx_lsp_shortcodes.php';
+
+    }
+
+
+    /**
+     * Determines whether or not the current user has the ability to save meta data associated with this post.
+     *
+     * Save lgx_lsp_shortcodes Meta Field
+     *
+     * @param        int $post_id //The ID of the post being save
+     * @param         bool //Whether or not the user has the ability to save this post.
+     */
+    public function save_post_metadata_of_lgx_lsp_shortcodes( $post_id, $post ) {
+
+
+        $post_type = 'lgx_lsp_shortcodes';
+
+        // If this isn't a 'book' post, don't update it.
+        if ( $post_type != $post->post_type ) {
+            return;
+        }
+
+        if ( ! empty( $_POST['meta_lgx_lsp_shortcodes'] ) ) {
+
+            $postData = $_POST['meta_lgx_lsp_shortcodes'];
+
+            //echo '<pre>';  print_r($postData); echo '</pre>'; wp_die();
+
+            $savable_Data = array();
+
+
+            if ( $this->user_can_save_for_logo_slider_meta( $post_id, 'meta_lgx_lsp_shortcodes', $postData['nonce'] ) ) {
+
+                $savable_Data['lgx_lswp_showcase_type']             = sanitize_text_field( $postData['lgx_lswp_showcase_type'] );
+
+                // Basic Settings : ok
+                $savable_Data['lgx_brand_name_en']      = (( isset($postData['lgx_brand_name_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_brand_desc_en']      = (( isset($postData['lgx_brand_desc_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_company_url_en']     = (( isset($postData['lgx_company_url_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_from_category']      = (( isset($postData['lgx_from_category'])) ? sanitize_text_field( $postData['lgx_from_category']) : 'all');
+                $savable_Data['lgx_item_limit']         = (( isset($postData['lgx_item_limit'])) ? sanitize_text_field( $postData['lgx_item_limit']) : 0);
+                $savable_Data['lgx_preloader_en']       = (( isset($postData['lgx_preloader_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_target_type']        = (( isset($postData['lgx_target_type'])) ? sanitize_text_field(  $postData['lgx_target_type']) : '_self');
+                $savable_Data['lgx_nofollow_en']        = (( isset($postData['lgx_nofollow_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_logo_height']        = (( isset($postData['lgx_logo_height'])) ? sanitize_text_field( $postData['lgx_logo_height']) : '100%');
+                $savable_Data['lgx_logo_width']         = (( isset($postData['lgx_logo_width'])) ? sanitize_text_field( $postData['lgx_logo_width'])  : '100%');
+                $savable_Data['lgx_preloader_bg_color'] = (( isset($postData['lgx_preloader_bg_color'])) ? sanitize_text_field( $postData['lgx_preloader_bg_color'])  : '#ffffff');
+                $savable_Data['lgx_preloader_icon']     = (( isset($postData['lgx_preloader_icon'])) ? sanitize_text_field( $postData['lgx_preloader_icon'])  : '');
+
+
+                // Responsive Settings : ok
+                $savable_Data['lgx_large_desktop_item']   =  (( isset($postData['lgx_large_desktop_item'])) ? sanitize_text_field( $postData['lgx_large_desktop_item'] ): 5);;
+                $savable_Data['lgx_desktop_item']         =  (( isset($postData['lgx_desktop_item'])) ? sanitize_text_field( $postData['lgx_desktop_item'] ) : 4);
+                $savable_Data['lgx_tablet_item']          =  (( isset($postData['lgx_tablet_item'])) ? sanitize_text_field( $postData['lgx_tablet_item'] ) : 3);
+                $savable_Data['lgx_mobile_item']          =  (( isset($postData['lgx_mobile_item'])) ? sanitize_text_field( $postData['lgx_mobile_item'] ) : 2);
+
+
+                // Style Settings
+                $savable_Data['lgx_item_hover_effect']           = (( isset($postData['lgx_item_hover_effect'])) ? sanitize_text_field( $postData['lgx_item_hover_effect'] ) : 'none');
+                $savable_Data['lgx_item_hover_anim']            = (( isset($postData['lgx_item_hover_anim'])) ? sanitize_text_field( $postData['lgx_item_hover_anim'] ) : 'default');
+                $savable_Data['lgx_item_brand_name_color']      = (( isset($postData['lgx_item_brand_name_color'])) ? sanitize_text_field( $postData['lgx_item_brand_name_color'] ) : '#111111');;
+                $savable_Data['lgx_item_brand_name_font_size']  = (( isset($postData['lgx_item_brand_name_font_size'])) ? sanitize_text_field( $postData['lgx_item_brand_name_font_size'] ) : '20px');
+                $savable_Data['lgx_item_brand_name_font_weight']= (( isset($postData['lgx_item_brand_name_font_weight'])) ? sanitize_text_field( $postData['lgx_item_brand_name_font_weight'] ) : '600');
+
+                $savable_Data['lgx_item_desc_color']            = (( isset($postData['lgx_item_desc_color'])) ? sanitize_text_field( $postData['lgx_item_desc_color'] ) : '#555555');
+                $savable_Data['lgx_item_desc_font_size']        = (( isset($postData['lgx_item_desc_font_size'])) ? sanitize_text_field( $postData['lgx_item_desc_font_size'] ) : '20px');
+                $savable_Data['lgx_item_desc_font_weight']      = (( isset($postData['lgx_item_desc_font_weight'])) ? sanitize_text_field( $postData['lgx_item_desc_font_weight'] ) : '400');
+
+                $savable_Data['lgx_img_border_color_en']        = ((isset($postData['lgx_img_border_color_en'])) ? 'yes' : 'no');
+
+                $savable_Data['lgx_img_border_color']           = (( isset($postData['lgx_img_border_color'])) ? sanitize_text_field( $postData['lgx_img_border_color'] ) : '#FF5151');
+                $savable_Data['lgx_img_border_color_hover']     = (( isset($postData['lgx_img_border_color_hover'])) ? sanitize_text_field( $postData['lgx_img_border_color_hover'] ) : '#FF9B6A');
+                $savable_Data['lgx_img_border_width']           = (( isset($postData['lgx_img_border_width'])) ? sanitize_text_field( $postData['lgx_img_border_width'] ) : '1px');
+                $savable_Data['lgx_img_border_radius']          = (( isset($postData['lgx_img_border_radius'])) ? sanitize_text_field( $postData['lgx_img_border_radius'] ) : '4px');
+
+                $savable_Data['lgx_border_color_en']            = ((isset($postData['lgx_border_color_en'])) ? 'yes' : 'no');
+
+                $savable_Data['lgx_item_border_color']          = (( isset($postData['lgx_item_border_color'])) ? sanitize_text_field( $postData['lgx_item_border_color'] ) : '#161E54');
+                $savable_Data['lgx_item_border_color_hover']    = (( isset($postData['lgx_item_border_color_hover'])) ? sanitize_text_field( $postData['lgx_item_border_color_hover'] ) : '#161E54');
+                $savable_Data['lgx_item_border_width']          = (( isset($postData['lgx_item_border_width'])) ? sanitize_text_field( $postData['lgx_item_border_width'] ) : '4px');
+                $savable_Data['lgx_item_border_radius']         = (( isset($postData['lgx_item_border_radius'])) ? sanitize_text_field( $postData['lgx_item_border_radius'] ) : '100');
+
+                $savable_Data['lgx_item_bg_color_en']           = ((isset($postData['lgx_item_bg_color_en'])) ? 'yes' : 'no');
+
+                $savable_Data['lgx_item_bg_color']              = (( isset($postData['lgx_item_bg_color'])) ? sanitize_text_field( $postData['lgx_item_bg_color'] ) : '#f1f1f1');
+                $savable_Data['lgx_item_bg_color_hover']        = (( isset($postData['lgx_item_bg_color_hover'])) ? sanitize_text_field( $postData['lgx_item_bg_color_hover'] ) : '#f1f1f1');
+
+                $savable_Data['lgx_item_padding']               = (( isset($postData['lgx_item_padding'])) ? sanitize_text_field( $postData['lgx_item_padding'] ) : '0px');
+                $savable_Data['lgx_item_margin']                =(( isset($postData['lgx_item_margin'])) ? sanitize_text_field( $postData['lgx_item_margin'] ) : '0px');
+
+                $savable_Data['lgx_item_bottom_margin_title']                =(( isset($postData['lgx_item_bottom_margin_title'])) ? sanitize_text_field( $postData['lgx_item_bottom_margin_title'] ) : '0px');
+                $savable_Data['lgx_item_bottom_margin_desc']                =(( isset($postData['lgx_item_bottom_margin_desc'])) ? sanitize_text_field( $postData['lgx_item_bottom_margin_desc'] ) : '0px');
+
+
+                // Tooltip Settings : Ok
+                $savable_Data['lgx_tooltip_en']                  = ((isset($postData['lgx_tooltip_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_tooltip_content_type']        = (( isset($postData['lgx_tooltip_content_type'])) ? sanitize_text_field( $postData['lgx_tooltip_content_type'] ) : 'brand_name');
+                $savable_Data['lgx_tooltip_position']            = (( isset($postData['lgx_tooltip_position'])) ? sanitize_text_field( $postData['lgx_tooltip_position'] ) : 'top');
+                $savable_Data['lgx_tooltip_anim']                = (( isset($postData['lgx_tooltip_anim'])) ? sanitize_text_field( $postData['lgx_tooltip_anim'] ) : 'fade');
+                $savable_Data['lgx_tooltip_arrow_en']            = ((isset($postData['lgx_tooltip_arrow_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_tooltip_anim_duration']       = (( isset($postData['lgx_tooltip_anim_duration'])) ? sanitize_text_field( $postData['lgx_tooltip_anim_duration'] ) : 350);
+                $savable_Data['lgx_tooltip_anim_delay']          = (( isset($postData['lgx_tooltip_anim_delay'])) ? sanitize_text_field( $postData['lgx_tooltip_anim_delay'] ) : 300);
+                $savable_Data['lgx_tooltip_trigger_type']        = (( isset($postData['lgx_tooltip_trigger_type'])) ? sanitize_text_field( $postData['lgx_tooltip_trigger_type'] ) : 'hover');
+                $savable_Data['lgx_tooltip_distance']            =(( isset($postData['lgx_tooltip_distance'])) ? sanitize_text_field( $postData['lgx_tooltip_distance'] ) : 6);;
+                $savable_Data['lgx_tooltip_min_intersection']    = (( isset($postData['lgx_tooltip_min_intersection'])) ? sanitize_text_field( $postData['lgx_tooltip_min_intersection'] ) : 16);
+                $savable_Data['lgx_tooltip_timer']               = (( isset($postData['lgx_tooltip_timer'])) ? sanitize_text_field( $postData['lgx_tooltip_timer'] ) : 0);
+                $savable_Data['lgx_tooltip_padding']              = (( isset($postData['lgx_tooltip_padding'])) ? sanitize_text_field( $postData['lgx_tooltip_padding'] ) : '8px');
+                $savable_Data['lgx_tooltip_text_color']          = (( isset($postData['lgx_tooltip_text_color'])) ? sanitize_text_field( $postData['lgx_tooltip_text_color'] ) : '#ffffff');
+                $savable_Data['lgx_tooltip_bg_color']            = (( isset($postData['lgx_tooltip_bg_color'])) ? sanitize_text_field( $postData['lgx_tooltip_bg_color'] ) : '#d3d3d3');
+                $savable_Data['lgx_tooltip_border_color']        = (( isset($postData['lgx_tooltip_border_color'])) ? sanitize_text_field( $postData['lgx_tooltip_border_color'] ) : '#333333');
+                $savable_Data['lgx_tooltip_border_radius']       = (( isset($postData['lgx_tooltip_border_radius'])) ? sanitize_text_field( $postData['lgx_tooltip_border_radius'] ) : '4px');
+                $savable_Data['lgx_tooltip_border_width']       = (( isset($postData['lgx_tooltip_border_width'])) ? sanitize_text_field( $postData['lgx_tooltip_border_width'] ) : '2px');
+                $savable_Data['lgx_tooltip_arrow_bg_color']      = (( isset($postData['lgx_tooltip_arrow_bg_color'])) ? sanitize_text_field( $postData['lgx_tooltip_arrow_bg_color'] ) : '#555555');
+                $savable_Data['lgx_tooltip_arrow_border_color']  = (( isset($postData['lgx_tooltip_arrow_border_color'])) ? sanitize_text_field( $postData['lgx_tooltip_arrow_border_color'] ) : '#333333');
+
+
+
+                //Section Settings  : ok
+                $savable_Data['lgx_section_bg_img_en']          = ((isset($postData['lgx_section_bg_img_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_section_bg_color_en']        = ((isset($postData['lgx_section_bg_color_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_section_width']              = (( isset($postData['lgx_section_width'])) ? sanitize_text_field( $postData['lgx_section_width'] ) : '100%');
+                $savable_Data['lgx_section_container']          = (( isset($postData['lgx_section_container'])) ? sanitize_text_field( $postData['lgx_section_container'] ) : 'container-fluid');
+                $savable_Data['lgx_section_bg_img']             = (( isset($postData['lgx_section_bg_img'])) ? sanitize_text_field( $postData['lgx_section_bg_img'] ) : '');
+                $savable_Data['lgx_section_bg_img_attachment']  = (( isset($postData['lgx_section_bg_img_attachment'])) ? sanitize_text_field( $postData['lgx_section_bg_img_attachment'] ) : 'initial');
+                $savable_Data['lgx_section_bg_img_size']        = (( isset($postData['lgx_section_bg_img_size'])) ? sanitize_text_field( $postData['lgx_section_bg_img_size'] ) : 'cover');
+                $savable_Data['lgx_section_bg_color']           = (( isset($postData['lgx_section_bg_color'])) ? sanitize_text_field( $postData['lgx_section_bg_color'] ) : '#b56969');
+                $savable_Data['lgx_section_top_margin']         = (( isset($postData['lgx_section_top_margin'])) ? sanitize_text_field( $postData['lgx_section_top_margin'] ) : '0px');
+                $savable_Data['lgx_section_bottom_margin']      = (( isset($postData['lgx_section_bottom_margin'])) ? sanitize_text_field( $postData['lgx_section_bottom_margin'] ) : '0px');
+                $savable_Data['lgx_section_top_padding']        = (( isset($postData['lgx_section_top_padding'])) ? sanitize_text_field( $postData['lgx_section_top_padding'] ) : '0px');
+                $savable_Data['lgx_section_bottom_padding']     = (( isset($postData['lgx_section_bottom_padding'])) ? sanitize_text_field( $postData['lgx_section_bottom_padding'] ) : '0px');
+
+
+                //Header Settings : Ok
+                $savable_Data['lgx_header_en']                             = ((isset($postData['lgx_header_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_header_align']                         = (( isset($postData['lgx_header_align'])) ? sanitize_text_field( $postData['lgx_header_align'] ): 'center');
+                $savable_Data['lgx_header_title']                         = (( isset($postData['lgx_header_title'])) ? sanitize_text_field( $postData['lgx_header_title'] ): '');
+                $savable_Data['lgx_header_title_font_size']               = (( isset($postData['lgx_header_title_font_size'])) ? sanitize_text_field( $postData['lgx_header_title_font_size'] ): '36px');
+                $savable_Data['lgx_header_title_color']                   = (( isset($postData['lgx_header_title_color'])) ? sanitize_text_field( $postData['lgx_header_title_color'] ): '#010101');
+                $savable_Data['lgx_header_title_font_weight']             = (( isset($postData['lgx_header_title_font_weight'])) ? sanitize_text_field( $postData['lgx_header_title_font_weight'] ): 700);
+                $savable_Data['lgx_header_title_bottom_margin']           = (( isset($postData['lgx_header_title_bottom_margin'])) ? sanitize_text_field( $postData['lgx_header_title_bottom_margin'] ): '10px');
+                $savable_Data['lgx_header_subtitle']                      = (( isset($postData['lgx_header_subtitle'])) ? sanitize_text_field( $postData['lgx_header_subtitle'] ): '');
+                $savable_Data['lgx_header_subtitle_font_size']            = (( isset($postData['lgx_header_subtitle_font_size'])) ? sanitize_text_field( $postData['lgx_header_subtitle_font_size'] ): '16px');
+                $savable_Data['lgx_header_subtitle_color']                = (( isset($postData['lgx_header_subtitle_color'])) ? sanitize_text_field( $postData['lgx_header_subtitle_color'] ): '#888888');
+                $savable_Data['lgx_header_subtitle_font_weight']          = (( isset($postData['lgx_header_subtitle_font_weight'])) ? sanitize_text_field( $postData['lgx_header_subtitle_font_weight'] ): '400');
+                $savable_Data['lgx_header_subtitle_bottom_margin']        = (( isset($postData['lgx_header_subtitle_bottom_margin'])) ? sanitize_text_field( $postData['lgx_header_subtitle_bottom_margin'] ): '10px');
+
+
+                //Grid : OK
+                $savable_Data['lgx_grid_column_gap']    = (( isset($postData['lgx_grid_column_gap'])) ? sanitize_text_field( $postData['lgx_grid_column_gap'] ) : '15px');
+                $savable_Data['lgx_grid_row_gap']       = (( isset($postData['lgx_grid_row_gap'])) ? sanitize_text_field( $postData['lgx_grid_row_gap'] ) : '15px');
+                $savable_Data['lgx_grid_item_min_height']       = (( isset($postData['lgx_grid_item_min_height'])) ? sanitize_text_field( $postData['lgx_grid_item_min_height'] ) : 0);
+
+                //Grid Masonry
+
+                //Carousel Control Settings :ok
+                $savable_Data['lgx_carousel_ticker_en']              = ((isset($postData['lgx_carousel_ticker_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_carousel_transition_effect']      = (( isset($postData['lgx_carousel_transition_effect'])) ? sanitize_text_field( $postData['lgx_carousel_transition_effect'] ): 'all');
+                $savable_Data['lgx_carousel_infinite_en']            = ((isset($postData['lgx_carousel_infinite_en'])) ? 'yes' : 'no');
+
+                $savable_Data['lgx_carousel_transition_speed']       = (( isset($postData['lgx_carousel_transition_speed'])) ? sanitize_text_field( $postData['lgx_carousel_transition_speed'] ): 500);
+                $savable_Data['lgx_carousel_autoplay_en']            = ((isset($postData['lgx_carousel_autoplay_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_carousel_autoplay_delay']         = (( isset($postData['lgx_carousel_autoplay_delay'])) ? sanitize_text_field( $postData['lgx_carousel_autoplay_delay'] ): 1500);
+                $savable_Data['lgx_carousel_pause_mouse_enter_en']   = ((isset($postData['lgx_carousel_pause_mouse_enter_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_carousel_space_between']          = (( isset($postData['lgx_carousel_space_between'])) ? sanitize_text_field( $postData['lgx_carousel_space_between'] ): 10);
+                $savable_Data['lgx_carousel_rtl_en']                 = ((isset($postData['lgx_carousel_rtl_en'])) ? 'yes' : 'no');
+
+                $savable_Data['lgx_carousel_nav_en']                = ((isset($postData['lgx_carousel_nav_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_carousel_nav_border_en']         = ((isset($postData['lgx_carousel_nav_border_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_carousel_nav_hover_en']          = ((isset($postData['lgx_carousel_nav_hover_en'])) ? 'yes' : 'no');
+
+                $savable_Data['lgx_carousel_nav_position']          = (( isset($postData['lgx_carousel_nav_position'])) ? sanitize_text_field( $postData['lgx_carousel_nav_position'] ): 'top_right');
+                $savable_Data['lgx_carousel_nav_color']             = (( isset($postData['lgx_carousel_nav_color'])) ? sanitize_text_field( $postData['lgx_carousel_nav_color'] ): '#ffffff');
+                $savable_Data['lgx_carousel_nav_color_hover']       = (( isset($postData['lgx_carousel_nav_color_hover'])) ? sanitize_text_field( $postData['lgx_carousel_nav_color_hover'] ): '#ffffff');
+                $savable_Data['lgx_carousel_nav_bg_color']          = (( isset($postData['lgx_carousel_nav_bg_color'])) ? sanitize_text_field( $postData['lgx_carousel_nav_bg_color'] ): '#222b30');
+                $savable_Data['lgx_carousel_nav_bg_color_hover']    = (( isset($postData['lgx_carousel_nav_bg_color_hover'])) ? sanitize_text_field( $postData['lgx_carousel_nav_bg_color_hover'] ): '#222b30');
+
+                $savable_Data['lgx_carousel_nav_border_color']          = (( isset($postData['lgx_carousel_nav_border_color'])) ? sanitize_text_field( $postData['lgx_carousel_nav_border_color'] ): '#161E54');
+                $savable_Data['lgx_carousel_nav_border_color_hover']    = (( isset($postData['lgx_carousel_nav_border_color_hover'])) ? sanitize_text_field( $postData['lgx_carousel_nav_border_color_hover'] ): '#88E0EF');
+                $savable_Data['lgx_carousel_nav_border_width']          = (( isset($postData['lgx_carousel_nav_border_width'])) ? sanitize_text_field( $postData['lgx_carousel_nav_border_width'] ): '1px');
+                $savable_Data['lgx_carousel_nav_border_radius']         = (( isset($postData['lgx_carousel_nav_border_radius'])) ? sanitize_text_field( $postData['lgx_carousel_nav_border_radius'] ): '4px');
+                $savable_Data['lgx_carousel_nav_border_style']          = (( isset($postData['lgx_carousel_nav_border_style'])) ? sanitize_text_field( $postData['lgx_carousel_nav_border_style'] ): 'solid');
+
+                $savable_Data['lgx_carousel_pagination_en']           = ((isset($postData['lgx_carousel_pagination_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_carousel_pagination_color']        = (( isset($postData['lgx_carousel_pagination_color'])) ? sanitize_text_field( $postData['lgx_carousel_pagination_color'] ): '#869791');
+                $savable_Data['lgx_carousel_pagination_color_active'] = (( isset($postData['lgx_carousel_pagination_color_active'])) ? sanitize_text_field( $postData['lgx_carousel_pagination_color_active'] ): '#222b30');
+
+                $savable_Data['lgx_carousel_auto_height_en']          = ((isset($postData['lgx_carousel_auto_height_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_carousel_allow_touch_move_en']     = ((isset($postData['lgx_carousel_allow_touch_move_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_carousel_mouse_wheel_en']          = ((isset($postData['lgx_carousel_mouse_wheel_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_carousel_simulate_touch_en']       = ((isset($postData['lgx_carousel_simulate_touch_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_carousel_grab_cursor_en']         = ((isset($postData['lgx_carousel_grab_cursor_en'])) ? 'yes' : 'no');
+
+                $savable_Data['lgx_carousel_dynamic_bullets_en']       = ((isset($postData['lgx_carousel_dynamic_bullets_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_carousel_dynamic_bullets_no']       = (( isset($postData['lgx_carousel_dynamic_bullets_no'])) ? sanitize_text_field( $postData['lgx_carousel_dynamic_bullets_no'] ): 1);
+
+                $savable_Data['lgx_carousel_nav_btn_type']            = (( isset($postData['lgx_carousel_nav_btn_type'])) ? sanitize_text_field( $postData['lgx_carousel_nav_btn_type'] ): 'icon');
+                $savable_Data['lgx_carousel_nav_btn_text_prev']       = (( isset($postData['lgx_carousel_nav_btn_text_next'])) ? sanitize_text_field( $postData['lgx_carousel_nav_btn_text_prev'] ): 'Prev');
+                $savable_Data['lgx_carousel_nav_btn_text_next']       = (( isset($postData['lgx_carousel_nav_btn_text_next'])) ? sanitize_text_field( $postData['lgx_carousel_nav_btn_text_next'] ): 'Next');
+
+                $savable_Data['lgx_carousel_nav_btn_padding']        = (( isset($postData['lgx_carousel_nav_btn_padding'])) ? sanitize_text_field( $postData['lgx_carousel_nav_btn_padding'] ): '0px');
+                $savable_Data['lgx_carousel_nav_btn_font_size']      = (( isset($postData['lgx_carousel_nav_btn_font_size'])) ? sanitize_text_field( $postData['lgx_carousel_nav_btn_font_size'] ): '22px');
+                $savable_Data['lgx_carousel_nav_btn_line_height']    = (( isset($postData['lgx_carousel_nav_btn_line_height'])) ? sanitize_text_field( $postData['lgx_carousel_nav_btn_line_height'] ): '24px');
+                $savable_Data['lgx_carousel_nav_btn_width']          = (( isset($postData['lgx_carousel_nav_btn_width'])) ? sanitize_text_field( $postData['lgx_carousel_nav_btn_width'] ): '30px');
+                $savable_Data['lgx_carousel_nav_btn_height']         = (( isset($postData['lgx_carousel_nav_btn_height'])) ? sanitize_text_field( $postData['lgx_carousel_nav_btn_height'] ): '30px');
+                $savable_Data['lgx_carousel_item_vertical_align']    = (( isset($postData['lgx_carousel_item_vertical_align'])) ? sanitize_text_field( $postData['lgx_carousel_item_vertical_align'] ): 'top');
+                $savable_Data['lgx_carousel_nav_icon']               = (( isset($postData['lgx_carousel_nav_icon'])) ? sanitize_text_field( $postData['lgx_carousel_nav_icon'] ): 'angle');
+                $savable_Data['lgx_carousel_lazy_load_en']           = ((isset($postData['lgx_carousel_lazy_load_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_carousel_lazy_spinner_color']     = (( isset($postData['lgx_carousel_lazy_spinner_color'])) ? sanitize_text_field( $postData['lgx_carousel_lazy_spinner_color'] ): 'white');
+                $savable_Data['lgx_carousel_pagi_mobile_en']         = ((isset($postData['lgx_carousel_pagi_mobile_en'])) ? 'yes' : 'no');
+                $savable_Data['lgx_carousel_nav_mobile_en']          = ((isset($postData['lgx_carousel_nav_mobile_en'])) ? 'yes' : 'no');
+
+
+                // echo '<pre>';  print_r($savable_Data); echo '</pre>'; wp_die();
+                update_post_meta( $post_id, '_lgx_lsp_shortcodes_meta', $savable_Data );
+            }
+        }
+    }// End  Meta Save
+
+
+    /**
+     * @param array $classes
+     * @return array|mixed
+     */
+
+
+    public function add_meta_box_css_class_for_lgx_lsp_shortcodes($classes = array()) {
+
+        $add_classes = array( 'lgx_logo_slider_meta_box_postbox', 'lgx_logo_slider_meta_box_postbox_free' );
+
+        foreach ( $add_classes as $class ) {
+            if ( ! in_array( $class, $classes ) ) {
+                $classes[] = sanitize_html_class( $class );
+            }
+        }
+
+        return $classes;
+    }
+
+
+
+    public function add_new_column_head_for_lgx_logo_showcase($default_columns) {
+        unset( $default_columns['date'] );
+
+        $default_columns['title']            = __( 'Title', 'lgx-logo-showcase-wp' );
+        $default_columns['shortcode']        = __( 'Shortcode', 'lgx-logo-showcase-wp' );
+        //   $default_columns['php_shortcode']    = __( 'Theme or Plugin Code', 'lgx-logo-showcase-wp' );
+        $default_columns['date']             = __( 'Date', 'lgx-logo-showcase-wp' );
+
+        return $default_columns;
+    }
+
+    public function define_admin_column_value_for_lgx_logo_showcase($column, $post_id) {
+        if(!empty($post_id)) {
+            switch ($column) {
+                case 'shortcode':
+                    echo '<input type="text" class="lgx_logo_slider_list_copy_input"  readonly="readonly" value="[lgxlogoslider id=&quot;' . $post_id . '&quot;]">';
+                    // echo '<div>Click on shortcode to copy</div>';
+                    break;
+
+                case 'php_shortcode':
+                    echo '<input type="text" class="lgx_logo_slider_list_copy_input" style="width: 360px; text-align: center;" readonly="readonly" value="<?php echo do_shortcode( \'[lgxlogoslider id=&quot;' . $post_id . '&quot;]\' ); ?>">';
+                    // echo '<div>Click on theme or plugin code to copy</div>';
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+
+
 }
+
+
+
+
+
+

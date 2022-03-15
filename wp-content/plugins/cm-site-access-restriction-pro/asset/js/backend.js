@@ -196,6 +196,32 @@ jQuery(function($) {
 		$('form').off('submit', stopSubmit(e));
 	});
 
+	$('body').on('change', '.cmsar_islogouturl_checkbox', function() {
+		if($(this).is(':checked') == true) {
+			$(this).closest('.cmsar_menu_options').find('.blocker').css('height', '100px');
+			$(this).closest('.cmsar_menu_options').find('.cmsar_visible_for_select').val('loggedin').trigger('change');
+			$(this).closest('.cmsar_menu_options').find('.cmsar_all_selected_radio:first').trigger('click');
+		} else {
+			$(this).closest('.cmsar_menu_options').find('.blocker').css('height', '0px');
+		}
+	});
+
+	$('body').on('change', '.cmsar_visible_for_select', function() {
+		if($(this).val() == 'loggedin') {
+			$(this).closest('.cmsar_menu_options').find('.cmsar_menu_all_selected_roles').show();
+		} else {
+			$(this).closest('.cmsar_menu_options').find('.cmsar_menu_all_selected_roles').hide();
+		}
+	});
+
+	$('body').on('change', '.cmsar_all_selected_radio', function() {
+		if($(this).val() == 'selected_roles') {
+			$(this).closest('.cmsar_menu_options').find('.cmsar_menu_roles').show();
+		} else {
+			$(this).closest('.cmsar_menu_options').find('.cmsar_menu_roles').hide();
+		}
+	});
+
 });
 
 function getUsers($input) {

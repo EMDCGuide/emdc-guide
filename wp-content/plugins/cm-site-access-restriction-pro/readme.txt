@@ -4,7 +4,7 @@ Contributors: CreativeMindsSolutions
 Donate link: https://www.cminds.com/wordpress-plugins-library/membership-plugin-for-wordpress
 Requires at least: 5.4.0
 Tested up to: 5.8
-Stable tag: 1.5.9
+Stable tag: 1.6.1
 
 == Description ==
 
@@ -38,6 +38,12 @@ A gated content powerful solution and restricted content plugin for WordPress. S
 > [More FAQ's](https://www.cminds.com/wordpress-plugins-library/membership-plugin-for-wordpress/)
 
 == Changelog ==
+
+= 1.6.1 =
+* Added support to restrict wp nav menu items
+
+= 1.6.0 =
+* Added support to change restrict partially content x%
 
 = 1.5.9 =
 * Compatible with PHP 7.4

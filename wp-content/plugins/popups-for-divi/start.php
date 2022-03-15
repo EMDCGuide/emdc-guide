@@ -51,7 +51,6 @@ function pfd_init_plugin() {
 	require_once DIVI_POPUP_PATH . 'includes/builder/hooks.php';
 
 	// Integrations and compatibility.
-	require_once DIVI_POPUP_PATH . 'includes/integrations/forminator.php';
 	require_once DIVI_POPUP_PATH . 'includes/integrations/ie.php';
 	require_once DIVI_POPUP_PATH . 'includes/integrations/sg-optimizer.php';
 	require_once DIVI_POPUP_PATH . 'includes/integrations/wp-rocket.php';

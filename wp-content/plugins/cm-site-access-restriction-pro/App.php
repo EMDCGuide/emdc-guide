@@ -10,7 +10,7 @@ require_once dirname(__FILE__) . '/core/Core.php';
 
 class App extends Core {
 	
-	const VERSION = '1.5.9';
+	const VERSION = '1.6.1';
 	const PREFIX = 'cmacc';
 	const SLUG = 'cm-site-access-restriction';
 	const PLUGIN_NAME = 'CM Site Access Restriction';

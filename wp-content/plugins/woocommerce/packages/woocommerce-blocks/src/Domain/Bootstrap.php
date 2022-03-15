@@ -5,12 +5,13 @@ use Automattic\WooCommerce\Blocks\AssetsController as AssetsController;
 use Automattic\WooCommerce\Blocks\Assets\Api as AssetApi;
 use Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry;
 use Automattic\WooCommerce\Blocks\BlockTypesController;
+use Automattic\WooCommerce\Blocks\BlockTemplatesController;
+use Automattic\WooCommerce\Blocks\InboxNotifications;
 use Automattic\WooCommerce\Blocks\Installer;
 use Automattic\WooCommerce\Blocks\Registry\Container;
 use Automattic\WooCommerce\Blocks\RestApi;
 use Automattic\WooCommerce\Blocks\Payments\Api as PaymentsApi;
 use Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry;
-use Automattic\WooCommerce\Blocks\Payments\Integrations\Stripe;
 use Automattic\WooCommerce\Blocks\Payments\Integrations\Cheque;
 use Automattic\WooCommerce\Blocks\Payments\Integrations\PayPal;
 use Automattic\WooCommerce\Blocks\Payments\Integrations\BankTransfer;
@@ -57,22 +58,33 @@ class Bootstrap {
 	public function __construct( Container $container ) {
 		$this->container = $container;
 		$this->package   = $container->get( Package::class );
-		$this->init();
-		/**
-		 * Usable as a safe event hook for when the plugin has been loaded.
-		 */
-		do_action( 'woocommerce_blocks_loaded' );
+		if ( $this->has_core_dependencies() ) {
+			$this->init();
+			/**
+			 * Fires after WooCommerce Blocks plugin has loaded.
+			 *
+			 * This hook is intended to be used as a safe event hook for when the plugin has been loaded, and all
+			 * dependency requirements have been met.
+			 */
+			do_action( 'woocommerce_blocks_loaded' );
+		}
 	}
 
 	/**
 	 * Init the package - load the blocks library and define constants.
 	 */
 	protected function init() {
-		if ( ! $this->has_core_dependencies() ) {
-			return;
-		}
 		$this->register_dependencies();
 		$this->register_payment_methods();
+
+		add_action(
+			'admin_init',
+			function() {
+				InboxNotifications::create_surface_cart_checkout_blocks_notification();
+			},
+			10,
+			0
+		);
 
 		$is_rest = wc()->is_rest_api_request();
 
@@ -89,6 +101,7 @@ class Bootstrap {
 		$this->container->get( RestApi::class );
 		$this->container->get( GoogleAnalytics::class );
 		$this->container->get( BlockTypesController::class );
+		$this->container->get( BlockTemplatesController::class );
 		if ( $this->package->feature()->is_feature_plugin_build() ) {
 			$this->container->get( PaymentsApi::class );
 		}
@@ -100,7 +113,31 @@ class Bootstrap {
 	 * @return boolean
 	 */
 	protected function has_core_dependencies() {
-		return class_exists( 'WooCommerce' ) && function_exists( 'register_block_type' );
+		$has_needed_dependencies = class_exists( 'WooCommerce', false );
+		if ( $has_needed_dependencies ) {
+			$plugin_data = \get_file_data(
+				$this->package->get_path( 'woocommerce-gutenberg-products-block.php' ),
+				[
+					'RequiredWCVersion' => 'WC requires at least',
+				]
+			);
+			if ( isset( $plugin_data['RequiredWCVersion'] ) && version_compare( \WC()->version, $plugin_data['RequiredWCVersion'], '<' ) ) {
+				$has_needed_dependencies = false;
+				add_action(
+					'admin_notices',
+					function() {
+						if ( should_display_compatibility_notices() ) {
+							?>
+							<div class="notice notice-error">
+								<p><?php esc_html_e( 'The WooCommerce Blocks feature plugin requires a more recent version of WooCommerce and has been paused. Please update WooCommerce to the latest version to continue enjoying WooCommerce Blocks.', 'woocommerce' ); ?></p>
+							</div>
+							<?php
+						}
+					}
+				);
+			}
+		}
+		return $has_needed_dependencies;
 	}
 
 	/**
@@ -192,6 +229,12 @@ class Bootstrap {
 			}
 		);
 		$this->container->register(
+			BlockTemplatesController::class,
+			function ( Container $container ) {
+				return new BlockTemplatesController();
+			}
+		);
+		$this->container->register(
 			DraftOrders::class,
 			function( Container $container ) {
 				return new DraftOrders( $container->get( Package::class ) );
@@ -235,7 +278,7 @@ class Bootstrap {
 			GoogleAnalytics::class,
 			function( Container $container ) {
 				// Require Google Analytics Integration to be activated.
-				if ( ! class_exists( 'WC_Google_Analytics_Integration' ) ) {
+				if ( ! class_exists( 'WC_Google_Analytics_Integration', false ) ) {
 					return;
 				}
 				$asset_api = $container->get( AssetApi::class );
@@ -256,18 +299,8 @@ class Bootstrap {
 
 	/**
 	 * Register payment method integrations with the container.
-	 *
-	 * @internal Stripe is a temporary method that is used for setting up payment method integrations with Cart and
-	 *           Checkout blocks. This logic should get moved to the payment gateway extensions.
 	 */
 	protected function register_payment_methods() {
-		$this->container->register(
-			Stripe::class,
-			function( Container $container ) {
-				$asset_api = $container->get( AssetApi::class );
-				return new Stripe( $asset_api );
-			}
-		);
 		$this->container->register(
 			Cheque::class,
 			function( Container $container ) {

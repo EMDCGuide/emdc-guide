@@ -1,9 +1,10 @@
-/* global wp, bp, BP_Nouveau, _, Backbone */
-/* @version 4.0.0 */
+/* global wp, BP_Nouveau, _, Backbone */
+/* @since 3.0.0 */
+/* @version 8.0.0 */
 window.wp = window.wp || {};
 window.bp = window.bp || {};
 
-( function( exports, $ ) {
+( function( bp, $ ) {
 
 	// Bail if not set
 	if ( typeof BP_Nouveau === 'undefined' ) {
@@ -125,7 +126,7 @@ window.bp = window.bp || {};
 				scope        : this.scope
 			} );
 
-			// Use it in the filters viex
+			// Use it in the filters view.
 			filters_view = new bp.Views.inviteFilters( { model: this.filters, users: collection } );
 
 			this.views.add( { id: 'filters', view: filters_view } );
@@ -535,7 +536,13 @@ window.bp = window.bp || {};
 		},
 
 		usersFilterError: function( collection, response ) {
-			bp.Nouveau.GroupInvites.displayFeedback( response.feedback, 'error' );
+			var type = 'error';
+
+			if ( response.type ) {
+				type = response.type;
+			}
+
+			bp.Nouveau.GroupInvites.displayFeedback( response.feedback, type );
 		},
 
 		resetSearchTerms: function( event ) {
@@ -844,4 +851,4 @@ window.bp = window.bp || {};
 	// Launch BP Nouveau Groups
 	bp.Nouveau.GroupInvites.start();
 
-} )( bp, jQuery );
+} )( window.bp, jQuery );

@@ -1,3 +1,7 @@
+= Version 3.0.5 =
+* Fix: Hide the onboarding notice for non-admin users.
+* Change: Remove unused third-party integration with Forminator that could cause problems with Divi.
+
 = Version 3.0.3 =
 * Improve: Compatibility with WP Rocket 3.9.
 * Fix: PHP 8 compatibility.
@@ -15,7 +19,7 @@
 * Fix: Removed debugging output in JavaScript console.
 
 = 2.3.6 =
-* Change: Rename JS API function: `DiviArea.Core.focusArea()` is now `DiviAreaItem.focus()`
+* Change: Rename JS API function: `DiviArea.Core.focusArea()` is now `DiviAreaItemdev.focus()`
 * Change: Rename JS API function: `DiviArea.Core.blurArea()` is now `DiviAreaItem.blur()`
 * Change New JS API function `DiviAreaItem.show()` and `DiviAreaItem.hide()`
 * Fix: The "Popup" tab works for all post-types.

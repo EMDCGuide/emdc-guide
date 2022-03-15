@@ -2,8 +2,8 @@
 /**
  * Wishlist page template - Standard Layout
  *
- * @author  Your Inspiration Themes
- * @package YITH WooCommerce Wishlist
+ * @author YITH
+ * @package YITH\Wishlist\Templates\Wishlist\View
  * @version 3.0.0
  */
 
@@ -76,7 +76,7 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 
 		<th class="product-name">
 			<span class="nobr">
-				<?php echo esc_html( apply_filters( 'yith_wcwl_wishlist_view_name_heading', __( 'Resource name', 'yith-woocommerce-wishlist' ), $wishlist ) ); ?>
+				<?php echo esc_html( apply_filters( 'yith_wcwl_wishlist_view_name_heading', __( 'Product name', 'yith-woocommerce-wishlist' ), $wishlist ) ); ?>
 			</span>
 		</th>
 
@@ -131,8 +131,9 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 	<?php
 	if ( $wishlist && $wishlist->has_items() ) :
 		foreach ( $wishlist_items as $item ) :
-			// phpcs:ignore Generic.Commenting.DocComment
 			/**
+			 * Each of the wishlist items
+			 *
 			 * @var $item \YITH_WCWL_Wishlist_Item
 			 */
 			global $product;
@@ -153,7 +154,7 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 					<?php if ( $show_remove_product ) : ?>
 						<td class="product-remove">
 							<div>
-								<a href="<?php echo esc_url( add_query_arg( 'remove_from_wishlist', $item->get_product_id() ) ); ?>" class="remove remove_from_wishlist" title="<?php echo esc_html( apply_filters( 'yith_wcwl_remove_product_wishlist_message_title', __( 'Remove this product', 'yith-woocommerce-wishlist' ) ) ); ?>">&times;</a>
+								<a href="<?php echo esc_url( $item->get_remove_url() ); ?>" class="remove remove_from_wishlist" title="<?php echo esc_html( apply_filters( 'yith_wcwl_remove_product_wishlist_message_title', __( 'Remove this product', 'yith-woocommerce-wishlist' ) ) ); ?>">&times;</a>
 							</div>
 						</td>
 					<?php endif; ?>
@@ -162,7 +163,7 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 						<?php do_action( 'yith_wcwl_table_before_product_thumbnail', $item, $wishlist ); ?>
 
 						<a href="<?php echo esc_url( get_permalink( apply_filters( 'woocommerce_in_cart_product', $item->get_product_id() ) ) ); ?>">
-							<?php echo $product->get_image(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+							<?php echo wp_kses_post( $product->get_image() ); ?>
 						</a>
 
 						<?php do_action( 'yith_wcwl_table_after_product_thumbnail', $item, $wishlist ); ?>
@@ -177,11 +178,12 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 
 						<?php
 						if ( $show_variation && $product->is_type( 'variation' ) ) {
-							// phpcs:ignore Generic.Commenting.DocComment
 							/**
+							 * Product is a Variation
+							 *
 							 * @var $product \WC_Product_Variation
 							 */
-							echo wc_get_formatted_variation( $product ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo wp_kses_post( wc_get_formatted_variation( $product ) );
 						}
 						?>
 
@@ -194,11 +196,11 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 
 							<?php
 							if ( $show_price ) {
-								echo $item->get_formatted_product_price(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo wp_kses_post( $item->get_formatted_product_price() );
 							}
 
 							if ( $show_price_variations ) {
-								echo $item->get_price_variation(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo wp_kses_post( $item->get_price_variation() );
 							}
 							?>
 
@@ -260,8 +262,9 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 										<option value=""><?php esc_html_e( 'Move', 'yith-woocommerce-wishlist' ); ?></option>
 										<?php
 										foreach ( $users_wishlists as $wl ) :
-											// phpcs:ignore Generic.Commenting.DocComment
 											/**
+											 * Each of customer's wishlists
+											 *
 											 * @var $wl \YITH_WCWL_Wishlist
 											 */
 											if ( $wl->get_token() === $wishlist_token ) {
@@ -287,7 +290,7 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 
 							<!-- Remove from wishlist -->
 							<?php if ( $repeat_remove_button ) : ?>
-								<a href="<?php echo esc_url( add_query_arg( 'remove_from_wishlist', $item->get_product_id() ) ); ?>" class="remove_from_wishlist button" title="<?php echo esc_html( apply_filters( 'yith_wcwl_remove_product_wishlist_message_title', __( 'Remove this product', 'yith-woocommerce-wishlist' ) ) ); ?>"><?php esc_html_e( 'Remove', 'yith-woocommerce-wishlist' ); ?></a>
+								<a href="<?php echo esc_url( $item->get_remove_url() ); ?>" class="remove_from_wishlist button" title="<?php echo esc_html( apply_filters( 'yith_wcwl_remove_product_wishlist_message_title', __( 'Remove this product', 'yith-woocommerce-wishlist' ) ) ); ?>"><?php esc_html_e( 'Remove', 'yith-woocommerce-wishlist' ); ?></a>
 							<?php endif; ?>
 
 							<?php do_action( 'yith_wcwl_table_after_product_cart', $item, $wishlist ); ?>
@@ -315,7 +318,9 @@ if ( ! defined( 'YITH_WCWL' ) ) {
 	if ( ! empty( $page_links ) ) :
 		?>
 		<tr class="pagination-row wishlist-pagination">
-			<td colspan="<?php echo esc_attr( $column_count ); ?>"><?php echo $page_links; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
+			<td colspan="<?php echo esc_attr( $column_count ); ?>">
+				<?php echo wp_kses_post( $page_links ); ?>
+			</td>
 		</tr>
 	<?php endif ?>
 	</tbody>

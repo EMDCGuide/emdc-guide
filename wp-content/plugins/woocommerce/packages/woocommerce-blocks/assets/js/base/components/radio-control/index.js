@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import { withInstanceId } from '@woocommerce/base-hocs/with-instance-id';
+import { withInstanceId } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -11,11 +11,11 @@ import RadioControlOption from './option';
 import './style.scss';
 
 const RadioControl = ( {
-	className,
+	className = '',
 	instanceId,
 	id,
 	selected,
-	onChange,
+	onChange = () => {},
 	options = [],
 } ) => {
 	const radioControlId = id || instanceId;

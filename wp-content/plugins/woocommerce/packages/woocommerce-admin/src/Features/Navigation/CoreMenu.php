@@ -74,6 +74,16 @@ class CoreMenu {
 	}
 
 	/**
+	 * Get unfulfilled order count
+	 *
+	 * @return array
+	 */
+	public static function get_shop_order_count() {
+		$status_counts = array_map( 'wc_orders_count', array( 'processing', 'on-hold' ) );
+		return array_sum( $status_counts );
+	}
+
+	/**
 	 * Get all menu categories.
 	 *
 	 * @return array
@@ -84,6 +94,7 @@ class CoreMenu {
 			array(
 				'title' => __( 'Orders', 'woocommerce' ),
 				'id'    => 'woocommerce-orders',
+				'badge' => self::get_shop_order_count(),
 				'order' => 10,
 			),
 			array(
@@ -242,7 +253,7 @@ class CoreMenu {
 	/**
 	 * Get items for tools category.
 	 *
-	 * @returna array
+	 * @return array
 	 */
 	public static function get_tool_items() {
 		$tabs = array(
@@ -347,7 +358,7 @@ class CoreMenu {
 				) {
 					continue;
 				}
-	
+
 				// Use the link from the first item if it's a category.
 				if ( ! isset( $item['url'] ) ) {
 					$categoryMenuId = $menuId === 'favorites' ? 'plugins' : $menuId;
@@ -356,7 +367,7 @@ class CoreMenu {
 					if ( ! empty( $category_items ) ) {
 						$first_item = $category_items[0];
 
-	
+
 						$submenu['woocommerce'][] = array(
 							$item['title'],
 							$first_item['capability'],
@@ -364,10 +375,10 @@ class CoreMenu {
 							$item['title'],
 						);
 					}
-	
+
 					continue;
 				}
-	
+
 				// Show top-level items.
 				$submenu['woocommerce'][] = array(
 					$item['title'],

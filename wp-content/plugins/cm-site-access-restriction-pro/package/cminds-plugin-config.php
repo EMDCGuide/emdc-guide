@@ -50,7 +50,7 @@ $cminds_plugin_config = array(
 			<li class="heading">Current Edition</li>
 			<li class="price">$0.00</li>
 			<li class="noaction"><span>Free Download</span></li>
-		   <li>Login and Registration PopUp</li>
+			<li>Login and Registration PopUp</li>
 			<li>Ajax login or registration</li>
 			<li>Stay on the same page after login</li>
 			<li>X</li>
@@ -65,14 +65,14 @@ $cminds_plugin_config = array(
 			<li>X</li>
 			<li>X</li>
 			<li>X</li>
-			  <li class="price">$0.00</li>
+			<li class="price">$0.00</li>
 			<li class="noaction"><span>Free Download</span></li>
 		</ul>
 		<ul>
 			<li class="heading">Pro</li>
 			<li class="price">$29.00</li>
 			<li class="action"><a href="https://www.cminds.com/store/cm-site-access-restriction-and-invitation-codes-plugin-for-wordpress/" style="background-color:darkblue;" target="_blank">More Info</a> &nbsp;&nbsp;<a href="https://www.cminds.com/?edd_action=add_to_cart&download_id=88183&wp_referrer=https://www.cminds.com/checkout/&edd_options[price_id]=1" target="_blank">Buy Now</a></li>
-		   <li>Login and Registration PopUp</li>
+			<li>Login and Registration PopUp</li>
 			<li>Ajax login or registration</li>
 			<li>Stay on the same page after login</li>
 			<li>Invitation codes support</li>
@@ -87,7 +87,7 @@ $cminds_plugin_config = array(
 			<li>Restrict registration fields per Role</li>
 			<li>Create Role based Registration forms</li>
 			<li>Export All User Data To CSV</li>
-		   <li class="price">$29.00</li>
+			<li class="price">$29.00</li>
 			<li class="action"><a href="https://www.cminds.com/store/cm-site-access-restriction-and-invitation-codes-plugin-for-wordpress/" style="background-color:darkblue;" target="_blank">More Info</a> &nbsp;&nbsp;<a href="https://www.cminds.com/?edd_action=add_to_cart&download_id=88183&wp_referrer=https://www.cminds.com/checkout/&edd_options[price_id]=1" target="_blank">Buy Now</a></li>
 		</ul>
 	</div>',

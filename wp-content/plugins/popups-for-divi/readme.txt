@@ -2,8 +2,8 @@
 Contributors: strackerphil-1
 Tags: popup, marketing, divi
 Requires at least: 4.0.0
-Tested up to: 5.7.2
-Stable tag: 3.0.3
+Tested up to: 5.9
+Stable tag: 3.0.5
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -36,11 +36,9 @@ Check out the [Plugin website](https://divimode.com/divi-popup/?utm_source=wporg
 
 Tested in all major browsers on Windows and Mac: Chrome, Firefox, Safari, IE 11, Edge!
 
-# 🎂 Popups for Divi turns 2
+# Popups for Divi Course
 
-Wow, it's already two years since the beginning of Popups for Divi!
-
-It has been a great time and we've learned a lot. During that time we added a ton of features and have created a stable and powerful marketing plugin.
+During the past years, we've added a ton of features and have created a stable and powerful marketing plugin.
 
 To celebrate the anniversary, we have created a six-day course that teaches you everything about the plugin. It walks you through the basics of creating your first Popup, shows possible ways to customize your Popup layouts and goes into advanced techniques and usages of the plugin.
 
@@ -173,14 +171,18 @@ When you need additional features, then please have a look at our the Premium pl
 
 == Changelog ==
 
+= Version 3.0.5 =
+* Fix: Hide the onboarding notice for non-admin users.
+* Change: Remove unused third-party integration with Forminator that could cause problems with Divi.
+
+Plugin tested with WordPress 5.9.0 and Divi 4.14.7
+
 = Version 3.0.3 =
 * Improve: Compatibility with WP Rocket 3.9.
 * Fix: PHP 8 compatibility.
 * Fix: Address error in plugins uninstall.php script.
 * Fix: Pinch-Zoom works while Popup is open on mobile devices.
 * Fix: Popup contents that have "overflow: scroll" can be scrolled via the mouse wheel.
-
-Plugin tested with WordPress 5.7.2 and Divi 4.9.7
 
 = Version 3.0.2 =
 * Fix: The plugin does not trigger "Constant already defined / headers already sent" warnings anymore.

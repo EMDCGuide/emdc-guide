@@ -30,7 +30,7 @@ if ( ! class_exists( 'YIT_Icons' ) ) {
 		 */
 		private $data
 			= array(
-				'font_awesome_version' => '4.6.3',
+				'font_awesome_version' => '4.7.0',
 				'icons'                => array(
 					'FontAwesome' => array(
 						'\f000' => 'glass',
@@ -667,6 +667,47 @@ if ( ! class_exists( 'YIT_Icons' ) ) {
 						'\f2b2' => 'themeisle',
 						'\f2b3' => 'google-plus-official',
 						'\f2b4' => 'font-awesome',
+						'\f2b5' => 'handshake-o',
+						'\f2b6' => 'envelope-open',
+						'\f2b7' => 'envelope-open-o',
+						'\f2b8' => 'linode',
+						'\f2b9' => 'address-book',
+						'\f2ba' => 'address-book-o',
+						'\f2bb' => 'address-card',
+						'\f2bc' => 'address-card-o',
+						'\f2bd' => 'user-circle',
+						'\f2be' => 'user-circle-o',
+						'\f2c0' => 'user-o',
+						'\f2c1' => 'id-badge',
+						'\f2c2' => 'id-card',
+						'\f2c3' => 'id-card-o',
+						'\f2c4' => 'quora',
+						'\f2c5' => 'free-code-camp',
+						'\f2c6' => 'telegram',
+						'\f2c7' => 'thermometer-full',
+						'\f2c8' => 'thermometer-three-quarters',
+						'\f2c9' => 'thermometer-half',
+						'\f2ca' => 'thermometer-quarter',
+						'\f2cb' => 'thermometer-empty',
+						'\f2cc' => 'shower',
+						'\f2cd' => 'bath',
+						'\f2ce' => 'podcast',
+						'\f2d0' => 'window-maximize',
+						'\f2d1' => 'window-minimize',
+						'\f2d2' => 'window-restore',
+						'\f2d3' => 'window-close',
+						'\f2d4' => 'window-close-o',
+						'\f2d5' => 'bandcamp',
+						'\f2d6' => 'grav',
+						'\f2d7' => 'etsy',
+						'\f2d8' => 'imdb',
+						'\f2d9' => 'ravelry',
+						'\f2da' => 'eercast',
+						'\f2db' => 'microchip',
+						'\f2dc' => 'snowflake-o',
+						'\f2dd' => 'superpowers',
+						'\f2de' => 'wpexplorer',
+						'\f2e0' => 'meetup',
 					),
 					'Dashicons'   => array(
 						'\f100' => 'admin-appearance',
@@ -979,7 +1020,19 @@ if ( ! class_exists( 'YIT_Icons' ) ) {
 		 * @return string
 		 */
 		public function get_icon_data( $icon_string, $filter_suffix = '' ) {
-			$icon_data = '';
+			return yith_plugin_fw_html_data_to_string( $this->get_icon_data_array( $icon_string, $filter_suffix ) );
+		}
+
+		/**
+		 * Get the icon data array
+		 *
+		 * @param string $icon_string   The icon string.
+		 * @param string $filter_suffix The filter suffix.
+		 *
+		 * @return array
+		 */
+		public function get_icon_data_array( $icon_string, $filter_suffix = '' ) {
+			$icon_data = array();
 			if ( $icon_string ) {
 				$icon_array = explode( ':', $icon_string );
 
@@ -994,8 +1047,12 @@ if ( ! class_exists( 'YIT_Icons' ) ) {
 				if ( array_key_exists( $font_name, $icons ) ) {
 					$icon_key  = array_search( $icon_name, $icons[ $font_name ], true );
 					$icon_code = '&#x' . str_replace( '\\', '', $icon_key );
-
-					$icon_data = 'data-font="' . esc_attr( $font_name ) . '" data-name="' . esc_attr( $icon_name ) . '" data-key="' . esc_attr( $icon_key ) . '" data-icon="' . $icon_code . '"';
+					$icon_data = array(
+						'font' => $font_name,
+						'name' => $icon_name,
+						'key'  => $icon_key,
+						'icon' => $icon_code,
+					);
 				}
 			}
 
@@ -1084,7 +1141,7 @@ if ( ! class_exists( 'YIT_Icons' ) ) {
 		 * Enqueue Scripts
 		 */
 		public function enqueue_scripts() {
-			wp_register_style( 'font-awesome', "https://maxcdn.bootstrapcdn.com/font-awesome/{$this->font_awesome_version}/css/font-awesome.min.css", array(), $this->font_awesome_version );
+			wp_register_style( 'font-awesome', YIT_CORE_PLUGIN_URL . '/assets/fonts/font-awesome/font-awesome.min.css', array(), $this->font_awesome_version );
 
 			wp_add_inline_style( 'font-awesome', $this->get_inline_style( 'font-awesome' ) );
 

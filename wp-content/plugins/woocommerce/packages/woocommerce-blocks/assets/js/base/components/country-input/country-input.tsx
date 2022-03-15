@@ -9,11 +9,11 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { ValidatedSelect } from '../select';
+import Combobox from '../combobox';
 import './style.scss';
 import type { CountryInputWithCountriesProps } from './CountryInputProps';
 
-const CountryInput = ( {
+export const CountryInput = ( {
 	className,
 	countries,
 	id,
@@ -30,10 +30,12 @@ const CountryInput = ( {
 }: CountryInputWithCountriesProps ): JSX.Element => {
 	const options = useMemo(
 		() =>
-			Object.keys( countries ).map( ( key ) => ( {
-				key,
-				name: decodeEntities( countries[ key ] ),
-			} ) ),
+			Object.entries( countries ).map(
+				( [ countryCode, countryName ] ) => ( {
+					value: countryCode,
+					label: decodeEntities( countryName ),
+				} )
+			),
 		[ countries ]
 	);
 
@@ -44,15 +46,16 @@ const CountryInput = ( {
 				'wc-block-components-country-input'
 			) }
 		>
-			<ValidatedSelect
+			<Combobox
 				id={ id }
 				label={ label }
 				onChange={ onChange }
 				options={ options }
-				value={ options.find( ( option ) => option.key === value ) }
+				value={ value }
 				errorId={ errorId }
 				errorMessage={ errorMessage }
 				required={ required }
+				autoComplete={ autoComplete }
 			/>
 			{ autoComplete !== 'off' && (
 				<input
@@ -61,11 +64,17 @@ const CountryInput = ( {
 					autoComplete={ autoComplete }
 					value={ value }
 					onChange={ ( event ) => {
-						const textValue = event.target.value;
+						const textValue = event.target.value.toLocaleUpperCase();
 						const foundOption = options.find(
-							( option ) => option.key === textValue
+							( option ) =>
+								( textValue.length !== 2 &&
+									option.label.toLocaleUpperCase() ===
+										textValue ) ||
+								( textValue.length === 2 &&
+									option.value.toLocaleUpperCase() ===
+										textValue )
 						);
-						onChange( foundOption ? foundOption.key : '' );
+						onChange( foundOption ? foundOption.value : '' );
 					} }
 					style={ {
 						minHeight: '0',

@@ -35,11 +35,11 @@ import { blocksConfig } from '@woocommerce/block-settings';
 /**
  * Internal dependencies
  */
+import { getBlockClassName } from '../utils';
 import {
 	renderHiddenContentPlaceholder,
 	renderNoProductsPlaceholder,
-	getBlockClassName,
-} from '../utils';
+} from '../edit-utils';
 import {
 	DEFAULT_PRODUCT_LIST_LAYOUT,
 	getProductLayoutConfig,
@@ -148,7 +148,10 @@ class Editor extends Component {
 					controls={ [
 						{
 							icon: 'edit',
-							title: __( 'Edit', 'woocommerce' ),
+							title: __(
+								'Edit inner product layout',
+								'woocommerce'
+							),
 							onClick: () => this.togglePreview(),
 							isActive: isEditing,
 						},

@@ -90,8 +90,6 @@ if ( ! class_exists( 'YIT_Assets' ) ) {
 			wp_register_style( 'yit-plugin-metaboxes', YIT_CORE_PLUGIN_URL . '/assets/css/metaboxes.css', array( 'yith-plugin-ui' ), $this->version );
 			wp_register_style( 'yith-plugin-fw-fields', YIT_CORE_PLUGIN_URL . '/assets/css/yith-fields.css', array( 'yith-plugin-ui' ), $this->version );
 
-			wp_register_style( 'raleway-font', '//fonts.googleapis.com/css?family=Raleway:100,200,300,400,500,600,700,800,900', array(), $this->version );
-
 			$wc_version_suffix = '';
 			if ( function_exists( 'WC' ) || ! empty( $woocommerce ) ) {
 				$woocommerce_version = function_exists( 'WC' ) ? WC()->version : $woocommerce->version;
@@ -146,9 +144,11 @@ if ( ! class_exists( 'YIT_Assets' ) ) {
 						'bulk_trash_confirm_title'    => __( 'Confirm trash', 'yith-plugin-fw' ),
 						'bulk_trash_confirm_message'  => __( 'Are you sure you want to trash the selected items?', 'yith-plugin-fw' ),
 						'bulk_trash_confirm_button'   => _x( 'Yes, move to trash', 'Trash confirmation action', 'yith-plugin-fw' ),
+						'bulk_trash_cancel_button'    => __( 'No', 'yith-plugin-fw' ),
 						'bulk_delete_confirm_title'   => __( 'Confirm delete', 'yith-plugin-fw' ),
 						'bulk_delete_confirm_message' => __( 'Are you sure you want to delete the selected items?', 'yith-plugin-fw' ) . '<br /><br />' . __( 'This action cannot be undone and you will not be able to recover this data.', 'yith-plugin-fw' ),
-						'bulk_delete_confirm_button'  => _x( 'Yes, delete permanently', 'Delete confirmation action', 'yith-plugin-fw' ),
+						'bulk_delete_confirm_button'  => _x( 'Yes, delete', 'Delete confirmation action', 'yith-plugin-fw' ),
+						'bulk_delete_cancel_button'   => __( 'No', 'yith-plugin-fw' ),
 					),
 				)
 			);

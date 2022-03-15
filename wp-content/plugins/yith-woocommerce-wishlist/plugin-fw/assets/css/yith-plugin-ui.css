@@ -25,10 +25,16 @@
   --yith-update-focus: #e7eccc;
   --yith-outline-text: #0087b3;
   --yith-outline-border: #0094c4;
-  --yith-outline-bg: #ffffff;
+  --yith-outline-bg: rgba(255, 255, 255, 0);
   --yith-outline-bg-hover: rgba(157, 198, 205, 0.2);
   --yith-outline-border-hover: #007ba3;
   --yith-outline-focus: #dfeef2;
+  --yith-delete-outline-text: #c41d04;
+  --yith-delete-outline-border: #c41d04;
+  --yith-delete-outline-bg: rgba(205, 157, 157, 0);
+  --yith-delete-outline-bg-hover: rgba(232, 184, 184, 0.15);
+  --yith-delete-outline-border-hover: #db2b11;
+  --yith-delete-outline-focus: #ffe9e7;
   --yith-accent: #98aa36;
   --yith-light-bg: #f0f6fb;
   --yith-light-border-color: #d7e3e7;
@@ -268,6 +274,7 @@
   display: inline-block;
   text-decoration: none;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .yith-plugin-ui .button-primary:focus, .yith-plugin-ui .button-secondary:focus, .wp-core-ui .yith-plugin-ui .button-primary:focus, .wp-core-ui .yith-plugin-ui .button-secondary:focus {
@@ -321,13 +328,25 @@
 .yith-plugin-ui #doaction,
 .yith-plugin-ui #doaction2,
 .yith-plugin-ui #post-query-submit,
+.yith-plugin-ui #posts-filter #delete_all,
 .yith-plugin-ui #search-submit,
 .yith-plugin-ui .button.filter-button, .wp-core-ui .yith-plugin-ui .button.action,
 .wp-core-ui .yith-plugin-ui #doaction,
 .wp-core-ui .yith-plugin-ui #doaction2,
 .wp-core-ui .yith-plugin-ui #post-query-submit,
+.wp-core-ui .yith-plugin-ui #posts-filter #delete_all,
 .wp-core-ui .yith-plugin-ui #search-submit,
 .wp-core-ui .yith-plugin-ui .button.filter-button {
+  display: inline-block;
+  height: auto;
+  line-height: 30px;
+  border-radius: 4px;
+  padding: 0 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .3s ease-in-out;
+  text-decoration: none;
+  white-space: nowrap;
   background: var(--yith-outline-bg);
   border: 1px solid var(--yith-outline-border);
   color: var(--yith-outline-text);
@@ -342,11 +361,30 @@
 .yith-plugin-ui #doaction:focus,
 .yith-plugin-ui #doaction2:focus,
 .yith-plugin-ui #post-query-submit:focus,
+.yith-plugin-ui #posts-filter #delete_all:focus,
 .yith-plugin-ui #search-submit:focus,
 .yith-plugin-ui .button.filter-button:focus, .wp-core-ui .yith-plugin-ui .button.action:focus,
 .wp-core-ui .yith-plugin-ui #doaction:focus,
 .wp-core-ui .yith-plugin-ui #doaction2:focus,
 .wp-core-ui .yith-plugin-ui #post-query-submit:focus,
+.wp-core-ui .yith-plugin-ui #posts-filter #delete_all:focus,
+.wp-core-ui .yith-plugin-ui #search-submit:focus,
+.wp-core-ui .yith-plugin-ui .button.filter-button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.yith-plugin-ui .button.action:focus,
+.yith-plugin-ui #doaction:focus,
+.yith-plugin-ui #doaction2:focus,
+.yith-plugin-ui #post-query-submit:focus,
+.yith-plugin-ui #posts-filter #delete_all:focus,
+.yith-plugin-ui #search-submit:focus,
+.yith-plugin-ui .button.filter-button:focus, .wp-core-ui .yith-plugin-ui .button.action:focus,
+.wp-core-ui .yith-plugin-ui #doaction:focus,
+.wp-core-ui .yith-plugin-ui #doaction2:focus,
+.wp-core-ui .yith-plugin-ui #post-query-submit:focus,
+.wp-core-ui .yith-plugin-ui #posts-filter #delete_all:focus,
 .wp-core-ui .yith-plugin-ui #search-submit:focus,
 .wp-core-ui .yith-plugin-ui .button.filter-button:focus {
   background: var(--yith-outline-bg);
@@ -362,6 +400,8 @@
 .yith-plugin-ui #doaction2:active,
 .yith-plugin-ui #post-query-submit:hover,
 .yith-plugin-ui #post-query-submit:active,
+.yith-plugin-ui #posts-filter #delete_all:hover,
+.yith-plugin-ui #posts-filter #delete_all:active,
 .yith-plugin-ui #search-submit:hover,
 .yith-plugin-ui #search-submit:active,
 .yith-plugin-ui .button.filter-button:hover,
@@ -372,6 +412,8 @@
 .wp-core-ui .yith-plugin-ui #doaction2:active,
 .wp-core-ui .yith-plugin-ui #post-query-submit:hover,
 .wp-core-ui .yith-plugin-ui #post-query-submit:active,
+.wp-core-ui .yith-plugin-ui #posts-filter #delete_all:hover,
+.wp-core-ui .yith-plugin-ui #posts-filter #delete_all:active,
 .wp-core-ui .yith-plugin-ui #search-submit:hover,
 .wp-core-ui .yith-plugin-ui #search-submit:active,
 .wp-core-ui .yith-plugin-ui .button.filter-button:hover,
@@ -379,6 +421,25 @@
   background: var(--yith-outline-bg-hover);
   border-color: var(--yith-outline-border-hover);
   color: var(--yith-outline-text);
+}
+
+.yith-plugin-ui #posts-filter #delete_all, .wp-core-ui .yith-plugin-ui #posts-filter #delete_all {
+  background: var(--yith-delete-outline-bg);
+  border: 1px solid var(--yith-delete-outline-border);
+  color: var(--yith-delete-outline-text);
+}
+
+.yith-plugin-ui #posts-filter #delete_all:focus, .wp-core-ui .yith-plugin-ui #posts-filter #delete_all:focus {
+  background: var(--yith-delete-outline-bg);
+  border: 1px solid var(--yith-delete-outline-border);
+  color: var(--yith-delete-outline-text);
+  box-shadow: 0 0 0 3px var(--yith-delete-outline-focus);
+}
+
+.yith-plugin-ui #posts-filter #delete_all:hover, .yith-plugin-ui #posts-filter #delete_all:active, .wp-core-ui .yith-plugin-ui #posts-filter #delete_all:hover, .wp-core-ui .yith-plugin-ui #posts-filter #delete_all:active {
+  background: var(--yith-delete-outline-bg-hover);
+  border-color: var(--yith-delete-outline-border-hover);
+  color: var(--yith-delete-outline-text);
 }
 
 .yith-plugin-ui .tablenav .tablenav-pages .button,
@@ -429,6 +490,7 @@
   cursor: pointer;
   transition: all .3s ease-in-out;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .yith-plugin-ui .yith-plugin-fw__button:focus, .yith-plugin-ui [class^="yith-plugin-fw__button--"]:focus, .yith-plugin-ui [class*=" yith-plugin-fw__button--"]:focus,
@@ -516,11 +578,19 @@
 
 .yith-plugin-ui .yith-plugin-fw__button--add:before, .yith-plugin-ui .yith-add-button:before, .wp-core-ui .yith-plugin-ui .yith-plugin-fw__button--add:before, .wp-core-ui .yith-plugin-ui .yith-add-button:before {
   font-family: yith-icon;
-  content: "";
+  content: "";
   margin: 0 8px 0 -5px;
-  font-size: 15px;
+  font-size: 1.15em;
   font-weight: 400;
   vertical-align: top;
+}
+
+.yith-plugin-ui .yith-plugin-fw__button--add:before, .yith-plugin-ui .yith-add-button:before, .wp-core-ui .yith-plugin-ui .yith-plugin-fw__button--add:before, .wp-core-ui .yith-plugin-ui .yith-add-button:before {
+  display: inline-block;
+  margin: 0 10px 0 -5px;
+  font-size: .95em;
+  transition: transform .2s, margin .2s, font-size .2s;
+  transition-timing-function: ease-in-out;
 }
 
 .yith-plugin-ui .yith-plugin-fw__button--add.closed, .yith-plugin-ui .yith-add-button.closed, .wp-core-ui .yith-plugin-ui .yith-plugin-fw__button--add.closed, .wp-core-ui .yith-plugin-ui .yith-add-button.closed {
@@ -543,12 +613,9 @@
 }
 
 .yith-plugin-ui .yith-plugin-fw__button--add.closed:before, .yith-plugin-ui .yith-add-button.closed:before, .wp-core-ui .yith-plugin-ui .yith-plugin-fw__button--add.closed:before, .wp-core-ui .yith-plugin-ui .yith-add-button.closed:before {
-  font-family: yith-icon;
-  content: "";
+  font-size: 1.15em;
   margin: 0 8px 0 -5px;
-  font-size: 15px;
-  font-weight: 400;
-  vertical-align: top;
+  transform: rotate(-45deg);
 }
 
 .yith-plugin-ui .yith-plugin-fw__button--close, .wp-core-ui .yith-plugin-ui .yith-plugin-fw__button--close {
@@ -572,9 +639,9 @@
 
 .yith-plugin-ui .yith-plugin-fw__button--close:before, .wp-core-ui .yith-plugin-ui .yith-plugin-fw__button--close:before {
   font-family: yith-icon;
-  content: "";
+  content: "";
   margin: 0 8px 0 -5px;
-  font-size: 15px;
+  font-size: 1.15em;
   font-weight: 400;
   vertical-align: top;
 }
@@ -602,7 +669,7 @@
   font-family: yith-icon;
   content: "";
   margin: 0 8px 0 -5px;
-  font-size: 15px;
+  font-size: 1.15em;
   font-weight: 400;
   vertical-align: top;
 }
@@ -630,7 +697,7 @@
   font-family: yith-icon;
   content: "";
   margin: 0 8px 0 -5px;
-  font-size: 15px;
+  font-size: 1.15em;
   font-weight: 400;
   vertical-align: top;
 }
@@ -658,7 +725,7 @@
   font-family: yith-icon;
   content: "";
   margin: 0 8px 0 -5px;
-  font-size: 15px;
+  font-size: 1.15em;
   font-weight: 400;
   vertical-align: top;
 }
@@ -686,7 +753,7 @@
   font-family: yith-icon;
   content: "";
   margin: 0 8px 0 -5px;
-  font-size: 15px;
+  font-size: 1.15em;
   font-weight: 400;
   vertical-align: top;
 }
@@ -767,7 +834,7 @@
   top: 50%;
   left: 10px;
   transform: translateY(-50%);
-  font-size: 1.15em;
+  font-size: 1em;
   font-weight: 400;
 }
 
@@ -838,6 +905,7 @@
   cursor: pointer;
   display: inline-block;
   margin-right: 10px;
+  white-space: nowrap;
 }
 
 .yith-plugin-fw__confirm__wrap .yith-plugin-fw__confirm__button:last-child {
@@ -1171,7 +1239,7 @@ table.yith-plugin-fw__classic-table.wp-list-table .sorting-indicator {
 
 table.yith-plugin-fw__classic-table.wp-list-table .sorting-indicator:before {
   font-family: yith-icon;
-  content: "\f106";
+  content: "\f116";
   color: inherit;
   font-size: 10px;
   top: 0;
@@ -1181,14 +1249,14 @@ table.yith-plugin-fw__classic-table.wp-list-table .sorting-indicator:before {
 table.yith-plugin-fw__classic-table.wp-list-table th.sorted.asc .sorting-indicator:before,
 table.yith-plugin-fw__classic-table.wp-list-table th.desc:hover span.sorting-indicator:before,
 table.yith-plugin-fw__classic-table.wp-list-table th.desc a:focus span.sorting-indicator:before {
-  content: "\e903";
+  content: "\f113";
   font-weight: 600;
 }
 
 table.yith-plugin-fw__classic-table.wp-list-table th.sorted.desc .sorting-indicator:before,
 table.yith-plugin-fw__classic-table.wp-list-table th.asc:hover span.sorting-indicator:before,
 table.yith-plugin-fw__classic-table.wp-list-table th.asc a:focus span.sorting-indicator:before {
-  content: "\e900";
+  content: "\f110";
   font-weight: 600;
 }
 
@@ -1237,13 +1305,23 @@ table.yith-plugin-fw__boxed-table tbody tr {
 
 table.yith-plugin-fw__boxed-table tbody tr th, table.yith-plugin-fw__boxed-table tbody tr td {
   background: transparent;
-  border-radius: 5px;
   vertical-align: middle;
   padding: 25px 0 25px 25px;
 }
 
 table.yith-plugin-fw__boxed-table tbody tr td:last-child {
   padding-right: 25px;
+}
+
+table.yith-plugin-fw__boxed-table tbody tr th:first-child,
+table.yith-plugin-fw__boxed-table tbody tr td:first-child {
+  border-radius: 5px 0 0 5px;
+}
+
+table.yith-plugin-fw__boxed-table tbody tr th:last-child,
+table.yith-plugin-fw__boxed-table tbody tr td:last-child {
+  padding-right: 25px;
+  border-radius: 0 5px 5px 0;
 }
 
 table.yith-plugin-fw__boxed-table tbody tr:hover {
@@ -1273,7 +1351,7 @@ table.yith-plugin-fw__boxed-table.wp-list-table .sorting-indicator {
 
 table.yith-plugin-fw__boxed-table.wp-list-table .sorting-indicator:before {
   font-family: yith-icon;
-  content: "\f106";
+  content: "\f116";
   color: inherit;
   font-size: 10px;
   top: 0;
@@ -1283,14 +1361,14 @@ table.yith-plugin-fw__boxed-table.wp-list-table .sorting-indicator:before {
 table.yith-plugin-fw__boxed-table.wp-list-table th.sorted.asc .sorting-indicator:before,
 table.yith-plugin-fw__boxed-table.wp-list-table th.desc:hover span.sorting-indicator:before,
 table.yith-plugin-fw__boxed-table.wp-list-table th.desc a:focus span.sorting-indicator:before {
-  content: "\e903";
+  content: "\f113";
   font-weight: 600;
 }
 
 table.yith-plugin-fw__boxed-table.wp-list-table th.sorted.desc .sorting-indicator:before,
 table.yith-plugin-fw__boxed-table.wp-list-table th.asc:hover span.sorting-indicator:before,
 table.yith-plugin-fw__boxed-table.wp-list-table th.asc a:focus span.sorting-indicator:before {
-  content: "\e900";
+  content: "\f110";
   font-weight: 600;
 }
 
@@ -1373,7 +1451,7 @@ table.yith-plugin-fw__boxed-table.wp-list-table tbody tr:hover .yith-plugin-fw__
 
 .yith-plugin-ui--classic-wp-list-style table.wp-list-table .sorting-indicator:before, .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--classic-wp-list-style table.wp-list-table .sorting-indicator:before {
   font-family: yith-icon;
-  content: "\f106";
+  content: "\f116";
   color: inherit;
   font-size: 10px;
   top: 0;
@@ -1385,7 +1463,7 @@ table.yith-plugin-fw__boxed-table.wp-list-table tbody tr:hover .yith-plugin-fw__
 .yith-plugin-ui--classic-wp-list-style table.wp-list-table th.desc a:focus span.sorting-indicator:before, .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--classic-wp-list-style table.wp-list-table th.sorted.asc .sorting-indicator:before,
 .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--classic-wp-list-style table.wp-list-table th.desc:hover span.sorting-indicator:before,
 .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--classic-wp-list-style table.wp-list-table th.desc a:focus span.sorting-indicator:before {
-  content: "\e903";
+  content: "\f113";
   font-weight: 600;
 }
 
@@ -1394,7 +1472,7 @@ table.yith-plugin-fw__boxed-table.wp-list-table tbody tr:hover .yith-plugin-fw__
 .yith-plugin-ui--classic-wp-list-style table.wp-list-table th.asc a:focus span.sorting-indicator:before, .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--classic-wp-list-style table.wp-list-table th.sorted.desc .sorting-indicator:before,
 .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--classic-wp-list-style table.wp-list-table th.asc:hover span.sorting-indicator:before,
 .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--classic-wp-list-style table.wp-list-table th.asc a:focus span.sorting-indicator:before {
-  content: "\e900";
+  content: "\f110";
   font-weight: 600;
 }
 
@@ -1451,13 +1529,25 @@ table.yith-plugin-fw__boxed-table.wp-list-table tbody tr:hover .yith-plugin-fw__
 
 .yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr th, .yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr td, .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr th, .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr td {
   background: transparent;
-  border-radius: 5px;
   vertical-align: middle;
   padding: 25px 0 25px 25px;
 }
 
 .yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr td:last-child, .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr td:last-child {
   padding-right: 25px;
+}
+
+.yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr th:first-child,
+.yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr td:first-child, .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr th:first-child,
+.yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr td:first-child {
+  border-radius: 5px 0 0 5px;
+}
+
+.yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr th:last-child,
+.yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr td:last-child, .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr th:last-child,
+.yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr td:last-child {
+  padding-right: 25px;
+  border-radius: 0 5px 5px 0;
 }
 
 .yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr:hover, .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--boxed-wp-list-style table.wp-list-table tbody tr:hover {
@@ -1487,7 +1577,7 @@ table.yith-plugin-fw__boxed-table.wp-list-table tbody tr:hover .yith-plugin-fw__
 
 .yith-plugin-ui--boxed-wp-list-style table.wp-list-table .sorting-indicator:before, .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--boxed-wp-list-style table.wp-list-table .sorting-indicator:before {
   font-family: yith-icon;
-  content: "\f106";
+  content: "\f116";
   color: inherit;
   font-size: 10px;
   top: 0;
@@ -1499,7 +1589,7 @@ table.yith-plugin-fw__boxed-table.wp-list-table tbody tr:hover .yith-plugin-fw__
 .yith-plugin-ui--boxed-wp-list-style table.wp-list-table th.desc a:focus span.sorting-indicator:before, .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--boxed-wp-list-style table.wp-list-table th.sorted.asc .sorting-indicator:before,
 .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--boxed-wp-list-style table.wp-list-table th.desc:hover span.sorting-indicator:before,
 .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--boxed-wp-list-style table.wp-list-table th.desc a:focus span.sorting-indicator:before {
-  content: "\e903";
+  content: "\f113";
   font-weight: 600;
 }
 
@@ -1508,7 +1598,7 @@ table.yith-plugin-fw__boxed-table.wp-list-table tbody tr:hover .yith-plugin-fw__
 .yith-plugin-ui--boxed-wp-list-style table.wp-list-table th.asc a:focus span.sorting-indicator:before, .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--boxed-wp-list-style table.wp-list-table th.sorted.desc .sorting-indicator:before,
 .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--boxed-wp-list-style table.wp-list-table th.asc:hover span.sorting-indicator:before,
 .yith-plugin-ui #plugin-fw-wc .yith-plugin-ui--boxed-wp-list-style table.wp-list-table th.asc a:focus span.sorting-indicator:before {
-  content: "\e900";
+  content: "\f110";
   font-weight: 600;
 }
 
@@ -1540,6 +1630,10 @@ table.yith-plugin-fw__boxed-table.wp-list-table tbody tr:hover .yith-plugin-fw__
 /**
  * YITH Animations
  */
+.yith-plugin-fw-animate__appear-from-bottom {
+  animation: yith-plugin-fw-appear-from-bottom .3s forwards;
+}
+
 .yith-plugin-fw-animate__appear-from-top {
   animation: yith-plugin-fw-appear-from-top .3s forwards;
 }
@@ -1566,6 +1660,32 @@ table.yith-plugin-fw__boxed-table.wp-list-table tbody tr:hover .yith-plugin-fw__
     opacity: 0;
     transform: translateY(-30%);
     -webkit-transform: translateY(-30%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    -webkit-transform: translateY(0);
+  }
+}
+
+@-webkit-keyframes yith-plugin-fw-appear-from-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(30%);
+    -webkit-transform: translateY(30%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    -webkit-transform: translateY(0);
+  }
+}
+
+@keyframes yith-plugin-fw-appear-from-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(30%);
+    -webkit-transform: translateY(30%);
   }
   to {
     opacity: 1;

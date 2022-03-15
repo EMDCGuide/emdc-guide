@@ -1,7 +1,7 @@
 <?php
 namespace Automattic\WooCommerce\Blocks\StoreApi\Schemas;
 
-use Automattic\WooCommerce\Blocks\RestApi\Routes;
+use Automattic\WooCommerce\Blocks\StoreApi\Routes\RouteException;
 
 /**
  * ShippingAddressSchema class.
@@ -36,6 +36,13 @@ class ShippingAddressSchema extends AbstractAddressSchema {
 	 */
 	public function get_item_response( $address ) {
 		if ( ( $address instanceof \WC_Customer || $address instanceof \WC_Order ) ) {
+			$shipping_country = $address->get_shipping_country();
+			$shipping_state   = $address->get_shipping_state();
+
+			if ( ! $this->validate_state( $shipping_state, $shipping_country ) ) {
+				$shipping_state = '';
+			}
+
 			return (object) $this->prepare_html_response(
 				[
 					'first_name' => $address->get_shipping_first_name(),
@@ -44,9 +51,10 @@ class ShippingAddressSchema extends AbstractAddressSchema {
 					'address_1'  => $address->get_shipping_address_1(),
 					'address_2'  => $address->get_shipping_address_2(),
 					'city'       => $address->get_shipping_city(),
-					'state'      => $address->get_shipping_state(),
+					'state'      => $shipping_state,
 					'postcode'   => $address->get_shipping_postcode(),
-					'country'    => $address->get_shipping_country(),
+					'country'    => $shipping_country,
+					'phone'      => $address->get_shipping_phone(),
 				]
 			);
 		}

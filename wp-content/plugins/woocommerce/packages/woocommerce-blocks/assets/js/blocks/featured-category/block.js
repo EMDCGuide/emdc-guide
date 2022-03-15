@@ -8,8 +8,6 @@ import {
 	InnerBlocks,
 	InspectorControls,
 	MediaReplaceFlow,
-	PanelColorSettings,
-	withColors,
 	RichText,
 } from '@wordpress/block-editor';
 import {
@@ -21,10 +19,13 @@ import {
 	ResizableBox,
 	Spinner,
 	ToggleControl,
+	ToolbarGroup,
 	withSpokenMessages,
 } from '@wordpress/components';
 import classnames from 'classnames';
-import { compose } from '@wordpress/compose';
+import { Component } from '@wordpress/element';
+import { withSelect } from '@wordpress/data';
+import { compose, createHigherOrderComponent } from '@wordpress/compose';
 import PropTypes from 'prop-types';
 import { getSetting } from '@woocommerce/settings';
 import { Icon, folderStarred } from '@woocommerce/icons';
@@ -53,9 +54,8 @@ import { withCategory } from '../../hocs';
  * @param {function(any):any} props.getCategory Function for getting category details.
  * @param {boolean} props.isLoading Whether loading or not.
  * @param {Object} props.category The product category object.
- * @param {Object} props.overlayColor Overlay color object for content.
- * @param {function(any):any} props.setOverlayColor Setter for overlay color.
  * @param {function(any):any} props.debouncedSpeak Function for delayed speak.
+ * @param {function():void} props.triggerUrlUpdate Function to update Shop now button Url.
  */
 const FeaturedCategory = ( {
 	attributes,
@@ -65,9 +65,8 @@ const FeaturedCategory = ( {
 	getCategory,
 	isLoading,
 	category,
-	overlayColor,
-	setOverlayColor,
 	debouncedSpeak,
+	triggerUrlUpdate = () => void null,
 } ) => {
 	const renderApiError = () => (
 		<ErrorPlaceholder
@@ -102,6 +101,20 @@ const FeaturedCategory = ( {
 					} }
 					allowedTypes={ [ 'image' ] }
 				/>
+				<ToolbarGroup
+					controls={ [
+						{
+							icon: 'edit',
+							title: __(
+								'Edit selected category',
+								'woocommerce'
+							),
+							onClick: () =>
+								setAttributes( { editMode: ! editMode } ),
+							isActive: editMode,
+						},
+					] }
+				/>
 			</BlockControls>
 		);
 	};
@@ -129,21 +142,14 @@ const FeaturedCategory = ( {
 						}
 					/>
 				</PanelBody>
-				<PanelColorSettings
-					title={ __( 'Overlay', 'woocommerce' ) }
-					colorSettings={ [
-						{
-							value: overlayColor.color,
-							onChange: setOverlayColor,
-							label: __(
-								'Overlay Color',
+				{ !! url && (
+					<>
+						<PanelBody
+							title={ __(
+								'Overlay',
 								'woocommerce'
-							),
-						},
-					] }
-				>
-					{ !! url && (
-						<>
+							) }
+						>
 							<RangeControl
 								label={ __(
 									'Background Opacity',
@@ -159,7 +165,10 @@ const FeaturedCategory = ( {
 							/>
 							{ focalPointPickerExists && (
 								<FocalPointPicker
-									label={ __( 'Focal Point Picker' ) }
+									label={ __(
+										'Focal Point Picker',
+										'woocommerce'
+									) }
 									url={ url }
 									value={ focalPoint }
 									onChange={ ( value ) =>
@@ -167,9 +176,9 @@ const FeaturedCategory = ( {
 									}
 								/>
 							) }
-						</>
-					) }
-				</PanelColorSettings>
+						</PanelBody>
+					</>
+				) }
 			</InspectorControls>
 		);
 	};
@@ -208,6 +217,7 @@ const FeaturedCategory = ( {
 								mediaId: 0,
 								mediaSrc: '',
 							} );
+							triggerUrlUpdate();
 						} }
 						isSingle
 					/>
@@ -264,14 +274,8 @@ const FeaturedCategory = ( {
 	};
 
 	const renderCategory = () => {
-		const {
-			className,
-			contentAlign,
-			dimRatio,
-			focalPoint,
-			height,
-			showDesc,
-		} = attributes;
+		const { contentAlign, dimRatio, focalPoint, showDesc } = attributes;
+
 		const classes = classnames(
 			'wc-block-featured-category',
 			{
@@ -281,14 +285,10 @@ const FeaturedCategory = ( {
 				'has-background-dim': dimRatio !== 0,
 			},
 			dimRatioToClass( dimRatio ),
-			contentAlign !== 'center' && `has-${ contentAlign }-content`,
-			className
+			contentAlign !== 'center' && `has-${ contentAlign }-content`
 		);
 		const mediaSrc = attributes.mediaSrc || getCategoryImageSrc( category );
 		const style = !! category ? getBackgroundImageStyles( mediaSrc ) : {};
-		if ( overlayColor.color ) {
-			style.backgroundColor = overlayColor.color;
-		}
 		if ( focalPoint ) {
 			const bgPosX = focalPoint.x * 100;
 			const bgPosY = focalPoint.y * 100;
@@ -302,7 +302,10 @@ const FeaturedCategory = ( {
 		return (
 			<ResizableBox
 				className={ classes }
-				size={ { height } }
+				size={ {
+					height: '',
+					width: '',
+				} }
 				minHeight={ getSetting( 'min_height', 500 ) }
 				enable={ { bottom: true } }
 				onResizeStop={ onResizeStop }
@@ -393,15 +396,67 @@ FeaturedCategory.propTypes = {
 		description: PropTypes.node,
 		permalink: PropTypes.string,
 	} ),
-	// from withColors
-	overlayColor: PropTypes.object,
-	setOverlayColor: PropTypes.func.isRequired,
 	// from withSpokenMessages
 	debouncedSpeak: PropTypes.func.isRequired,
+	triggerUrlUpdate: PropTypes.func,
 };
 
 export default compose( [
 	withCategory,
-	withColors( { overlayColor: 'background-color' } ),
 	withSpokenMessages,
+	withSelect( ( select, { clientId }, { dispatch } ) => {
+		const Block = select( 'core/block-editor' ).getBlock( clientId );
+		const buttonBlockId = Block?.innerBlocks[ 0 ]?.clientId || '';
+		const currentButtonAttributes =
+			Block?.innerBlocks[ 0 ]?.attributes || {};
+		const updateBlockAttributes = ( attributes ) => {
+			if ( buttonBlockId ) {
+				dispatch( 'core/block-editor' ).updateBlockAttributes(
+					buttonBlockId,
+					attributes
+				);
+			}
+		};
+		return { updateBlockAttributes, currentButtonAttributes };
+	} ),
+	createHigherOrderComponent( ( ProductComponent ) => {
+		class WrappedComponent extends Component {
+			state = {
+				doUrlUpdate: false,
+			};
+			componentDidUpdate() {
+				const {
+					attributes,
+					updateBlockAttributes,
+					currentButtonAttributes,
+					category,
+				} = this.props;
+				if (
+					this.state.doUrlUpdate &&
+					! attributes.editMode &&
+					category?.permalink &&
+					currentButtonAttributes?.url &&
+					category.permalink !== currentButtonAttributes.url
+				) {
+					updateBlockAttributes( {
+						...currentButtonAttributes,
+						url: category.permalink,
+					} );
+					this.setState( { doUrlUpdate: false } );
+				}
+			}
+			triggerUrlUpdate = () => {
+				this.setState( { doUrlUpdate: true } );
+			};
+			render() {
+				return (
+					<ProductComponent
+						triggerUrlUpdate={ this.triggerUrlUpdate }
+						{ ...this.props }
+					/>
+				);
+			}
+		}
+		return WrappedComponent;
+	}, 'withUpdateButtonAttributes' ),
 ] )( FeaturedCategory );

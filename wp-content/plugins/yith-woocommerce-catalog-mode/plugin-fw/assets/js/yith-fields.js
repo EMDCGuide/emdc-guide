@@ -148,8 +148,9 @@
 							attachment = attachment.toJSON();
 
 							if ( attachment.id ) {
-								attachmentIDs = attachmentIDs ? attachmentIDs + "," + attachment.id : attachment.id;
-								wrapper.append( '<li class="image" data-attachment_id="' + attachment.id + '"><img src="' + attachment.sizes.thumbnail.url + '"/><ul class="actions"><li><a href="#" class="delete" title="' + button.data( 'delete' ) + '">x</a></li></ul></li>' );
+								attachmentIDs           = attachmentIDs ? attachmentIDs + "," + attachment.id : attachment.id;
+								var attachmentImageData = attachment.sizes.thumbnail || attachment.sizes.medium || attachment.sizes.large || attachment.sizes.full;
+								wrapper.append( '<li class="image" data-attachment_id="' + attachment.id + '"><img src="' + attachmentImageData.url + '"/><ul class="actions"><li><a href="#" class="delete" title="' + button.data( 'delete' ) + '">x</a></li></ul></li>' );
 							}
 						} );
 
@@ -483,7 +484,6 @@
 		} else {
 			$( this ).attr( 'value', 'no' ).removeClass( 'onoffchecked' );
 		}
-		$( this ).trigger( 'change' );
 	} );
 
 
@@ -791,6 +791,23 @@
 			$( '.select2-results' ).closest( '.select2-container' ).addClass( 'yith-plugin-fw-select2-container' );
 		}
 	} );
+
+	/**
+	 * Select2 - focus on search field when opened and the select is not multiple.
+	 * For multiple select this is already handled by select2.
+	 */
+	$( document ).on( 'select2:open', function ( e ) {
+		if ( !e.target.multiple ) {
+			setTimeout(
+				function () {
+					document.querySelector( '.yith-plugin-fw-select2-container .select2-search__field' ).focus();
+				},
+				50
+			)
+		}
+	} );
+
+
 	/**
 	 * Dimensions
 	 */

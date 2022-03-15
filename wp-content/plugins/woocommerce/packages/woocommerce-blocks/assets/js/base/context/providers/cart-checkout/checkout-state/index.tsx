@@ -55,8 +55,7 @@ export const useCheckoutContext = (): CheckoutStateContextType => {
 
 /**
  * Checkout state provider
- * This provides provides an api interface exposing checkout state for use with
- * cart or checkout blocks.
+ * This provides an API interface exposing checkout state for use with cart or checkout blocks.
  *
  * @param {Object}  props                     Incoming props for the provider.
  * @param {Object}  props.children            The children being wrapped.
@@ -143,16 +142,15 @@ export const CheckoutStateProvider = ( {
 				void dispatch( actions.setOrderId( orderId ) ),
 			setOrderNotes: ( orderNotes ) =>
 				void dispatch( actions.setOrderNotes( orderNotes ) ),
+			setExtensionData: ( extensionData ) =>
+				void dispatch( actions.setExtensionData( extensionData ) ),
 			setAfterProcessing: ( response ) => {
 				const paymentResult = getPaymentResultFromCheckoutResponse(
 					response
 				);
-
-				if ( paymentResult.redirectUrl ) {
-					dispatch(
-						actions.setRedirectUrl( paymentResult.redirectUrl )
-					);
-				}
+				dispatch(
+					actions.setRedirectUrl( paymentResult?.redirectUrl || '' )
+				);
 				dispatch( actions.setProcessingResponse( paymentResult ) );
 				dispatch( actions.setAfterProcessing() );
 			},
@@ -180,6 +178,7 @@ export const CheckoutStateProvider = ( {
 						);
 					}
 					dispatch( actions.setIdle() );
+					dispatch( actions.setHasError() );
 				} else {
 					dispatch( actions.setProcessing() );
 				}
@@ -300,6 +299,7 @@ export const CheckoutStateProvider = ( {
 							// the last observer response always "wins" for success.
 							successResponse = response;
 						}
+
 						if (
 							isErrorResponse( response ) ||
 							isFailResponse( response )
@@ -329,8 +329,7 @@ export const CheckoutStateProvider = ( {
 							dispatch( actions.setHasError( true ) );
 						}
 					} else {
-						// nothing hooked in had any response type so let's just
-						// consider successful
+						// nothing hooked in had any response type so let's just consider successful.
 						dispatch( actions.setComplete() );
 					}
 				} );
@@ -385,6 +384,7 @@ export const CheckoutStateProvider = ( {
 		shouldCreateAccount: checkoutState.shouldCreateAccount,
 		setShouldCreateAccount: ( value ) =>
 			dispatch( actions.setShouldCreateAccount( value ) ),
+		extensionData: checkoutState.extensionData,
 	};
 	return (
 		<CheckoutContext.Provider value={ checkoutData }>

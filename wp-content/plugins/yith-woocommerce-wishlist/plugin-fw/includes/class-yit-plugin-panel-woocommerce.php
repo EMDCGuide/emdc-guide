@@ -82,6 +82,8 @@ if ( ! class_exists( 'YIT_Plugin_Panel_WooCommerce' ) ) {
 					$this->links = $this->settings['links'];
 				}
 
+				$this->maybe_init_premium_tab();
+
 				add_action( 'admin_init', array( $this, 'set_default_options' ) );
 				add_action( 'admin_menu', array( $this, 'add_setting_page' ) );
 				add_action( 'admin_menu', array( $this, 'add_premium_version_upgrade_to_menu' ), 100 );
@@ -99,6 +101,9 @@ if ( ! class_exists( 'YIT_Plugin_Panel_WooCommerce' ) ) {
 
 				add_action( 'admin_enqueue_scripts', array( $this, 'init_wp_with_tabs' ), 11 );
 				add_action( 'admin_init', array( $this, 'maybe_redirect_to_proper_wp_page' ) );
+
+				/* Add UTM tracking code on premium tab */
+				add_filter( 'yith_plugin_fw_premium_landing_uri', array( $this, 'add_utm_data_on_premium_tab' ), 10, 2 );
 
 				// Init actions once to prevent multiple initialization.
 				static::init_actions();
@@ -216,6 +221,8 @@ if ( ! class_exists( 'YIT_Plugin_Panel_WooCommerce' ) ) {
 
 			if ( 'admin.php' === $pagenow && isset( $_REQUEST['tab'] ) && in_array( $_REQUEST['tab'], $tabs, true ) ) {
 				$tab = sanitize_key( wp_unslash( $_REQUEST['tab'] ) );
+			} elseif ( isset( $_REQUEST['tab'] ) && 'help' === $_REQUEST['tab'] && ! empty( $this->settings['help_tab'] ) ) {
+				$tab = 'help';
 			}
 
 			return apply_filters( 'yith_wc_plugin_panel_current_tab', $tab );
@@ -275,8 +282,12 @@ if ( ! class_exists( 'YIT_Plugin_Panel_WooCommerce' ) ) {
 
 			$this->print_tabs_nav();
 
-			if ( $custom_tab_options ) {
+			if ( $this->is_premium_tab() && $this->has_premium_tab() ) {
+				$this->print_premium_tab();
+			} elseif ( $custom_tab_options ) {
 				$this->print_custom_tab( $custom_tab_options );
+			} elseif ( $this->is_help_tab() ) {
+				$this->print_help_tab();
 			} else {
 				include YIT_CORE_PLUGIN_TEMPLATE_PATH . '/panel/woocommerce/woocommerce-form.php';
 			}
@@ -409,7 +420,6 @@ if ( ! class_exists( 'YIT_Plugin_Panel_WooCommerce' ) ) {
 
 				wp_enqueue_style( 'yith-plugin-fw-fields' );
 				wp_enqueue_style( 'woocommerce_admin_styles' );
-				wp_enqueue_style( 'raleway-font' );
 
 				wp_enqueue_script( 'woocommerce_settings', $woocommerce->plugin_url() . '/assets/js/admin/settings.min.js', $woocommerce_settings_deps, $woocommerce_version, true );
 				wp_localize_script(
@@ -651,7 +661,7 @@ if ( ! class_exists( 'YIT_Plugin_Panel_WooCommerce' ) ) {
 			check_ajax_referer( 'save-toggle-element', 'security' );
 
 			if ( ! current_user_can( $this->settings['capability'] ) ) {
-				wp_die( - 1 );
+				wp_die( -1 );
 			}
 
 			$posted      = $_POST;
@@ -680,7 +690,7 @@ if ( ! class_exists( 'YIT_Plugin_Panel_WooCommerce' ) ) {
 						$i         = 0;
 						$new_value = array();
 						foreach ( $order_elements as $key ) {
-							$index               = apply_filters( 'yith_toggle_elements_index', $i ++, $key );
+							$index               = apply_filters( 'yith_toggle_elements_index', $i++, $key );
 							$new_value[ $index ] = $value[ $key ];
 						}
 

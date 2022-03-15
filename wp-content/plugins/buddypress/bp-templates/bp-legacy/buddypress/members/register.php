@@ -165,7 +165,7 @@
 					<h2><?php _e( 'Profile Details', 'buddypress' ); ?></h2>
 
 					<?php /* Use the profile field loop to render input fields for the 'base' profile field group */ ?>
-					<?php if ( bp_is_active( 'xprofile' ) ) : if ( bp_has_profile( array( 'profile_group_id' => 1, 'fetch_field_data' => false ) ) ) : while ( bp_profile_groups() ) : bp_the_profile_group(); ?>
+					<?php if ( bp_is_active( 'xprofile' ) ) : if ( bp_has_profile( bp_xprofile_signup_args() ) ) : while ( bp_profile_groups() ) : bp_the_profile_group(); ?>
 
 					<?php while ( bp_profile_fields() ) : bp_the_profile_field(); ?>
 
@@ -351,10 +351,17 @@
 			 *
 			 * @since 1.1.0
 			 */
-			do_action( 'bp_before_registration_submit_buttons' ); ?>
+			do_action( 'bp_before_registration_submit_buttons' );
+
+			if ( bp_get_membership_requests_required() ) {
+				$button_text = __( 'Submit Request', 'buddypress' );
+			} else {
+				$button_text = __( 'Complete Sign Up', 'buddypress' );
+			}
+			?>
 
 			<div class="submit">
-				<input type="submit" name="signup_submit" id="signup_submit" value="<?php esc_attr_e( 'Complete Sign Up', 'buddypress' ); ?>" />
+				<input type="submit" name="signup_submit" id="signup_submit" value="<?php echo esc_attr( $button_text ); ?>" />
 			</div>
 
 			<?php
@@ -390,7 +397,9 @@
 			do_action( 'bp_before_registration_confirmed' ); ?>
 
 			<div id="template-notices" role="alert" aria-atomic="true">
-				<?php if ( bp_registration_needs_activation() ) : ?>
+				<?php if ( bp_get_membership_requests_required() ) : ?>
+					<p><?php _e( 'You have successfully submitted your membership request! Our site moderators will review your submission and send you an activation email if your request is approved.', 'buddypress' ); ?></p>
+				<?php elseif ( bp_registration_needs_activation() ) : ?>
 					<p><?php _e( 'You have successfully created your account! To begin using this site you will need to activate your account via the email we have just sent to your address.', 'buddypress' ); ?></p>
 				<?php else : ?>
 					<p><?php _e( 'You have successfully created your account! Please log in using the username and password you have just created.', 'buddypress' ); ?></p>

@@ -57,6 +57,27 @@ class Install {
 			'wc_admin_update_170_homescreen_layout',
 			'wc_admin_update_170_db_version',
 		),
+		'2.7.0'  => array(
+			'wc_admin_update_270_delete_report_downloads',
+			'wc_admin_update_270_db_version',
+		),
+		'2.7.1'  => array(
+			'wc_admin_update_271_update_task_list_options',
+			'wc_admin_update_271_db_version',
+		),
+		'2.8.0'  => array(
+			'wc_admin_update_280_order_status',
+			'wc_admin_update_280_db_version',
+		),
+		'2.9.0'  => array(
+			'wc_admin_update_290_update_apperance_task_option',
+			'wc_admin_update_290_delete_default_homepage_layout_option',
+			'wc_admin_update_290_db_version',
+		),
+		'3.0.0'  => array(
+			'wc_admin_update_300_update_is_read_from_last_read',
+			'wc_admin_update_300_db_version',
+		),
 	);
 
 	/**
@@ -176,13 +197,12 @@ class Install {
 		}
 
 		// Check if we are not already running this routine.
-		if ( 'yes' === get_transient( 'wc_admin_installing' ) ) {
+		if ( self::is_installing() ) {
 			return;
 		}
 
 		// If we made it till here nothing is running yet, lets set the transient now.
 		set_transient( 'wc_admin_installing', 'yes', MINUTE_IN_SECONDS * 10 );
-		wc_maybe_define_constant( 'WC_ADMIN_INSTALLING', true );
 
 		self::migrate_options();
 		self::create_tables();
@@ -196,6 +216,15 @@ class Install {
 		// plugin version update. We base plugin age off of this value.
 		add_option( 'woocommerce_admin_install_timestamp', time() );
 		do_action( 'woocommerce_admin_installed' );
+	}
+
+	/**
+	 * Check if the installer is installing.
+	 *
+	 * @return bool
+	 */
+	public static function is_installing() {
+		return 'yes' === get_transient( 'wc_admin_installing' );
 	}
 
 	/**
@@ -286,6 +315,7 @@ class Install {
 			layout varchar(20) DEFAULT '' NOT NULL,
 			image varchar(200) NULL DEFAULT NULL,
 			is_deleted boolean DEFAULT 0 NOT NULL,
+			is_read boolean DEFAULT 0 NOT NULL,
 			icon varchar(200) NOT NULL default 'info',
 			PRIMARY KEY (note_id)
 		) $collate;
@@ -513,6 +543,16 @@ class Install {
 			'wc-admin-home-screen-feedback',
 			'wc-admin-effortless-payments-by-mollie',
 			'wc-admin-google-ads-and-marketing',
+			'wc-admin-marketing-intro',
+			'wc-admin-draw-attention',
+			'wc-admin-need-some-inspiration',
+			'wc-admin-choose-niche',
+			'wc-admin-start-dropshipping-business',
+			'wc-admin-filter-by-product-variations-in-reports',
+			'wc-admin-learn-more-about-variable-products',
+			'wc-admin-getting-started-ecommerce-webinar',
+			'wc-admin-navigation-feedback',
+			'wc-admin-navigation-feedback-follow-up',
 		);
 
 		$additional_obsolete_notes_names = apply_filters(

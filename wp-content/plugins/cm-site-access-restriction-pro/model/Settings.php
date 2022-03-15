@@ -19,6 +19,7 @@ class Settings extends SettingsAbstract {
 	const OPTION_ACCESS_GRANTED_WHITELIST = 'cmacc_access_granted_whitelist';
 	const OPTION_ACCESS_DENIED_LOGGED_IN_USERS = 'cmacc_access_denied_logged_in';
 	const OPTION_SHORTCODE_ACCESS_DENIED_TEXT = 'cmacc_shortcode_access_denied_text';
+	const OPTION_RESTRICT_PARTIALLY_CONTENT_PERCENT = 'cmacc_restrict_partially_content_percent';
 
 	public static $categories = array(
 		'general' => 'General',
@@ -76,8 +77,16 @@ class Settings extends SettingsAbstract {
 				'category' => 'general',
 				'subcategory' => 'general',
 				'title' => 'Restriction type',
-				'desc' => '<strong>Restrict full content:</strong> Choose this if you want to restrict full content.<br><strong>Restrict partially content:</strong> Choose this if you want to show only 20% of the content are displayed with fade effect and message.<br><strong>Restrict content with shortcode only:</strong> Choose this if you want to restrict content with [access] shortcode only. <a href="https://creativeminds.helpscoutdocs.com/article/1366-site-access-restriction-shortcodes" target="_blank">Click here</a> to read more about shortcode.',
+				'desc' => '<strong>Restrict full content:</strong> Choose this if you want to restrict full content.<br><strong>Restrict partially content:</strong> Choose this if you want to show only X% of the content are displayed with fade effect and message.<br><strong>Restrict content with shortcode only:</strong> Choose this if you want to restrict content with [access] shortcode only. <a href="https://creativeminds.helpscoutdocs.com/article/1366-site-access-restriction-shortcodes" target="_blank">Click here</a> to read more about shortcode.',
 				'default' => 'full',
+			),
+			self::OPTION_RESTRICT_PARTIALLY_CONTENT_PERCENT => array(
+				'type' => self::TYPE_INT,
+				'default' => '20',
+				'category' => 'general',
+				'subcategory' => 'general',
+				'title' => 'Restrict partially content percentage',
+				'desc' => 'Here you able to change percentage of restrict partially content. Default is 20',
 			),
 			self::OPTION_RESTRICT_WITH_CUSTOM_FILTER => array(
 				'type' => self::TYPE_BOOL,

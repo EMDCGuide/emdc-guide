@@ -3,11 +3,33 @@
  * Members functions
  *
  * @since 3.0.0
- * @version 6.0.0
+ * @version 10.0.0
  */
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
+
+/**
+ * Register Scripts for the Members component
+ *
+ * @since 8.0.0
+ *
+ * @param array $scripts Optional. The array of scripts to register.
+ * @return array The same array with the specific members scripts.
+ */
+function bp_nouveau_members_register_scripts( $scripts = array() ) {
+	if ( ! isset( $scripts['bp-nouveau'] ) || ! bp_get_members_invitations_allowed() ) {
+		return $scripts;
+	}
+
+	return array_merge( $scripts, array(
+		'bp-nouveau-member-invites' => array(
+			'file'         => 'js/buddypress-member-invites%s.js',
+			'dependencies' => array(),
+			'footer'       => true,
+		),
+	) );
+}
 
 /**
  * Enqueue the members scripts
@@ -16,19 +38,20 @@ defined( 'ABSPATH' ) || exit;
  */
 function bp_nouveau_members_enqueue_scripts() {
 	// Neutralize Ajax when using BuddyPress Groups & member widgets on default front page
-	if ( ! bp_is_user_front() || ! bp_nouveau_get_appearance_settings( 'user_front_page' ) ) {
-		return;
+	if ( bp_is_user_front() && bp_nouveau_get_appearance_settings( 'user_front_page' ) ) {
+		wp_add_inline_style(
+			'bp-nouveau',
+			'#member-front-widgets #groups-list-options,
+			#member-front-widgets #members-list-options,
+			#member-front-widgets #friends-list-options {
+				display: none;
+			}'
+		);
 	}
 
-	wp_add_inline_style(
-		'bp-nouveau', '
-		#member-front-widgets #groups-list-options,
-		#member-front-widgets #members-list-options,
-		#member-front-widgets #friends-list-options {
-			display: none;
-		}
-	'
-	);
+	if ( bp_is_user_members_invitations_list() ) {
+		wp_enqueue_script( 'bp-nouveau-member-invites' );
+	}
 }
 
 /**
@@ -58,7 +81,7 @@ function bp_nouveau_get_members_directory_nav_items() {
 				'component' => 'members',
 				'slug'      => 'personal', // slug is used because BP_Core_Nav requires it, but it's the scope
 				'li_class'  => array(),
-				'link'      => bp_loggedin_user_domain() . bp_get_friends_slug() . '/my-friends/',
+				'link'      => bp_loggedin_user_domain() . bp_nouveau_get_component_slug( 'friends' ) . '/my-friends/',
 				'text'      => __( 'My Friends', 'buddypress' ),
 				'count'     => bp_get_total_friend_count( bp_loggedin_user_id() ),
 				'position'  => 15,
@@ -506,3 +529,37 @@ function bp_nouveau_member_customizer_nav() {
 
 	return $nav->get_primary();
 }
+
+/**
+ * Includes additional information about the Members loop Ajax response.
+ *
+ * @since 10.0.0
+ *
+ * @param array $additional_info An associative array with additional information to include in the Ajax response.
+ * @param array $args            The Ajax query arguments.
+ * @return array                 Additional information about the members loop.
+ */
+function bp_nouveau_members_loop_additional_info( $additional_info = array(), $args = array() ) {
+	if ( ! isset( $GLOBALS['members_template'] ) || ! $GLOBALS['members_template'] ) {
+		return $additional_info;
+	}
+
+	$members_template = $GLOBALS['members_template'];
+
+	if ( isset( $members_template->member_count ) && 'all' === $args['scope'] ) {
+		$additional_info['totalItems'] = bp_core_number_format( $members_template->member_count );
+		$additional_info['navLabel']   = esc_html__( 'All Members', 'buddypress' );
+
+		$nav_labels = array(
+			'active' => esc_html__( 'Active Members', 'buddypress' ),
+			'newest' => esc_html__( 'Newest Members', 'buddypress' ),
+		);
+
+		if ( isset( $nav_labels[ $args['filter'] ] ) ) {
+			$additional_info['navLabel'] = $nav_labels[ $args['filter'] ];
+		}
+	}
+
+	return $additional_info;
+}
+add_filter( 'bp_nouveau_members_ajax_object_template_response', 'bp_nouveau_members_loop_additional_info', 10, 2 );

@@ -3,10 +3,13 @@
  */
 import { __, _n, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { SearchListControl, SearchListItem } from '@woocommerce/components';
+import {
+	SearchListControl,
+	SearchListItem,
+} from '@woocommerce/editor-components/search-list-control';
 import { SelectControl } from '@wordpress/components';
 import { withCategories } from '@woocommerce/block-hocs';
-import ErrorMessage from '@woocommerce/editor-components/error-placeholder/error-message.js';
+import ErrorMessage from '@woocommerce/editor-components/error-placeholder/error-message';
 import classNames from 'classnames';
 
 /**
@@ -149,11 +152,7 @@ const ProductCategoryControl = ( {
 				isSingle={ isSingle }
 			/>
 			{ !! onOperatorChange && (
-				<div
-					className={
-						selected.length < 2 ? 'screen-reader-text' : ''
-					}
-				>
+				<div hidden={ selected.length < 2 }>
 					<SelectControl
 						className="woocommerce-product-categories__operator"
 						label={ __(

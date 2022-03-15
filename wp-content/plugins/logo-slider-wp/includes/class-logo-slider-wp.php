@@ -159,40 +159,64 @@ class Logo_Slider_WP {
 
 		$plugin_admin = new Logo_Slider_WP_Admin( $this->get_plugin_name(), $this->get_version() );
 
-		//Check plugin pro version is activated
+		//Check plugin pro version is activated || This is need only on free version
         $this->loader->add_action('activated_plugin', $plugin_admin, 'pro_version_activation_checking_admin_init', 10, 2);
         $this->loader->add_action('admin_notices', $plugin_admin, 'pro_version_activation_checking_notice_warning' );
 
-
+        // Enqueue admin assets
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
-		$this->loader->add_action('init', $plugin_admin, 'logosliderwp_initialize');
+        //Register custom post tye for logo item and shortcodes
+        $this->loader->add_action( 'init', $plugin_admin, 'register_post_type_for_logo_slider', 0 );
+        $this->loader->add_action( 'init', $plugin_admin, 'register_post_type_for_lgx_logo_slider_shortcodes',0 );
 
-        //add metabox for custom post type
-        $this->loader->add_action('add_meta_boxes', $plugin_admin, 'add_meta_boxes_metabox');
+        //Add Thumbnail Support
+        $this->loader->add_action( 'init', $plugin_admin, 'add_thumbnail_support' );
 
-        //add plugin row meta and actions links
-        $this->loader->add_filter( 'plugin_action_links_' . LSWP_PLUGIN_BASE_NAME, $plugin_admin, 'add_links_admin_plugin_page_title' );
+        //Change Feature Image position
+        $this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'changing_meta_box_position_of_brand_logo' );
+
+        //Add meta_box for logo slider custom post type. Pattern --> adding_meta_boxes_for_{post_type}.
+        $this->loader->add_action( 'add_meta_boxes_logosliderwp', $plugin_admin, 'adding_meta_boxes_for_logosliderwp' );
+
+        //Add meta_box for shortcodes custom post type. Pattern --> adding_meta_boxes_for_{post_type}.
+        $this->loader->add_action( 'add_meta_boxes_lgx_lsp_shortcodes', $plugin_admin, 'adding_meta_boxes_for_lgx_lsp_shortcodes' );
+        //Add custom css class to meta box panel. Pattern --> postbox_classes_{post_type}_{meta_box_id}.
+        $this->loader->add_filter('postbox_classes_lgx_lsp_shortcodes_lgx_lsp_shortcodes_meta_box_panel', $plugin_admin, 'add_meta_box_css_class_for_lgx_lsp_shortcodes' );
+
+        //Save metadata of post type. Pattern --> save_post_{post_type}.
+        $this->loader->add_action( 'save_post_logosliderwp', $plugin_admin, 'save_post_metadata_of_logosliderwp', 10, 2 );
+
+        //Save metadata of post type. Pattern --> save_post_{post_type}.
+        $this->loader->add_action( 'save_post_lgx_lsp_shortcodes', $plugin_admin, 'save_post_metadata_of_lgx_lsp_shortcodes', 10, 2 );
+
+        // Add admin menu
+        $this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
+
+        //Add new column head in post type listing page. Pattern --> manage_{post_type}_posts_columns.
+        $this->loader->add_filter('manage_logosliderwp_posts_columns', $plugin_admin, 'add_new_column_head_for_logosliderwp' );
+
+        //Define admin column value for column head in post type listing page. Pattern --> manage_{$post_type}_posts_custom_column.
+        $this->loader->add_action( 'manage_logosliderwp_posts_custom_column', $plugin_admin, 'define_admin_column_value_for_logosliderwp', 10, 2 );
+
+        /*NEw*/
+
+        //Add new column head in post type listing page. Pattern --> manage_{post_type}_posts_columns.
+        $this->loader->add_filter('manage_lgx_lsp_shortcodes_posts_columns', $plugin_admin, 'add_new_column_head_for_lgx_logo_showcase' );
+
+        //Define admin column value for column head in post type listing page. Pattern --> manage_{$post_type}_posts_custom_column.
+        $this->loader->add_action( 'manage_lgx_lsp_shortcodes_posts_custom_column', $plugin_admin, 'define_admin_column_value_for_lgx_logo_showcase', 10, 2 );
+
+        /*NEw*/
 
 
-        //logosliderwp save post
-        $this->loader->add_action('save_post', $plugin_admin, 'save_post_metabox_logosliderwp', 10, 2);
+        // Add plugin row meta and actions links
+        $this->loader->add_filter( 'plugin_action_links_' . LGX_LS_PLUGIN_BASE, $plugin_admin, 'add_links_admin_plugin_page_title' );
 
-		//Adding
-		$this->loader->add_action('init', $plugin_admin, 'add_thumbnail_support_logo_slider');
+        //Add Support Link
+        $this->loader->add_filter( 'plugin_row_meta', $plugin_admin, 'add_links_admin_plugin_page_description', 10, 2 );
 
-        // Change Feature Image Position
- 		$this->loader->add_action('do_meta_boxes', $plugin_admin, 'logo_slider_wp_img_box');
-
-		//adding the setting action
-		$this->loader->add_action('admin_init', $plugin_admin, 'logo_slider_wp_setting_init');
-
-		// Add admin menu
-		$this->loader->add_action('admin_menu', $plugin_admin, 'add_plugin_admin_menu');
-
-		//Support Link
-		$this->loader->add_filter('plugin_row_meta', $plugin_admin, 'logo_slider_wp_support_link', 10, 2);
 
         //Add new column head in post type listing page. Pattern --> manage_{post_type}_posts_columns.
         $this->loader->add_filter('manage_logosliderwp_posts_columns', $plugin_admin, 'add_new_column_head_for_logosliderwp' );
@@ -208,9 +232,8 @@ class Logo_Slider_WP {
         $this->loader->add_action( 'wp_ajax_lgx_ls_admin_lswp_reorder', $plugin_admin, 'save_post_reorder_for_logosliderwp', 99 );
 
 
-		//Hook Tinymce
-		$this->loader->add_filter("mce_external_plugins", $plugin_admin, "lgx_owl_register_tinymce_plugin");
-		$this->loader->add_filter('mce_buttons', $plugin_admin, 'lgx_owl_add_tinymce_button');
+        //Deprecated : Adding the setting action
+        $this->loader->add_action('admin_init', $plugin_admin, 'logo_slider_wp_setting_init_dep');
 
 	}
 
@@ -225,13 +248,20 @@ class Logo_Slider_WP {
 
 		$plugin_public = new Logo_Slider_WP_Public( $this->get_plugin_name(), $this->get_version() );
 
+        // Enqueue Assets
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
+        // Register Shortcode
+        $this->loader->add_action( 'init', $plugin_public, 'register_lgx_logo_slider_shortcode', 0);
+
 		//Add  Short Code
-		add_shortcode('logo-slider-wp', array($plugin_public, 'logo_slider_wp_shortcode_function' ));
+        add_shortcode('logo-slider-wp', array($plugin_public, 'logo_slider_wp_shortcode_function_dep' ));
 
 		//add_theme_support( 'post-thumbnails', array('logosliderwp'));
+
+
+
 
 
 	}

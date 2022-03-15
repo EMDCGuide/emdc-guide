@@ -382,7 +382,7 @@ function groups_notification_group_invites( &$group, &$member, $inviter_user_id 
  * @param int    $secondary_item_id The secondary item ID.
  * @param int    $total_items       The total number of messaging-related notifications
  *                                  waiting for the user.
- * @param string $format            'string' for BuddyBar-compatible notifications; 'array'
+ * @param string $format            'string' for notification HTML link or 'array' for separate link and text.
  *                                  for WP Toolbar. Default: 'string'.
  * @return string
  */
@@ -614,7 +614,7 @@ function groups_format_notifications( $action, $item_id, $secondary_item_id, $to
 					 * @param string $text              Notification content.
 					 * @param string $notification_link The permalink for notification.
 					 */
-					return apply_filters( 'bp_groups_' . $amount . '_' . $action . '_notification', '<a href="' . $notification_link . '">' . $text . '</a>', $total_items, $group->name );
+					return apply_filters( 'bp_groups_' . $amount . '_' . $action . '_notification', '<a href="' . $notification_link . '">' . $text . '</a>', $total_items, $group->name, $text, $notification_link );
 				} else {
 
 					/**

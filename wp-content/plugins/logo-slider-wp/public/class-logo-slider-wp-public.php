@@ -63,8 +63,10 @@ class Logo_Slider_WP_Public {
 
         $this->settings_api = new Lgx_Carousel_Settings_API($plugin_name, $version);
 
-        add_shortcode('logo-slider', array($this, 'logo_slider_wp_shortcode_function' ));
+        add_shortcode('logo-slider', array($this, 'logo_slider_wp_shortcode_function_dep' ));
     }
+
+
 
 
     /**
@@ -73,6 +75,18 @@ class Logo_Slider_WP_Public {
      * @since    1.0.0
      */
     public function enqueue_styles() {
+
+
+        /**
+         *
+         * Deprecated Slider Style
+         *
+         */
+
+        wp_register_style('lgx-logo-slider-owl', plugin_dir_url( __FILE__ ) . 'assets/libs/owl/assets/owl.carousel.min.css', array(), $this->version, 'all' );
+        wp_register_style('lgx-logo-slider-owltheme', plugin_dir_url( __FILE__ ) . 'assets/libs/owl/assets/owl.theme.default.min.css', array('lgx-logo-slider-owl'), $this->version, 'all' );
+        wp_register_style( 'lgx-logo-slider-style-dep', plugin_dir_url( __FILE__ ) . 'assets/css/logosliderwppublic-dep.min.css', array('lgx-logo-slider-owl'), $this->version, 'all' );
+
 
         /**
          * This function is provided for demonstration purposes only.
@@ -85,13 +99,16 @@ class Logo_Slider_WP_Public {
          * between the defined hooks and the functions defined in this
          * class.
          */
+        wp_register_style('logo-slider-wp-font', plugin_dir_url( __FILE__ ) . 'assets/css/font-awesome.min.css', array(), $this->version );
 
-        wp_enqueue_style('lgx-logo-slider-owl', plugin_dir_url( __FILE__ ) . 'assets/lib/owl/assets/owl.carousel.min.css', array(), $this->version, 'all' );
-        wp_enqueue_style('lgx-logo-slider-owltheme', plugin_dir_url( __FILE__ ) . 'assets//lib/owl/assets/owl.theme.default.min.css', array(), $this->version, 'all' );
+        //Swiper style
+        wp_register_style('logo-slider-wp-swiper-css', plugin_dir_url( __FILE__ ) . 'assets/libs/swiper/swiper-bundle.min.css', array(), $this->version );
 
-        wp_enqueue_style( 'lgx-logo-slider-animate',  plugin_dir_url( __FILE__ ) . 'assets/lib/animate/animate-logo.css', array(), '20', 'all' );
+        //TooltipStar
+        wp_register_style('logo-slider-wp-tooltipster-css', plugin_dir_url( __FILE__ ) . 'assets/libs/tooltipster/css/tooltipster.bundle.min.css', array(), $this->version );
 
-        wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'assets/css/logo-slider-wp-public.css', array(), $this->version, 'all' );
+        //Main Style
+        wp_register_style( 'lgx-logo-slider-style', plugin_dir_url( __FILE__ ) . 'assets/css/logo-slider-wp-public.min.css', array(), $this->version, 'all' );
 
     }
 
@@ -102,6 +119,21 @@ class Logo_Slider_WP_Public {
      */
     public function enqueue_scripts() {
 
+
+        // Deprecated Script
+        wp_register_script('lgxlogoowljs', plugin_dir_url( __FILE__ ) . 'assets/libs/owl/owl.carousel.js', array( 'jquery' ), $this->version, false );
+        wp_register_script('lgxlogoowljs-modified', plugin_dir_url( __FILE__ ) . 'assets/libs/owl/owl-modified.js', array( 'lgxlogoowljs' ), $this->version, false );
+        wp_register_script( 'lgx-logo-slider-script-dep', plugin_dir_url( __FILE__ ) . 'assets/js/logosliderwppublic-dep.js', array( 'lgxlogoowljs' ), $this->version, false );
+
+        // Localize the script
+        $translation_array = array(
+            'owl_navigationTextL'    => plugin_dir_url( __FILE__ ). 'assets/img/prev.png',
+            'owl_navigationTextR'    => plugin_dir_url( __FILE__ ) . 'assets/img/next.png',
+        );
+        wp_localize_script( 'lgx-logo-slider-script-dep', 'logosliderwp', $translation_array );
+
+        // wp_enqueue_script('jquery');
+
         /**
          * This function is provided for demonstration purposes only.
          *
@@ -114,18 +146,17 @@ class Logo_Slider_WP_Public {
          * class.
          */
 
+        // Swiper Script
+        wp_register_script('logo-slider-wp-swiper-js', plugin_dir_url( __FILE__ ) . 'assets/libs/swiper/swiper-bundle.min.js', array(), $this->version, true );
 
-        wp_enqueue_script('lgxlogoowljs', plugin_dir_url( __FILE__ ) . 'assets/lib/owl/owl.carousel.js', array( 'jquery' ), $this->version, false );
-        wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'assets/js/logo-slider-wp-public.js', array( 'lgxlogoowljs' ), $this->version, false );
+        //TooltipStar
+        wp_register_script('logo-slider-wp-tooltipster-js', plugin_dir_url( __FILE__ ) . 'assets/libs/tooltipster/js/tooltipster.bundle.min.js', array('jquery'), $this->version, true );
 
-        // Localize the script
-        $translation_array = array(
-            'owl_navigationTextL'    => plugin_dir_url( __FILE__ ). 'assets/img/prev.png',
-            'owl_navigationTextR'    => plugin_dir_url( __FILE__ ) . 'assets/img/next.png',
-        );
-        wp_localize_script( $this->plugin_name, 'logosliderwp', $translation_array );
+        //Masonry
+     //   wp_register_script('logo-slider-wp-masonry-js', plugin_dir_url( __FILE__ ) . 'assets/libs/masonry/masonry.pkgd.min.js', array('jquery'), $this->version, true );
 
-        wp_enqueue_script('jquery');
+        //Main Script
+        wp_register_script('logo-slider-wp-public', plugin_dir_url( __FILE__ ) . 'assets/js/logo-slider-wp-public.js', array('jquery'), $this->version, true );
     }
 
 
@@ -139,7 +170,7 @@ class Logo_Slider_WP_Public {
      *  @since 1.0.0
      */
 
-    public static function lgx_output_function($params){
+    public static function lgx_output_function_dep($params){
 
         //Query args
         $cats       = trim($params['cat'] );
@@ -148,6 +179,8 @@ class Logo_Slider_WP_Public {
         $orderby    = trim( $params['orderby']);
         $limit      = intval($params['limit']);
 
+        //New
+        $ticker         = $params['ticker'];
 
         $compnayanme_en     = trim($params['companyname']);
         $compnaydesc_en     = trim($params['companydesc']);
@@ -162,26 +195,40 @@ class Logo_Slider_WP_Public {
         $bgcolor    	= trim($params['bgcolor']);
         $hovertype    	= trim($params['hovertype']);
 
+
+
+
         //Data Attribute
+
         $data_attr                        = array();
+
+        if($ticker == 'yes') {
+
+            $data_attr['autoplaytimeout']   = 0;
+            $data_attr['autoplayspeed']     = 3000;
+
+        } else {
+            $data_attr['autoplaytimeout']     = intval($params['autoplay_timeout']);
+            $data_attr['autoplayspeed']     = intval($params['autoplay_speed']);
+
+        }
+
+
         $data_attr['margin']              = intval($params['margin']);
         $data_attr['loop']                = ($params['loop'] == 'no') ? 'false' : 'true';
         $data_attr['autoplay']            = ($params['autoplay'] == 'no') ? 'false' : 'true';
-        $data_attr['autoplaytimeout']     = intval($params['autoplay_timeout']);
+
+
 
         $data_attr['autoplayhoverpause']  = ($params['hover_pause'] == 'no') ? 'false' : 'true';
         $data_attr['dots']                = ($params['dots'] == 'no') ? 'false' : 'true';
-        $data_attr['smartspeed']          = trim($params['smartspeed']);
-        $data_attr['slidespeed']          = trim($params['slidespeed']);
-        $data_attr['paginationspeed']     = trim($params['paginationspeed']);
+
 
         //
         $data_attr['itemlarge']           = intval($params['itemlarge']);
         $data_attr['itemdesk']            = intval($params['itemdesk']);
         $data_attr['itemtablet']          = intval($params['itemtablet']);
         $data_attr['itemmobile']          = intval($params['itemmobile']);
-
-       // print_r($params['itemlarge']);
 
 
         $data_attr['navlarge']           = ($params['navlarge'] == 'no') ? 'false' : 'true';
@@ -237,6 +284,22 @@ class Logo_Slider_WP_Public {
         $logo_post = new WP_Query( $logo_args );
         $logo_item    = '';
 
+        // Enqueue Style
+        wp_enqueue_style( 'lgx-logo-slider-owl' );
+        wp_enqueue_style( 'lgx-logo-slider-owltheme' );
+        wp_enqueue_style( 'lgx-logo-slider-style-dep');
+
+
+        //Enqueue Script
+        wp_enqueue_script( 'lgxlogoowljs' );
+
+        if($ticker == 'yes') {
+
+            wp_enqueue_script( 'lgxlogoowljs-modified' );
+        }
+
+        wp_enqueue_script( 'lgx-logo-slider-script-dep' );
+
         // The Loop
         if ( $logo_post->have_posts() ) {
 
@@ -263,6 +326,7 @@ class Logo_Slider_WP_Public {
                     $logo_img .= ( (!empty($company_name) && $compnayanme_en == 'yes' ) ? '<h6 class="logo-company-name">'.$company_name.'</h6>': '');
                     $logo_img .= ( (!empty($company_desc) && $compnaydesc_en == 'yes' ) ? '<p class="logo-company-desc">'.$company_desc.'</p>': '');
                     $logo_img .= '</div>';
+
                 }
 
                 $logo_item .= '<div class="item lgx-log-item" >';
@@ -300,7 +364,7 @@ class Logo_Slider_WP_Public {
      * @since 1.0.0
      */
 
-    public function logo_slider_wp_shortcode_function($atts) {
+    public function logo_slider_wp_shortcode_function_dep($atts) {
 
         $cats_set       = $this->settings_api->get_option('logosliderwp_settings_cat', 'logosliderwp_adv', '');
 
@@ -327,12 +391,9 @@ class Logo_Slider_WP_Public {
         $autoplay_set   = trim($this->settings_api->get_option('logosliderwp_settings_autoplay', 'logosliderwp_config', 'yes'));
 
 
-        $smartspeed_set  = intval($this->settings_api->get_option('logosliderwp_settings_smartspeed', 'logosliderwp_config', '500'));
-        $slidespeed_set  = intval($this->settings_api->get_option('logosliderwp_settings_slidespeed', 'logosliderwp_config', '200'));
-        $paginationspeed_set  = intval($this->settings_api->get_option('logosliderwp_settings_paginationspeed', 'logosliderwp_config', '800'));
-        $rewindspeed_set  = intval($this->settings_api->get_option('logosliderwp_settings_rewindspeed', 'logosliderwp_config', '1000'));
-
         $autoplay_timeout_set = intval($this->settings_api->get_option('logosliderwp_settings_autoplay_timeout', 'logosliderwp_config', 2000));
+
+        $autoplay_speed_set  = intval($this->settings_api->get_option('logosliderwp_settings_autoplay_slidespeed', 'logosliderwp_config', 1000));
 
 
         $hover_pause_set  = $this->settings_api->get_option('logosliderwp_settings_hover_pause', 'logosliderwp_config', 'no');
@@ -366,6 +427,7 @@ class Logo_Slider_WP_Public {
 
         $atts = shortcode_atts(array(
             'target'            => '_blank',
+            'ticker'            => 'no',
             'order'            => $order_set,
             'orderby'          => $orderby_set,
             'limit'            => $limit_set,
@@ -384,12 +446,9 @@ class Logo_Slider_WP_Public {
             'loop'             => $loop_set,
             'autoplay'         => $autoplay_set,
             'autoplay_timeout' => $autoplay_timeout_set,
+            'autoplay_speed'  => $autoplay_speed_set,
             'hover_pause'      => $hover_pause_set,
             'dots'             => $dots_set,
-            'smartspeed'       => $smartspeed_set,
-            'slidespeed'       => $slidespeed_set,
-            'paginationspeed'  => $paginationspeed_set,
-            'rewindspeed'      => $rewindspeed_set,
             'itemlarge'        => $item_set_lagedesctop,
             'itemdesk'         => $item_set_desctop,
             'itemtablet'       => $item_set_tablet,
@@ -400,9 +459,56 @@ class Logo_Slider_WP_Public {
             'navmobile'        => $nav_set_mobile,
         ), $atts, 'logo-slider');
 
-        $output = $this->lgx_output_function($atts);
+        $output = $this->lgx_output_function_dep($atts);
 
         return $output;
     }
 
+
+
+    /**
+     *
+     *  Version 3 Started
+     *
+     */
+
+    public function register_lgx_logo_slider_shortcode() {
+        // wp_register_style('logo-slider-wp-swiper-css', plugin_dir_url( __FILE__ ) . 'js/swiper-bundle.min.css', array(), $this->version );
+        // wp_register_script('logo-slider-wp-swiper-js', plugin_dir_url( __FILE__ ) . 'js/swiper-bundle.min.js', array(), $this->version, true );
+
+        add_shortcode('lgxlogoslider', array( $this, 'display_lgx_logo_slider' ) );
+    }
+
+    public function display_lgx_logo_slider($atts) {
+        if ( ! isset( $atts['id'] ) ) {
+            return '<p style="color: red;">Error: The showcase ID is missing. Please add a Showcase ID.</p>';
+        } else {
+            $lgx_shortcodes_meta = get_post_meta( $atts['id'], '_lgx_lsp_shortcodes_meta', true );
+
+            if(empty($lgx_shortcodes_meta)) {
+                return '<p style="color: red;">Error: The showcase ID is not valid. Please add a valid Showcase ID.</p>';
+            }
+            //echo '<pre>';print_r($lgx_shortcodes_meta['showcase_type']);echo '</pre>';
+            $lgx_lsw_loading_icon = plugin_dir_url( __FILE__ ). 'assets/img/loader.gif';
+            ob_start();
+            include('partials/view-controller.php');
+            return ob_get_clean();
+        }
+    }
+
+
+
+
+    /**
+     *
+     *  Version 3 End ***************************************************************************
+     *
+     */
+
+
+
 }
+
+
+
+

@@ -26,6 +26,7 @@ defined( 'ABSPATH' ) || exit;
  * @return array Extended exclude list.
  */
 function pfd_integration_wp_rocket_exclude_inline_content( $exclude_list ) {
+	// Never delay/move the Divi Area loader.
 	$exclude_list[] = 'window.DiviPopupData=window.DiviAreaConfig=';
 
 	return $exclude_list;

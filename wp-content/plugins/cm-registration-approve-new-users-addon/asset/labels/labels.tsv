@@ -1,4 +1,0 @@
-registration_success_msg_approval_needed	You've been registered successfully. Now your account needs to be approved by administrator.	Success message after registration if the approval is required.	Approve New Users
-login_error_approval_needed	Your account needs to be approved by administrator.	Error message during login if the approval is still pending.	Approve New Users
-admin_user_approved	User account has been approved.	Message showing when admin approved an account from the notification email.	Approve New Users
-admin_user_rejected	User account has been rejected and deleted.	Message showing when admin rejected an account from the notification email.	Approve New Users

@@ -10,7 +10,7 @@
  * Plugin Name:       Logo Slider by LogicHunt.com
  * Plugin URI:        https://logichunt.com/product/wordpress-logo-slider/
  * Description:       Ultimate & Most Popular Responsive Logo Showcase Slider. Display Unlimited Client, Supporter, Partner, Sponsor, or Brand Logo with Infinite Slides Loop.
- * Version:           2.4.1
+ * Version:           3.1.3
  * Author:            LogicHunt
  * Author URI:        http://logichunt.com
  * License:           GPL-2.0+
@@ -27,12 +27,19 @@ if ( ! defined( 'WPINC' ) ) {
 
 
 //plugin definition specific constants
-defined( 'LSWP_PLUGIN_NAME' ) or define( 'LSWP_PLUGIN_NAME', 'logo-slider-wp' ); //need to define in uninstall also
-defined( 'LSWP_PLUGIN_VERSION' ) or define( 'LSWP_PLUGIN_VERSION', '2.4.1' ); //need to define in uninstall also
-defined( 'LSWP_PLUGIN_BASE_NAME' ) or define( 'LSWP_PLUGIN_BASE_NAME', plugin_basename( __FILE__ ) );
-defined( 'LSWP_PLUGIN_ROOT_PATH' ) or define( 'LSWP_PLUGIN_ROOT_PATH', plugin_dir_path( __FILE__ ) );
-defined( 'LSWP_PLUGIN_ROOT_URL' ) or define( 'LSWP_PLUGIN_ROOT_URL', plugin_dir_url( __FILE__ ) );
-defined( 'LSWP_PLUGIN_TEXT_DOMAIN' ) or define( 'LSWP_PLUGIN_TEXT_DOMAIN', 'logo-slider-wp');
+defined( 'LGX_LS_WP_PLUGIN' )             or define( 'LGX_LS_WP_PLUGIN', 'logo-slider-wp' );
+defined( 'LGX_LS_PLUGIN_BASE' )           or define( 'LGX_LS_PLUGIN_BASE', plugin_basename( __FILE__ ) );
+defined( 'LGX_LS_PLUGIN_VERSION' )        or define( 'LGX_LS_PLUGIN_VERSION', '3.1.3' );
+defined( 'LGX_LS_PLUGIN_ROOT_PATH' )      or define( 'LGX_LS_PLUGIN_ROOT_PATH', plugin_dir_path( __FILE__ ) );
+defined( 'LGX_LS_PLUGIN_ROOT_URL' )       or define( 'LGX_LS_PLUGIN_ROOT_URL', plugin_dir_url( __FILE__ ) );
+defined( 'LGX_LS_PLUGIN_TEXT_DOMAIN')     or define( 'LGX_LS_PLUGIN_TEXT_DOMAIN', 'logo-slider-wp');
+
+if( (LGX_LS_PLUGIN_BASE == 'logo-slider-wp-pro/logo-slider-wp-pro.php') ) {
+	defined( 'LGX_LS_PLUGIN_META_FIELD_PRO')  or define( 'LGX_LS_PLUGIN_META_FIELD_PRO', 'enabled');
+} else {
+	defined( 'LGX_LS_PLUGIN_META_FIELD_PRO')  or define( 'LGX_LS_PLUGIN_META_FIELD_PRO', 'disabled');
+}
+
 
 
 /**
