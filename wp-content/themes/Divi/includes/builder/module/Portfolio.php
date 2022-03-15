@@ -601,6 +601,22 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 					'icon_sticky' => $hover_icon_sticky,
 				)
 			);
+
+			// Overlay Icon Styles.
+			$this->generate_styles(
+				array(
+					'hover'          => false,
+					'utility_arg'    => 'icon_font_family',
+					'render_slug'    => $render_slug,
+					'base_attr_name' => 'hover_icon',
+					'important'      => true,
+					'selector'       => '%%order_class%% .et_overlay:before',
+					'processor'      => array(
+						'ET_Builder_Module_Helper_Style_Processor',
+						'process_extended_icon',
+					),
+				)
+			);
 		}
 
 		ob_start();
@@ -715,7 +731,7 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 					endif;
 					?>
 
-				</div><!-- .et_pb_portfolio_item -->
+				</div>
 				<?php
 				ET_Post_Stack::pop();
 			}
@@ -843,7 +859,7 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 			%3$s',
 			$this->module_classname( $render_slug ),
 			$posts,
-			( ! $container_is_closed ? '</div> <!-- .et_pb_portfolio -->' : '' ),
+			( ! $container_is_closed ? '</div>' : '' ),
 			$this->module_id(),
 			$video_background, // #5
 			$parallax_image_background,
@@ -857,4 +873,6 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 	}
 }
 
-new ET_Builder_Module_Portfolio();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Portfolio();
+}

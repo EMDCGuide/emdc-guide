@@ -39,11 +39,11 @@ class ET_Builder_Module_Helper_MultiViewOptions {
 	protected $pattern = '/\{\{(.+)\}\}/';
 
 	/**
-	 * Module slug.
+	 * Module Object.
 	 *
-	 * @since 3.27.1
+	 * @since 4.10.0
 	 *
-	 * @var string
+	 * @var ET_Builder_Element
 	 */
 	protected $module;
 
@@ -301,7 +301,7 @@ class ET_Builder_Module_Helper_MultiViewOptions {
 	 * @return bool
 	 */
 	public function responsive_is_enabled( $name ) {
-		return et_pb_responsive_options()->is_enabled( $name, $this->props );
+		return et_pb_responsive_options()->is_enabled( $name, $this->get_module_props() );
 	}
 
 	/**
@@ -314,7 +314,7 @@ class ET_Builder_Module_Helper_MultiViewOptions {
 	 * @return bool
 	 */
 	public function hover_is_enabled( $name ) {
-		return et_pb_hover_options()->is_enabled( $name, $this->props );
+		return et_pb_hover_options()->is_enabled( $name, $this->get_module_props() );
 	}
 
 	/**
@@ -420,7 +420,7 @@ class ET_Builder_Module_Helper_MultiViewOptions {
 						continue;
 					}
 
-					$value = et_()->array_get( $this->props, self::get_name_by_mode( $name, $mode ), '' );
+					$value = $this->get_prop( self::get_name_by_mode( $name, $mode ) );
 
 					if ( '' === $value && isset( $this->default_values[ $name ][ $mode ] ) ) {
 						$value = $this->default_values[ $name ][ $mode ];
@@ -636,32 +636,6 @@ class ET_Builder_Module_Helper_MultiViewOptions {
 
 		if ( property_exists( $module, 'slug' ) ) {
 			$this->slug = $module->slug;
-		}
-
-		if ( property_exists( $module, 'props' ) && $module->props && is_array( $module->props ) ) {
-			$props = $module->props;
-
-			if ( empty( $props['content'] ) && property_exists( $module, 'content' ) ) {
-				$props['content'] = $module->content;
-			}
-
-			if ( in_array( $module->slug, array( 'et_pb_code', 'et_pb_fullwidth_code' ), true ) ) {
-				if ( isset( $props['content'] ) ) {
-					$props['raw_content'] = $props['content'];
-				}
-
-				if ( isset( $props[ 'content' . self::$hover_enabled_suffix ] ) ) {
-					$props[ 'raw_content' . self::$hover_enabled_suffix ] = $props[ 'content' . self::$hover_enabled_suffix ];
-				}
-
-				if ( isset( $props[ 'content' . self::$responsive_enabled_suffix ] ) ) {
-					$props[ 'raw_content' . self::$responsive_enabled_suffix ] = $props[ 'content' . self::$responsive_enabled_suffix ];
-				}
-			}
-
-			foreach ( $props as $key => $value ) {
-				$this->set_props( $key, $value );
-			}
 		}
 
 		$this->set_inherited_props();
@@ -1956,6 +1930,15 @@ class ET_Builder_Module_Helper_MultiViewOptions {
 		$temp_values = array();
 
 		foreach ( $values as $mode => $value ) {
+			// Decode HTML special characters such as "&amp;" to "&"
+			// to make the value consistence and the comparison is accurate.
+			// $temp_values variable is not used anywhere except to compare
+			// the values of each view mode. It will not printed anywhere.
+			// So we won't need to sanitize it.
+			if ( is_string( $value ) ) {
+				$value = htmlspecialchars_decode( $value );
+			}
+
 			// Stringify the value so can be easily compared.
 			$temp_values[ $mode ] = wp_json_encode( $value );
 		}
@@ -2143,6 +2126,56 @@ class ET_Builder_Module_Helper_MultiViewOptions {
 	}
 
 	/**
+	 * Gets a prop from Module.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param string $name    Prop name.
+	 * @param string $default Default value. Defaults to ''.
+	 *
+	 * @return string
+	 */
+	public function get_prop( $name, $default = '' ) {
+		$props = $this->get_prepped_props();
+		return isset( $props[ $name ] ) ? $props[ $name ] : '';
+	}
+
+	/**
+	 * Prepares the modules props to be consumed by this helper.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return array
+	 */
+	public function get_prepped_props() {
+		$props = [];
+
+		if ( property_exists( $this->module, 'props' ) && $this->module->props && is_array( $this->module->props ) ) {
+			$props = $this->module->props;
+
+			if ( empty( $props['content'] ) && property_exists( $this->module, 'content' ) ) {
+				$props['content'] = $this->module->content;
+			}
+
+			if ( in_array( $this->module->slug, array( 'et_pb_code', 'et_pb_fullwidth_code' ), true ) ) {
+				if ( isset( $props['content'] ) ) {
+					$props['raw_content'] = $props['content'];
+				}
+
+				if ( isset( $props[ 'content' . self::$hover_enabled_suffix ] ) ) {
+					$props[ 'raw_content' . self::$hover_enabled_suffix ] = $props[ 'content' . self::$hover_enabled_suffix ];
+				}
+
+				if ( isset( $props[ 'content' . self::$responsive_enabled_suffix ] ) ) {
+					$props[ 'raw_content' . self::$responsive_enabled_suffix ] = $props[ 'content' . self::$responsive_enabled_suffix ];
+				}
+			}
+		}
+
+		return $props;
+	}
+
+	/**
 	 * Gets the Module props.
 	 *
 	 * The Module is restricted in scope. Hence we use this getter.
@@ -2154,10 +2187,6 @@ class ET_Builder_Module_Helper_MultiViewOptions {
 	 * @return array
 	 */
 	public function get_module_props() {
-		if ( ! isset( $this->props ) ) {
-			return array();
-		}
-
-		return $this->props;
+		return $this->get_prepped_props();
 	}
 }

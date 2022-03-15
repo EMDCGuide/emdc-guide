@@ -130,15 +130,15 @@ function et_theme_builder_register_entities() {
 		ET_THEME_BUILDER_HEADER_LAYOUT_POST_TYPE,
 		array(
 			'labels'             => array(
-				'name'               => esc_html__( 'Header Layouts', 'et_builder' ),
-				'singular_name'      => esc_html__( 'Header Layout', 'et_builder' ),
+				'name'               => esc_html__( 'Header Templates', 'et_builder' ),
+				'singular_name'      => esc_html__( 'Header Template', 'et_builder' ),
 				'add_new'            => esc_html__( 'Add New', 'et_builder' ),
-				'add_new_item'       => esc_html__( 'Add New Header Layout', 'et_builder' ),
-				'edit_item'          => esc_html__( 'Edit Header Layout', 'et_builder' ),
-				'new_item'           => esc_html__( 'New Header Layout', 'et_builder' ),
-				'all_items'          => esc_html__( 'All Header Layouts', 'et_builder' ),
-				'view_item'          => esc_html__( 'View Header Layout', 'et_builder' ),
-				'search_items'       => esc_html__( 'Search Header Layouts', 'et_builder' ),
+				'add_new_item'       => esc_html__( 'Add New Header Template', 'et_builder' ),
+				'edit_item'          => esc_html__( 'Edit Header Template', 'et_builder' ),
+				'new_item'           => esc_html__( 'New Header Template', 'et_builder' ),
+				'all_items'          => esc_html__( 'All Header Templates', 'et_builder' ),
+				'view_item'          => esc_html__( 'View Header Template', 'et_builder' ),
+				'search_items'       => esc_html__( 'Search Header Templates', 'et_builder' ),
 				'not_found'          => esc_html__( 'Nothing found', 'et_builder' ),
 				'not_found_in_trash' => esc_html__( 'Nothing found in Trash', 'et_builder' ),
 				'parent_item_colon'  => '',
@@ -162,15 +162,15 @@ function et_theme_builder_register_entities() {
 		ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE,
 		array(
 			'labels'             => array(
-				'name'               => esc_html__( 'Body Layouts', 'et_builder' ),
-				'singular_name'      => esc_html__( 'Body Layout', 'et_builder' ),
+				'name'               => esc_html__( 'Body Templates', 'et_builder' ),
+				'singular_name'      => esc_html__( 'Body Template', 'et_builder' ),
 				'add_new'            => esc_html__( 'Add New', 'et_builder' ),
-				'add_new_item'       => esc_html__( 'Add New Body Layout', 'et_builder' ),
-				'edit_item'          => esc_html__( 'Edit Body Layout', 'et_builder' ),
-				'new_item'           => esc_html__( 'New Body Layout', 'et_builder' ),
-				'all_items'          => esc_html__( 'All Body Layouts', 'et_builder' ),
-				'view_item'          => esc_html__( 'View Body Layout', 'et_builder' ),
-				'search_items'       => esc_html__( 'Search Body Layouts', 'et_builder' ),
+				'add_new_item'       => esc_html__( 'Add New Body Template', 'et_builder' ),
+				'edit_item'          => esc_html__( 'Edit Body Template', 'et_builder' ),
+				'new_item'           => esc_html__( 'New Body Template', 'et_builder' ),
+				'all_items'          => esc_html__( 'All Body Templates', 'et_builder' ),
+				'view_item'          => esc_html__( 'View Body Template', 'et_builder' ),
+				'search_items'       => esc_html__( 'Search Body Templates', 'et_builder' ),
 				'not_found'          => esc_html__( 'Nothing found', 'et_builder' ),
 				'not_found_in_trash' => esc_html__( 'Nothing found in Trash', 'et_builder' ),
 				'parent_item_colon'  => '',
@@ -194,15 +194,15 @@ function et_theme_builder_register_entities() {
 		ET_THEME_BUILDER_FOOTER_LAYOUT_POST_TYPE,
 		array(
 			'labels'             => array(
-				'name'               => esc_html__( 'Footer Layouts', 'et_builder' ),
-				'singular_name'      => esc_html__( 'Footer Layout', 'et_builder' ),
+				'name'               => esc_html__( 'Footer Templates', 'et_builder' ),
+				'singular_name'      => esc_html__( 'Footer Template', 'et_builder' ),
 				'add_new'            => esc_html__( 'Add New', 'et_builder' ),
-				'add_new_item'       => esc_html__( 'Add New Footer Layout', 'et_builder' ),
-				'edit_item'          => esc_html__( 'Edit Footer Layout', 'et_builder' ),
-				'new_item'           => esc_html__( 'New Footer Layout', 'et_builder' ),
-				'all_items'          => esc_html__( 'All Footer Layouts', 'et_builder' ),
-				'view_item'          => esc_html__( 'View Footer Layout', 'et_builder' ),
-				'search_items'       => esc_html__( 'Search Footer Layouts', 'et_builder' ),
+				'add_new_item'       => esc_html__( 'Add New Footer Template', 'et_builder' ),
+				'edit_item'          => esc_html__( 'Edit Footer Template', 'et_builder' ),
+				'new_item'           => esc_html__( 'New Footer Template', 'et_builder' ),
+				'all_items'          => esc_html__( 'All Footer Templates', 'et_builder' ),
+				'view_item'          => esc_html__( 'View Footer Template', 'et_builder' ),
+				'search_items'       => esc_html__( 'Search Footer Templates', 'et_builder' ),
 				'not_found'          => esc_html__( 'Nothing found', 'et_builder' ),
 				'not_found_in_trash' => esc_html__( 'Nothing found in Trash', 'et_builder' ),
 				'parent_item_colon'  => '',
@@ -393,8 +393,18 @@ function et_theme_builder_get_theme_builder_post_id( $live, $create = true ) {
  * @return integer[]
  */
 function et_theme_builder_get_theme_builder_template_ids( $live ) {
-	$post_id      = et_theme_builder_get_theme_builder_post_id( $live, false );
-	$template_ids = get_post_meta( $post_id, '_et_template', false );
+	$post_id = et_theme_builder_get_theme_builder_post_id( $live, false );
+
+	// Try to get the template Ids from the backup.
+	// that maybe stored during saving templates process.
+	// @see et_theme_builder_api_save function.
+	$template_ids = get_option( 'et_tb_templates_backup_' . $post_id, false );
+
+	// If there is no backup available, then query the post meta.
+	if ( false === $template_ids ) {
+		$template_ids = get_post_meta( $post_id, '_et_template', false );
+	}
+
 	$template_ids = is_array( $template_ids ) ? $template_ids : array();
 	$template_ids = array_map( 'intval', $template_ids );
 
@@ -1243,9 +1253,10 @@ function et_theme_builder_get_template_layouts( $request = null, $cache = true, 
 		);
 	} else {
 		// We are currently displaying a template in the FE.
-		$templates = et_theme_builder_get_theme_builder_templates( true );
-		$settings  = et_theme_builder_get_flat_template_settings_options();
-		$template  = $request->get_template( $templates, $settings );
+		$templates   = et_theme_builder_get_theme_builder_templates( true );
+		$settings    = et_theme_builder_get_flat_template_settings_options();
+		$template    = $request->get_template( $templates, $settings );
+		$is_singular = is_singular();
 
 		if ( ! empty( $template ) ) {
 			$is_default      = $template['default'];
@@ -1257,7 +1268,7 @@ function et_theme_builder_get_template_layouts( $request = null, $cache = true, 
 			// it does not override any areas otherwise it will take over ALL site pages.
 			if ( ! $is_default || $override_header || $override_body || $override_footer ) {
 				$layouts = array(
-					ET_THEME_BUILDER_TEMPLATE_POST_TYPE    => $template['id'],
+					ET_THEME_BUILDER_TEMPLATE_POST_TYPE    => $is_singular ? $template['id'] : false,
 					ET_THEME_BUILDER_HEADER_LAYOUT_POST_TYPE => $template['layouts']['header'],
 					ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE => $template['layouts']['body'],
 					ET_THEME_BUILDER_FOOTER_LAYOUT_POST_TYPE => $template['layouts']['footer'],
@@ -1274,6 +1285,13 @@ function et_theme_builder_get_template_layouts( $request = null, $cache = true, 
 	 * @param array $layouts
 	 */
 	$layouts = apply_filters( 'et_theme_builder_template_layouts', $layouts );
+
+	// Add AB Subjects array.
+	foreach ( $layouts as $key => $layout ) {
+		if ( is_array( $layout ) && $layout['override'] ) {
+			$layouts[ $key ]['et_pb_ab_subjects'] = et_pb_ab_get_subjects( $layout['id'] );
+		}
+	}
 
 	if ( $cache ) {
 		$store[ $cache_key ] = $layouts;
@@ -1327,57 +1345,6 @@ function et_theme_builder_layout_has_post_content( $layout ) {
 }
 
 /**
- * Get the failure modal html for a template that overrides the body but does not display
- * post content (e.g. Post Content module is missing or the body has been disabled).
- *
- * @param string  $template_name  Template name.
- * @param boolean $layout_enabled Layout enabled.
- *
- * @return string
- */
-function et_theme_builder_get_failure_notification_modal( $template_name, $layout_enabled ) {
-	$i18n        = require ET_BUILDER_DIR . 'frontend-builder/i18n/theme-builder.php';
-	$error       = $i18n['This post has been assigned a template using the Theme Builder, however, the template being used does not contain a Post Content module.'];
-	$description = $i18n['A Post Content module is required in order to add unique content within the Theme Builder template.'];
-
-	if ( ! $layout_enabled ) {
-		$error       = $i18n['Oops, it looks like the current Theme Builder Template body layout is disabled.'];
-		$description = $i18n['The body layout of a template should not be disabled if you wish to display and edit the content of individual posts using this layout.'];
-	}
-
-	$output = sprintf(
-		'<div class="et-core-modal-overlay et-theme-builder-no-post-content et-core-active">
-		<div class="et-core-modal">
-			<div class="et-core-modal-header">
-				<h3 class="et-core-modal-title">%1$s</h3>
-				<a href="#" class="et-core-modal-close" data-et-core-modal="close"></a>
-			</div>
-
-			<div class="et-core-modal-content">
-				<p>%2$s</p>
-				<p>%3$s</p>
-				<p>%4$s</p>
-			</div>
-
-			<div class="et_pb_prompt_buttons">
-				<br>
-				<span class="spinner"></span>
-				<a href="%6$s" class="et-core-modal-action">%5$s</a>
-			</div>
-		</div>
-	</div>',
-		esc_html__( 'Missing Post Content Module', 'et_builder' ),
-		esc_html__( $error, 'et_builder' ),
-		esc_html__( $description, 'et_builder' ),
-		esc_html( sprintf( __( 'Current template: %1$s', 'et_builder' ), $template_name ) ),
-		esc_html__( 'Edit Theme Builder', 'et_builder' ),
-		esc_url( admin_url( 'admin.php?page=et_theme_builder' ) )
-	);
-
-	return $output;
-}
-
-/**
  * Create or update a Theme Builder template.
  *
  * @since 4.0
@@ -1386,7 +1353,7 @@ function et_theme_builder_get_failure_notification_modal( $template_name, $layou
  * @param array   $template         Template.
  * @param boolean $allow_default    Allow default.
  *
- * @return integer
+ * @return (integer|false) Return false on failure.
  */
 function et_theme_builder_store_template( $theme_builder_id, $template, $allow_default ) {
 	$_                   = et_();
@@ -1403,7 +1370,7 @@ function et_theme_builder_store_template( $theme_builder_id, $template, $allow_d
 	$footer_enabled      = (bool) $_->array_get( $template, 'layouts.footer.enabled', true );
 	$use_on              = array_map( 'sanitize_text_field', $_->array_get( $template, 'use_on', array() ) );
 	$exclude_from        = array_map( 'sanitize_text_field', $_->array_get( $template, 'exclude_from', array() ) );
-	$exists              = ET_THEME_BUILDER_TEMPLATE_POST_TYPE === get_post_type( $post_id ) && 'publish' === get_post_status( $post_id );
+	$exists              = $post_id > 0 && ET_THEME_BUILDER_TEMPLATE_POST_TYPE === get_post_type( $post_id ) && 'publish' === get_post_status( $post_id );
 	$autogenerated_title = '1' === $_->array_get( $template, 'autogenerated_title', '1' );
 
 	if ( ET_THEME_BUILDER_HEADER_LAYOUT_POST_TYPE !== get_post_type( $header_id ) || 'publish' !== get_post_status( $header_id ) ) {
@@ -1419,12 +1386,18 @@ function et_theme_builder_store_template( $theme_builder_id, $template, $allow_d
 	}
 
 	if ( $exists ) {
-		wp_update_post(
-			array(
-				'ID'         => $post_id,
-				'post_title' => $title,
-			)
-		);
+		// Preform update only when needed.
+		if ( get_post_field( 'post_title', $post_id, 'raw' ) !== $title ) {
+			wp_update_post(
+				array(
+					'ID'         => $post_id,
+					'post_title' => $title,
+				)
+			);
+		}
+
+		// Update layout title for each template.
+		et_theme_builder_update_layout_title( $template );
 	} else {
 		$post_id = wp_insert_post(
 			array(
@@ -1435,29 +1408,48 @@ function et_theme_builder_store_template( $theme_builder_id, $template, $allow_d
 		);
 	}
 
-	update_post_meta( $post_id, '_et_autogenerated_title', $autogenerated_title ? '1' : '0' );
-	update_post_meta( $post_id, '_et_default', $default ? '1' : '0' );
-	update_post_meta( $post_id, '_et_enabled', $enabled ? '1' : '0' );
-	update_post_meta( $post_id, '_et_header_layout_id', $header_id );
-	update_post_meta( $post_id, '_et_header_layout_enabled', $header_enabled ? '1' : '0' );
-	update_post_meta( $post_id, '_et_body_layout_id', $body_id );
-	update_post_meta( $post_id, '_et_body_layout_enabled', $body_enabled ? '1' : '0' );
-	update_post_meta( $post_id, '_et_footer_layout_id', $footer_id );
-	update_post_meta( $post_id, '_et_footer_layout_enabled', $footer_enabled ? '1' : '0' );
+	if ( 0 === $post_id || is_wp_error( $post_id ) ) {
+		return false;
+	}
 
+	$metas = array(
+		'_et_autogenerated_title'   => $autogenerated_title ? '1' : '0',
+		'_et_default'               => $default ? '1' : '0',
+		'_et_enabled'               => $enabled ? '1' : '0',
+		'_et_header_layout_id'      => $header_id,
+		'_et_header_layout_enabled' => $header_enabled ? '1' : '0',
+		'_et_body_layout_id'        => $body_id,
+		'_et_body_layout_enabled'   => $body_enabled ? '1' : '0',
+		'_et_footer_layout_id'      => $footer_id,
+		'_et_footer_layout_enabled' => $footer_enabled ? '1' : '0',
+	);
+
+	foreach ( $metas as $key => $value ) {
+		if ( strval( $value ) === strval( get_post_meta( $post_id, $key, true ) ) ) {
+			continue;
+		}
+
+		update_post_meta( $post_id, $key, $value );
+	}
+
+	// Handle _et_use_on meta.
 	delete_post_meta( $post_id, '_et_use_on' );
-	foreach ( $use_on as $condition ) {
-		add_post_meta( $post_id, '_et_use_on', $condition );
+	if ( $use_on ) {
+		$use_on_unique = array_unique( $use_on );
+
+		foreach ( $use_on_unique as $condition ) {
+			add_post_meta( $post_id, '_et_use_on', $condition );
+		}
 	}
 
+	// Handle _et_exclude_from meta.
 	delete_post_meta( $post_id, '_et_exclude_from' );
-	foreach ( $exclude_from as $condition ) {
-		add_post_meta( $post_id, '_et_exclude_from', $condition );
-	}
+	if ( $exclude_from ) {
+		$exclude_from_unique = array_unique( $exclude_from );
 
-	$templates = get_post_meta( $theme_builder_id, '_et_template', false );
-	if ( ! in_array( $post_id, $templates, true ) ) {
-		add_post_meta( $theme_builder_id, '_et_template', $post_id );
+		foreach ( $exclude_from_unique as $condition ) {
+			add_post_meta( $post_id, '_et_exclude_from', $condition );
+		}
 	}
 
 	return $post_id;
@@ -1781,3 +1773,30 @@ function et_theme_builder_clear_wp_post_cache( $layout_id = '' ) {
 }
 
 add_action( 'et_save_post', 'et_theme_builder_clear_wp_post_cache' );
+
+/**
+ *
+ * Update layout title for each template
+ *
+ * @param array $template Theme Builder Template.
+ */
+function et_theme_builder_update_layout_title( $template ) {
+	if ( empty( $template['layouts'] ) ) {
+		return;
+	}
+
+	foreach ( $template['layouts'] as $layout ) {
+		$layout_id = (int) $layout['id'];
+
+		if ( ! $layout_id ) {
+			continue;
+		}
+
+		wp_update_post(
+			array(
+				'ID'         => $layout_id,
+				'post_title' => sanitize_text_field( $template['title'] ),
+			)
+		);
+	}
+}

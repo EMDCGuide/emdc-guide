@@ -9,8 +9,13 @@ import $ from 'jquery';
 // Internal dependencies
 import { top_window } from '@core-ui/utils/frame-helpers';
 import ETScriptStickyStore from './sticky';
-import { getContentAreaSelector } from '../../frontend-builder/gutenberg/utils/selectors';
 import {
+  getContentAreaSelector,
+  getTemplateEditorIframe,
+} from '../../frontend-builder/gutenberg/utils/selectors';
+import { isTemplateEditor } from '../../frontend-builder/gutenberg/utils/conditionals';
+import {
+  getBuilderUtilsParams,
   isBFB,
   isExtraTheme,
   isFE,
@@ -43,7 +48,7 @@ const states = {
   breakpoint: 'desktop',
   extraMobileBreakpoint: false,
   isBuilderZoomed: false,
-  scrollLocation: et_builder_utils_params.onloadScrollLocation, // app|top
+  scrollLocation: getBuilderUtilsParams().onloadScrollLocation, // app|top
   scrollTop: {
     app: 0,
     top: 0,
@@ -73,12 +78,12 @@ const states = {
 // Valid values.
 // Retrieved from server, used for validating values
 const validValues = {
-  scrollLocation: [...et_builder_utils_params.scrollLocations],
+  scrollLocation: [...getBuilderUtilsParams().scrollLocations],
 };
 
 // Variables
 const builderScrollLocations = {
-  ...et_builder_utils_params.builderScrollLocations,
+  ...getBuilderUtilsParams().builderScrollLocations,
 };
 
 // @todo need to change how this works since builder already have et_screen_sizes(), unless
@@ -296,13 +301,19 @@ class ETScriptWindowStore extends EventEmitter {
     // Previous inserted DOM are also gone + Block item now has collapsing margin top/bottom
     // These needs to be manually calculated here since the result is no longer identical
     if (includes(contentSelectors, getContentAreaSelector(top_window, false))) {
+      // Find Block List Layout. By default, it's located on editor of top window.
+      // When Template Editor is active, it's "moved" to editor of iframe window.
+      const $blockEditorLayout = isTemplateEditor() ? getTemplateEditorIframe(top_window).find('.block-editor-block-list__layout.is-root-container') : top_window.jQuery('.block-editor-block-list__layout');
+
       // Blocks list position to its parent (title + content wrapper)
       // WordPress 5.4 = 183px
       // WordPress 5.5 = 161px
-      blockOffsetTop += top_window.jQuery('.block-editor-block-list__layout').position().top;
+      if ($blockEditorLayout.length) {
+        blockOffsetTop += $blockEditorLayout.position().top;
+      }
 
       // Compensating collapsing block item margin top
-      blockOffsetTop += parseInt($block.css('marginTop'));
+      blockOffsetTop += parseInt($block.css('marginTop')) || 0;
     }
 
     // Admin bar in less than 600 width window uses absolute positioning which stays on top of

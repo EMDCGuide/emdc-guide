@@ -1,5 +1,14 @@
 <?php
+/**
+ * Border Field.
+ *
+ * @package Divi
+ * @subpackage Builder
+ */
 
+/**
+ * Handles border field for modules.
+ */
 class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 
 	/**
@@ -60,6 +69,7 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 					'color_type'      => null,
 					'depends_on'      => null,
 					'depends_show_if' => null,
+					'sub_toggle'      => null,
 					'defaults'        => array(
 						'border_radii'  => null,
 						'border_styles' => array(
@@ -95,6 +105,7 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 				'color_type'      => 'color-alpha',
 				'depends_on'      => null,
 				'depends_show_if' => null,
+				'sub_toggle'      => null,
 				'use_radius'      => true,
 				'defaults'        => array(
 					'border_radii'  => 'on||||',
@@ -126,6 +137,7 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 				'default'         => $settings['defaults']['border_radii'],
 				'tab_slug'        => $settings['tab_slug'],
 				'toggle_slug'     => $settings['toggle_slug'],
+				'sub_toggle'      => $settings['sub_toggle'],
 				'attr_suffix'     => $suffix,
 				'option_category' => 'border',
 				'description'     => esc_html__( 'Here you can control the corner radius of this element. Enable the link icon to control all four corners at once, or disable to define custom values for each.', 'et_builder' ),
@@ -143,6 +155,7 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 			'description'         => esc_html__( 'You can add borders to any element, customize their appearance and assign unique styles to each edge.', 'et_builder' ),
 			'tab_slug'            => $settings['tab_slug'],
 			'toggle_slug'         => $settings['toggle_slug'],
+			'sub_toggle'          => $settings['sub_toggle'],
 			'type'                => 'composite',
 			'attr_suffix'         => $suffix,
 			'option_category'     => 'border',
@@ -442,8 +455,19 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 
 		$important = '';
 
-		if ( isset( $advanced_fields['border']['css']['important'] ) ) {
-			if ( 'plugin_only' === $advanced_fields['border']['css']['important'] ) {
+		// Backward compatibility. Use `border` settings as default if exists.
+		$legacy_border = self::$_->array_get( $advanced_fields, 'border', array() );
+
+		$borders_fields = self::$_->array_get(
+			$advanced_fields,
+			'borders',
+			array(
+				'default' => $legacy_border,
+			)
+		);
+
+		if ( isset( $borders_fields['css']['important'] ) ) {
+			if ( 'plugin_only' === $borders_fields['css']['important'] ) {
 				$important = et_builder_has_limitation( 'force_use_global_important' ) ? '!important' : '';
 			} else {
 				$important = '!important';
@@ -484,6 +508,11 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 		// Bail early if current device is tablet/phone and responsive is disabled.
 		if ( ! $is_desktop && ! et_pb_responsive_options()->is_responsive_enabled( $atts, "border_radii{$suffix}" ) ) {
 			return '';
+		}
+
+		// We need the default radius value.
+		if ( ! isset( $settings['default'] ) ) {
+			$settings['default'] = 'on||||';
 		}
 
 		// Make sure current radii value is different with default value. Default of desktop is
@@ -703,6 +732,34 @@ class ET_Builder_Module_Field_Border extends ET_Builder_Module_Field_Base {
 			$is_new_border_attr = 0 === strpos( $attr, 'border_' ) && substr_count( $attr, '_' ) > 1;
 
 			if ( $is_new_border_attr && ! in_array( $attr, self::$_is_default ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if attribute has border radius values.
+	 *
+	 * @param array $attrs border attrs.
+	 *
+	 * @return bool
+	 */
+	public function has_any_border_attrs( $attrs ) {
+		foreach ( $attrs as $attr => $value ) {
+			// Dont neglet border radius here.
+			// Since border and border radius are handled by same function.
+			// We should also check for border radius here.
+			if ( ! $value ) {
+				continue;
+			}
+
+			// don't use 2 === substr_count( $attr, '_' ) because in some cases border option may have 3 underscores ( in case we have several border options in module ).
+			// It's enough to make sure we have more than 1 underscores.
+			$is_new_border_attr = 0 === strpos( $attr, 'border_' ) && ( 'border_radii' === $attr || substr_count( $attr, '_' ) > 1 );
+
+			if ( $is_new_border_attr && ! in_array( $attr, self::$_is_default, true ) ) {
 				return true;
 			}
 		}

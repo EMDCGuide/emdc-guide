@@ -103,7 +103,7 @@ class ET_Core_API_Email_Fields {
 					$readonly_dependency => self::$_predefined_custom_field_support,
 				),
 				'readonly_if_not' => array(
-					$readonly_dependency => array( 'getresponse', 'sendinblue', 'constant_contact' ),
+					$readonly_dependency => array( 'getresponse', 'sendinblue', 'constant_contact', 'fluentcrm' ),
 				),
 			),
 			'field_type'       => array(
@@ -257,6 +257,9 @@ class ET_Core_API_Email_Fields {
 				),
 				'description'     => esc_html__( 'Define whether the field should be required or optional', 'et_core' ),
 				'toggle_slug'     => 'field_options',
+				'show_if_not'     => array(
+					'email_provider' => 'getresponse',
+				),
 			),
 			'hidden'           => array(
 				'label'           => esc_html__( 'Hidden Field', 'et_core' ),

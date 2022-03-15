@@ -636,7 +636,12 @@ class ET_Builder_Settings {
 		$is_default       = array();
 
 		// Page settings fields.
-		$fields = self::$_PAGE_SETTINGS_FIELDS;
+		$fields = array();
+		// phpcs:disable ET.Sniffs.ValidVariableName.UsedPropertyNotSnakeCase -- Needed for consistency with other variable names.
+		if ( ! empty( self::$_PAGE_SETTINGS_FIELDS ) ) {
+			$fields = self::$_PAGE_SETTINGS_FIELDS;
+		}
+		// phpcs:enable
 
 		// Defaults.
 		$default_bounce_rate_limit = 5;
@@ -653,28 +658,28 @@ class ET_Builder_Settings {
 		$is_default[]               = $et_pb_saved_color_palette === $default ? 'et_pb_color_palette' : '';
 
 		$gutter_width            = get_post_meta( $post_id, '_et_pb_gutter_width', true );
-		$default                 = $fields['et_pb_page_gutter_width']['default'];
+		$default                 = et_()->array_get( $fields, array( 'et_pb_page_gutter_width', 'default' ) );
 		$et_pb_page_gutter_width = '' !== $gutter_width ? $gutter_width : $default;
 		$is_default[]            = $et_pb_page_gutter_width === $default ? 'et_pb_page_gutter_width' : '';
 
 		$light_text_color       = get_post_meta( $post_id, '_et_pb_light_text_color', true );
-		$default                = $fields['et_pb_light_text_color']['default'];
+		$default                = et_()->array_get( $fields, array( 'et_pb_light_text_color', 'default' ) );
 		$et_pb_light_text_color = '' !== $light_text_color ? $light_text_color : $default;
 		$is_default[]           = strtolower( $et_pb_light_text_color ) === $default ? 'et_pb_light_text_color' : '';
 
 		$dark_text_color       = get_post_meta( $post_id, '_et_pb_dark_text_color', true );
-		$default               = $fields['et_pb_dark_text_color']['default'];
+		$default               = et_()->array_get( $fields, array( 'et_pb_dark_text_color', 'default' ) );
 		$et_pb_dark_text_color = '' !== $dark_text_color ? $dark_text_color : $default;
 		$is_default[]          = strtolower( $et_pb_dark_text_color ) === $default ? 'et_pb_dark_text_color' : '';
 
 		$content_area_background_color       = get_post_meta( $post_id, '_et_pb_content_area_background_color', true );
-		$default                             = $fields['et_pb_content_area_background_color']['default'];
+		$default                             = et_()->array_get( $fields, array( 'et_pb_content_area_background_color', 'default' ) );
 		$et_pb_content_area_background_color = '' !== $content_area_background_color ? $content_area_background_color : $default;
 		$is_default[]                        = strtolower( $et_pb_content_area_background_color ) === $default ? 'et_pb_content_area_background_color' : '';
 
 		$section_background_color = get_post_meta( $post_id, '_et_pb_section_background_color', true );
 
-		$default                        = $fields['et_pb_section_background_color']['default'];
+		$default                        = et_()->array_get( $fields, array( 'et_pb_section_background_color', 'default' ) );
 		$et_pb_section_background_color = '' !== $section_background_color ? $section_background_color : $default;
 		$is_default[]                   = strtolower( $et_pb_section_background_color ) === $default ? 'et_pb_section_background_color' : '';
 
@@ -685,7 +690,7 @@ class ET_Builder_Settings {
 		$is_default[] = empty( $overflow_y ) || $overflow_y === $OVERFLOW_DEFAULT ? $overflow->get_field_y( 'et_pb_' ) : '';
 
 		$static_css_file       = get_post_meta( $post_id, '_et_pb_static_css_file', true );
-		$default               = $fields['et_pb_static_css_file']['default'];
+		$default               = et_()->array_get( $fields, array( 'et_pb_static_css_file', 'default' ) );
 		$et_pb_static_css_file = '' !== $static_css_file ? $static_css_file : $default;
 		$is_default[]          = $et_pb_static_css_file === $default ? 'et_pb_static_css_file' : '';
 
@@ -695,7 +700,7 @@ class ET_Builder_Settings {
 
 		$post   = get_post( $post_id );
 		$values = array(
-			'et_pb_enable_ab_testing'                 => et_is_ab_testing_active() ? 'on' : 'off',
+			'et_pb_enable_ab_testing'                 => et_is_ab_testing_active( $post_id ) ? 'on' : 'off',
 			'et_pb_ab_bounce_rate_limit'              => $et_pb_ab_bounce_rate_limit,
 			'et_pb_ab_stats_refresh_interval'         => et_pb_ab_get_refresh_interval( $post_id ),
 			'et_pb_ab_subjects'                       => et_pb_ab_get_subjects( $post_id ),
@@ -1175,7 +1180,7 @@ class ET_Builder_Settings {
 	/**
 	 * Returns the localized title of the builder page settings modal.
 	 *
-	 * @return string
+	 * @return Array
 	 */
 	public static function get_title() {
 		global $post;
@@ -1191,7 +1196,27 @@ class ET_Builder_Settings {
 		 *
 		 * @param string $title
 		 */
-		return apply_filters( 'et_builder_page_settings_modal_title', sprintf( $settings, $post_type_obj->labels->singular_name ) );
+		$default_title = apply_filters( 'et_builder_page_settings_modal_title', sprintf( $settings, $post_type_obj->labels->singular_name ) );
+
+		$titles = array(
+			'post_content' => $default_title,
+		);
+
+		// Add titles for Theme Builder Layouts, so they can be used by Visual Theme Builder Editor.
+		$theme_builder_layouts = et_theme_builder_get_template_layouts();
+
+		// Unset main template from Theme Builder layouts to avoid PHP Notices.
+		if ( isset( $theme_builder_layouts['et_template'] ) ) {
+			unset( $theme_builder_layouts['et_template'] );
+		}
+
+		foreach ( $theme_builder_layouts as $key => $theme_builder_layout ) {
+			$template_obj = get_post_type_object( $key );
+			$title        = apply_filters( 'et_builder_page_settings_modal_title', sprintf( $settings, $template_obj->labels->singular_name ) );
+			$titles       = array_merge( $titles, array( $key => $title ) );
+		}
+
+		return $titles;
 	}
 
 	/**
@@ -1241,6 +1266,48 @@ class ET_Builder_Settings {
 		 * }
 		 */
 		return apply_filters( 'et_builder_page_settings_modal_toggles', $toggles );
+	}
+
+	/**
+	 * Returns the values of builder settings for each Theme Builder Area combined.
+	 *
+	 * @param string     $scope   Get values for scope (page|builder|all). Default 'page'.
+	 * @param string|int $post_id Optional. If not provided, {@link get_the_ID()} will be used.
+	 * @param bool       $exclude_defaults Optional. Whether to exclude default value.
+	 *
+	 * @return array {
+	 *     Settings Values
+	 *
+	 *     @type mixed $setting_key The value for the setting.
+	 *     ...
+	 * }
+	 */
+	public static function get_settings_values( $scope = 'page', $post_id = null, $exclude_defaults = false ) {
+		$results                 = array();
+		$post_id                 = $post_id ? $post_id : get_the_ID();
+		$results['post_content'] = self::get_values( $scope, $post_id, $exclude_defaults );
+
+		// In Theme Builder we can return results without TB Layouts.
+		if ( et_builder_tb_enabled() ) {
+			return $results;
+		}
+
+		$theme_builder_layouts = et_theme_builder_get_template_layouts();
+
+		// Unset main template from Theme Builder layouts to avoid PHP Notices.
+		if ( isset( $theme_builder_layouts['et_template'] ) ) {
+			unset( $theme_builder_layouts['et_template'] );
+		}
+
+		// Check if any active Theme Builder Area is used and add settings.
+		foreach ( $theme_builder_layouts as $key => $theme_builder_layout ) {
+			if ( is_array( $theme_builder_layout ) && 0 !== $theme_builder_layout['id'] && $theme_builder_layout['enabled'] && $theme_builder_layout['override'] ) {
+				$page_settings_values = self::get_values( $scope, $theme_builder_layout['id'], $exclude_defaults );
+				$results[ $key ]      = $page_settings_values;
+			}
+		}
+
+		return $results;
 	}
 
 	/**

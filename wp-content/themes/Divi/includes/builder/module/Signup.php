@@ -919,7 +919,6 @@ class ET_Builder_Module_Signup extends ET_Builder_Module_Type_WithSpamProtection
 				$button_icon_phone  = $custom_icon_phone && 'on' === $this->props['custom_button'];
 
 				$button_rel = $this->props['button_rel'];
-				$icon_class = $button_icon || $button_icon_tablet || $button_icon_phone ? ' et_pb_custom_button_icon' : '';
 
 				$icon_attr        = $button_icon ? et_pb_process_font_icon( $custom_icon ) : '';
 				$icon_attr_tablet = $button_icon_tablet ? et_pb_process_font_icon( $custom_icon_tablet ) : '';
@@ -928,12 +927,11 @@ class ET_Builder_Module_Signup extends ET_Builder_Module_Type_WithSpamProtection
 				$html = sprintf(
 					'
 					<p class="et_pb_newsletter_button_wrap">
-						<a class="et_pb_newsletter_button et_pb_button%1$s" href="#"%2$s data-icon="%3$s"%5$s%6$s>
+						<a class="et_pb_newsletter_button et_pb_button" href="#"%1$s data-icon="%2$s"%4$s%5$s>
 							<span class="et_subscribe_loader"></span>
-							%4$s
+							%3$s
 						</a>
 					</p>',
-					esc_attr( $icon_class ),
 					$this->get_rel_attributes( $button_rel ),
 					esc_attr( $icon_attr ),
 					et_pb_multi_view_options( $this )->render_element(
@@ -1196,7 +1194,7 @@ class ET_Builder_Module_Signup extends ET_Builder_Module_Type_WithSpamProtection
 			$this->add_classname( 'et_pb_newsletter_description_no_title' );
 		}
 
-		if ( ! $multi_view->has_value( 'content' ) ) {
+		if ( ! $multi_view->has_value( 'description' ) ) {
 			$this->add_classname( 'et_pb_newsletter_description_no_content' );
 		}
 
@@ -1308,4 +1306,7 @@ class ET_Builder_Module_Signup extends ET_Builder_Module_Type_WithSpamProtection
 		return $raw_value;
 	}
 }
-new ET_Builder_Module_Signup();
+
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Signup();
+}

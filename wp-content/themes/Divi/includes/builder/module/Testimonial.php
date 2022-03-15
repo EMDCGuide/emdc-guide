@@ -336,6 +336,17 @@ class ET_Builder_Module_Testimonial extends ET_Builder_Module {
 				'mobile_options'   => true,
 				'sticky'           => true,
 			),
+			'font_icon'                   => array(
+				'label'          => esc_html__( 'Icon', 'et_builder' ),
+				'toggle_slug'    => 'icon',
+				'type'           => 'select_icon',
+				'class'          => array( 'et-pb-font-icon' ),
+				'description'    => esc_html__( 'Choose an icon to display with your blurb.', 'et_builder' ),
+				'mobile_options' => true,
+				'hover'          => 'tabs',
+				'sticky'         => true,
+				'tab_slug'       => 'advanced',
+			),
 			'portrait_width'              => array(
 				'label'           => esc_html__( 'Image Width', 'et_builder' ),
 				'description'     => esc_html__( "Adjust the width of the person's portrait photo within the testimonial.", 'et_builder' ),
@@ -462,7 +473,6 @@ class ET_Builder_Module_Testimonial extends ET_Builder_Module {
 		$background_color       = $this->props['background_color'];
 		$background_color_hover = $this->get_hover_value( 'background_color' );
 		$use_icon_font_size     = $this->props['use_icon_font_size'];
-		$icon_font_size_values  = et_pb_responsive_options()->get_property_values( $this->props, 'icon_font_size' );
 
 		// Potrait Width.
 		$this->generate_styles(
@@ -515,6 +525,21 @@ class ET_Builder_Module_Testimonial extends ET_Builder_Module {
 				'css_property'                    => 'background-color',
 				'render_slug'                     => $render_slug,
 				'type'                            => 'color',
+			)
+		);
+
+		// Quote Icon Styles.
+		$this->generate_styles(
+			array(
+				'utility_arg'    => 'icon_font_family_and_content',
+				'render_slug'    => $render_slug,
+				'base_attr_name' => 'font_icon',
+				'important'      => true,
+				'selector'       => '%%order_class%%.et_pb_testimonial:before',
+				'processor'      => array(
+					'ET_Builder_Module_Helper_Style_Processor',
+					'process_extended_icon',
+				),
 			)
 		);
 
@@ -689,11 +714,11 @@ class ET_Builder_Module_Testimonial extends ET_Builder_Module {
 				%8$s
 				%7$s
 				<div class="et_pb_testimonial_description">
-					<div class="et_pb_testimonial_description_inner">%1$s</div> <!-- .et_pb_testimonial_description_inner -->
+					<div class="et_pb_testimonial_description_inner">%1$s</div>
 					%2$s
 					<p class="et_pb_testimonial_meta">%5$s</p>
-				</div> <!-- .et_pb_testimonial_description -->
-			</div> <!-- .et_pb_testimonial -->',
+				</div>
+			</div>',
 			$multi_view_testimonial_content,
 			et_core_esc_previously( $author ),
 			$this->module_id(),
@@ -773,4 +798,6 @@ class ET_Builder_Module_Testimonial extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Testimonial();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Testimonial();
+}

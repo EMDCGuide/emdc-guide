@@ -633,6 +633,12 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 			$order   = false !== strpos( strtolower( $request_orderby_value ), 'desc' ) ? 'DESC' : 'ASC';
 		}
 
+		if ( 'date' === $request_orderby_value ) {
+			$order = 'DESC';
+		}
+
+		add_filter( 'woocommerce_default_catalog_orderby', array( $this, 'set_default_orderby' ) );
+
 		$shortcode = sprintf(
 			'[products %1$s limit="%2$s" orderby="%3$s" columns="%4$s" %5$s order="%6$s" %7$s %8$s %9$s %10$s %11$s]',
 			et_core_intentionally_unescaped( $wc_custom_view, 'fixed_string' ),
@@ -665,6 +671,8 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 
 		$shop = do_shortcode( $shortcode );
 
+		remove_filter( 'woocommerce_default_catalog_orderby', array( $this, 'set_default_orderby' ) );
+
 		if ( $use_current_loop ) {
 			remove_filter( 'woocommerce_shortcode_products_query', array( $this, 'filter_vendors_products_query' ) );
 		}
@@ -685,6 +693,30 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 		}
 
 		return $shop;
+	}
+
+	/**
+	 * Set correct default value for the orderby menu depending on module settings.
+	 *
+	 * @param string $default_orderby default orderby value from woocommerce settings.
+	 * @return string updated orderby value for current module
+	 */
+	public function set_default_orderby( $default_orderby ) {
+		$orderby = $this->props['orderby'];
+
+		if ( '' === $orderby || 'default' === $orderby ) {
+			return $default_orderby;
+		}
+
+		// Should check this explicitly since it's the only option which supports '-desc' suffix.
+		if ( 'price-desc' === $orderby ) {
+			return 'price-desc';
+		}
+
+		// Remove '-desc' suffix from other options where Divi may add it.
+		$orderby = str_replace( '-desc', '', $orderby );
+
+		return $orderby;
 	}
 
 	/**
@@ -838,6 +870,22 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 			)
 		);
 
+		// Overlay Icon Styles.
+		$this->generate_styles(
+			array(
+				'hover'          => false,
+				'utility_arg'    => 'icon_font_family',
+				'render_slug'    => $render_slug,
+				'base_attr_name' => 'hover_icon',
+				'important'      => true,
+				'selector'       => '%%order_class%% .et_overlay:before',
+				'processor'      => array(
+					'ET_Builder_Module_Helper_Style_Processor',
+					'process_extended_icon',
+				),
+			)
+		);
+
 		if ( class_exists( 'ET_Builder_Module_Helper_Woocommerce_Modules' ) ) {
 			ET_Builder_Module_Helper_Woocommerce_Modules::add_star_rating_style(
 				$render_slug,
@@ -957,4 +1005,6 @@ class ET_Builder_Module_Shop extends ET_Builder_Module_Type_PostBased {
 	}
 }
 
-new ET_Builder_Module_Shop();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Shop();
+}

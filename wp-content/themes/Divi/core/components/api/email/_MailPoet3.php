@@ -161,12 +161,11 @@ class ET_Core_API_Email_MailPoet3 extends ET_Core_API_Email_Provider {
 		/**
 		 * Check if the subscriber with this email already exists.
 		 */
-		try {
-			$subscriber = \MailPoet\API\API::MP( 'v1' )->getSubscriber( $subscriber_data['email'] );
-		} catch ( Exception $exception ) {
-			$result = $exception->getMessage();
-		}
+		$subscriber = \MailPoet\Models\Subscriber::findOne( $subscriber_data['email'] );
 
+		if ( $subscriber ) {
+			$subscriber = $subscriber->withCustomFields()->withSubscriptions()->asArray();
+		}
 		/**
 		 * If subscriber is not found, add as a new subscriber. Otherwise, add existing subscriber to the lists.
 		 */

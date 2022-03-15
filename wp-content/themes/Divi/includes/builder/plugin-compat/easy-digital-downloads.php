@@ -156,10 +156,10 @@ class ET_Builder_Plugin_Compat_Easy_Digital_Downloads extends ET_Builder_Plugin_
 
 		// Re-styled button with Divi's button UI using javascript due to lack of filter
 		wp_add_inline_script(
-			'et-builder-modules-script',
+			et_get_combined_script_handle(),
 			"
 			(function($){
-				$(document).ready( function(){
+				$(function(){
 					$('.cart_item.edd_checkout a, input[name=\"edd_register_submit\"], .edd_submit').addClass( 'et_pb_button' ).attr('style', 'padding-right: 1em;');
 				});
 			})(jQuery)

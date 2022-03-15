@@ -319,6 +319,9 @@ class ET_Builder_Module_Image extends ET_Builder_Module {
 		$use_overlay       = $this->props['use_overlay'];
 		$animation_style   = $this->props['animation_style'];
 		$box_shadow_style  = self::$_->array_get( $this->props, 'box_shadow_style', '' );
+		$width             = $this->props['width'];
+		$height            = $this->props['height'];
+		$max_height        = $this->props['max_height'];
 
 		$video_background          = $this->video_background();
 		$parallax_image_background = $this->get_parallax_image_background();
@@ -436,6 +439,22 @@ class ET_Builder_Module_Image extends ET_Builder_Module {
 					'icon_sticky' => $hover_icon_sticky,
 				)
 			);
+
+			// Overlay Icon Styles.
+			$this->generate_styles(
+				array(
+					'hover'          => false,
+					'utility_arg'    => 'icon_font_family',
+					'render_slug'    => $render_slug,
+					'base_attr_name' => 'hover_icon',
+					'important'      => true,
+					'selector'       => '%%order_class%% .et_overlay:before',
+					'processor'      => array(
+						'ET_Builder_Module_Helper_Style_Processor',
+						'process_extended_icon',
+					),
+				)
+			);
 		}
 
 		// Set display block for svg image to avoid disappearing svg image
@@ -456,12 +475,22 @@ class ET_Builder_Module_Image extends ET_Builder_Module {
 			: '';
 
 		$image_attrs = array(
-			'src'    => '{{src}}',
-			'alt'    => esc_attr( $alt ),
-			'title'  => esc_attr( $title_text ),
-			'height' => 'auto',
-			'width'  => 'auto',
+			'src'   => '{{src}}',
+			'alt'   => esc_attr( $alt ),
+			'title' => esc_attr( $title_text ),
 		);
+
+		// Only if force fullwidth is not set.
+		if ( 'on' !== $force_fullwidth ) {
+			// Only height or max-height is set, no width set.
+			if ( 'auto' === $width && 'auto' !== $height || 'none' !== $max_height ) {
+				$el_style = array(
+					'selector'    => '%%order_class%% .et_pb_image_wrap img',
+					'declaration' => 'width: auto;',
+				);
+				ET_Builder_Element::set_style( $render_slug, $el_style );
+			}
+		}
 
 		$image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, 'src' );
 
@@ -559,4 +588,6 @@ function _et_bb_module_image_add_src_label( $filed ) {
 
 add_filter( 'et_builder_module_fields_et_pb_image_field_src', '_et_bb_module_image_add_src_label' );
 
-new ET_Builder_Module_Image();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Image();
+}

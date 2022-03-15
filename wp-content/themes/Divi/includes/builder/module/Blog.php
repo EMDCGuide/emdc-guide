@@ -812,7 +812,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 
 		$query_args = array(
 			'posts_per_page' => intval( $args['posts_number'] ),
-			'post_status'    => array( 'publish', 'private' ),
+			'post_status'    => array( 'publish', 'private', 'inherit' ),
 			'perm'           => 'readable',
 			'post_type'      => $args['post_type'],
 		);
@@ -831,6 +831,22 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 		$query_args['cat'] = implode( ',', self::filter_include_categories( $args['include_categories'], $post_id ) );
 
 		$query_args['paged'] = $paged;
+
+		// WP_Query doesn't return sticky posts when it performed via Ajax.
+		// This happens because `is_home` is false in this case, but on FE it's true if no category set for the query.
+		// Set `is_home` = true to emulate the FE behavior with sticky posts in VB.
+		if ( empty( $query_args['cat'] ) ) {
+			add_action(
+				'pre_get_posts',
+				function( $query ) {
+					if ( true === $query->get( 'et_is_home' ) ) {
+						$query->is_home = true;
+					}
+				}
+			);
+
+			$query_args['et_is_home'] = true;
+		}
 
 		if ( '' !== $args['offset_number'] && ! empty( $args['offset_number'] ) ) {
 			/**
@@ -860,10 +876,12 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 		 * Filters Blog module's main query.
 		 *
 		 * @since 4.7.0
+		 * @since 4.11.0 Pass modified module attributes.
 		 *
 		 * @param WP_Query $query
+		 * @param array    $args  Modified module attributes.
 		 */
-		$query = apply_filters( 'et_builder_blog_query', $query ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- We intend to override $wp_query for blog module.
+		$query = apply_filters( 'et_builder_blog_query', $query, $args ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- We intend to override $wp_query for blog module.
 
 		// Keep page's $wp_query global
 		$wp_query_page = $wp_query;
@@ -959,7 +977,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 										</a>
 									<?php
 									if ( 'on' !== $args['fullwidth'] ) {
-										echo '</div> <!-- .et_pb_image_container -->';
+										echo '</div>';
 									}
 								endif;
 						}
@@ -1089,7 +1107,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 			}
 
 			if ( 'on' === $args['show_pagination'] ) {
-				// echo '</div> <!-- .et_pb_posts -->'; // @todo this causes closing tag issue
 
 				$container_is_closed = true;
 
@@ -1257,12 +1274,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 		wp_enqueue_style( 'wp-mediaelement' );
 		wp_enqueue_script( 'wp-mediaelement' );
 
-		// include easyPieChart which is required for loading Blog module content via ajax correctly
-		wp_enqueue_script( 'easypiechart' );
-
-		// include ET Shortcode scripts
-		wp_enqueue_script( 'et-shortcodes-js' );
-
 		// remove all filters from WP audio shortcode to make sure current theme doesn't add any elements into audio module
 		remove_all_filters( 'wp_audio_shortcode_library' );
 		remove_all_filters( 'wp_audio_shortcode' );
@@ -1314,6 +1325,22 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 					'icon_sticky' => $hover_icon_sticky,
 				)
 			);
+
+			// Overlay Icon Styles.
+			$this->generate_styles(
+				array(
+					'hover'          => false,
+					'utility_arg'    => 'icon_font_family',
+					'render_slug'    => $render_slug,
+					'base_attr_name' => 'hover_icon',
+					'important'      => true,
+					'selector'       => '%%order_class%% .et_overlay:before',
+					'processor'      => array(
+						'ET_Builder_Module_Helper_Style_Processor',
+						'process_extended_icon',
+					),
+				)
+			);
 		}
 
 		$overlay_class = 'on' === $use_overlay ? ' et_pb_has_overlay' : '';
@@ -1328,7 +1355,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 
 		$args = array(
 			'posts_per_page' => (int) $posts_number,
-			'post_status'    => array( 'publish', 'private' ),
+			'post_status'    => array( 'publish', 'private', 'inherit' ),
 			'perm'           => 'readable',
 			'post_type'      => $post_type,
 		);
@@ -1450,10 +1477,12 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 		 * Filters Blog module's main query.
 		 *
 		 * @since 4.7.0
+		 * @since 4.11.0 Pass modified module attributes.
 		 *
 		 * @param WP_Query $wp_query
+		 * @param array    $attrs    Modified module attributes.
 		 */
-		$wp_query = apply_filters( 'et_builder_blog_query', $wp_query ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- We intend to override $wp_query for blog module.
+		$wp_query = apply_filters( 'et_builder_blog_query', $wp_query, $attrs ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- We intend to override $wp_query for blog module.
 
 		// Manually set the max_num_pages to make the `next_posts_link` work
 		if ( '' !== $offset_number && ! empty( $offset_number ) ) {
@@ -1561,7 +1590,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 						}
 
 						if ( 'on' !== $fullwidth ) {
-							echo '</div> <!-- .et_pb_image_container -->';
+							echo '</div>';
 						}
 					endif;
 				}
@@ -1573,17 +1602,19 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				<?php } ?>
 
 					<?php
-					$multi_view->render_element(
-						array(
-							'tag'            => 'p',
-							'content'        => '{{post_meta_removes}}',
-							'attrs'          => array(
-								'class' => 'post-meta',
+					if ( 'on' === $show_author || 'on' === $show_date || 'on' === $show_categories || 'on' === $show_comments ) {
+						$multi_view->render_element(
+							array(
+								'tag'            => 'p',
+								'content'        => '{{post_meta_removes}}',
+								'attrs'          => array(
+									'class' => 'post-meta',
+								),
+								'hover_selector' => '%%order_class%% .et_pb_post',
 							),
-							'hover_selector' => '%%order_class%% .et_pb_post',
-						),
-						true
-					);
+							true
+						);
+					}
 
 					echo '<div class="post-content">';
 
@@ -1633,14 +1664,14 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 					?>
 			<?php } // 'off' === $fullwidth || ! in_array( $post_format, array( 'link', 'audio', 'quote', 'gallery' ?>
 
-			</article> <!-- .et_pb_post -->
+			</article>
 				<?php
 				ET_Post_Stack::pop();
 			} // endwhile
 			ET_Post_Stack::reset();
 
 			if ( 'off' === $fullwidth ) {
-				echo '</div><!-- .et_pb_salvattore_content -->';
+				echo '</div>';
 			}
 
 			if ( $multi_view->has_value( 'show_pagination', 'on' ) ) {
@@ -1656,7 +1687,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 					true
 				);
 
-				echo '</div> <!-- .et_pb_posts -->';
+				echo '</div>';
 
 				$container_is_closed = true;
 			}
@@ -1703,6 +1734,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 			$this->add_classname(
 				array(
 					'et_pb_blog_grid_wrapper',
+					"et_pb_bg_layout_{$background_layout}",
 				)
 			);
 
@@ -1748,7 +1780,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				</div>',
 				esc_attr( implode( ' ', $inner_wrap_classname ) ),
 				$posts,
-				( ! $container_is_closed ? '</div> <!-- .et_pb_posts -->' : '' ),
+				( ! $container_is_closed ? '</div>' : '' ),
 				$this->module_id(),
 				$this->module_classname( $render_slug ), // #5
 				$video_background,
@@ -1784,7 +1816,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				%3$s %7$s',
 				$this->module_classname( $render_slug ),
 				$posts,
-				( ! $container_is_closed ? '</div> <!-- .et_pb_posts -->' : '' ),
+				( ! $container_is_closed ? '</div>' : '' ),
 				$this->module_id(),
 				$video_background, // #5
 				$parallax_image_background,
@@ -1955,4 +1987,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 	}
 }
 
-new ET_Builder_Module_Blog();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Blog();
+}

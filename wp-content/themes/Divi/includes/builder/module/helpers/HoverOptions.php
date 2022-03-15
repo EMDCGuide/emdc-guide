@@ -7,13 +7,13 @@
  *
  * Class ET_Builder_Module_Hover_Options
  */
-class ET_Builder_Module_Hover_Options {
+class ET_Builder_Module_Helper_Hover_Options {
 
 	private static $instance;
 
 	public static function get() {
 		if ( empty( self::$instance ) ) {
-			return self::$instance = new ET_Builder_Module_Hover_Options();
+			self::$instance = new ET_Builder_Module_Helper_Hover_Options();
 		}
 
 		return self::$instance;
@@ -66,9 +66,15 @@ class ET_Builder_Module_Hover_Options {
 	 * @return bool
 	 */
 	public function is_enabled( $setting, $attrs ) {
-		$name = $setting === 'background_color' ? 'background' : $setting;
+		$name = in_array( $setting, [ 'background_color', 'background_image' ], true ) ? 'background' : $setting;
 
-		return strpos( $this->util_get( $this->get_hover_enabled_field( $name ), $attrs ), 'on' ) === 0;
+		$field = $this->get_hover_enabled_field( $name );
+
+		$value = ! empty( $attrs[ $field ] ) ? $attrs[ $field ] : '';
+
+		$result = ! empty( $value ) && strpos( $value, 'on' ) === 0;
+
+		return $result;
 	}
 
 	/**

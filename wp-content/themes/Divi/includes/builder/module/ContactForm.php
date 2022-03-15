@@ -82,6 +82,7 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 					'css'            => array(
 						'main'         => "{$this->main_css_element}.et_pb_module .et_pb_button",
 						'limited_main' => "{$this->main_css_element}.et_pb_module .et_pb_button",
+						'important'    => 'plugin_only',
 					),
 					'no_rel_attr'    => true,
 					'box_shadow'     => array(
@@ -491,8 +492,9 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 			if ( '' !== $current_form_fields ) {
 				$fields_data_json  = str_replace( '\\', '', $current_form_fields );
 				$fields_data_array = json_decode( $fields_data_json, true );
+				$fields_data_array = null === $fields_data_array ? [] : $fields_data_array;
 
-				// check whether captcha field is not empty
+				// check whether captcha field is not empty.
 				if ( 'on' === $captcha && 'off' === $use_spam_service && ( ! isset( $_POST[ 'et_pb_contact_captcha_' . $et_pb_contact_form_num ] ) || empty( $_POST[ 'et_pb_contact_captcha_' . $et_pb_contact_form_num ] ) ) ) {
 					$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Make sure you entered the captcha.', 'et_builder' ) );
 					$et_contact_error  = true;
@@ -503,65 +505,69 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 				}
 
 				// check all fields on current form and generate error message if needed
-				if ( ! empty( $fields_data_array ) ) {
+				// Generate form map of submitted form.
+				$submitted_form_map = array(
+					'form_number' => $et_pb_contact_form_num,
+					'fields'      => array(),
+				);
 
-					// Generate form map of submitted form
-					$submitted_form_map = array(
-						'form_number' => $et_pb_contact_form_num,
-						'fields'      => array(),
+				foreach ( $fields_data_array as $index => $value ) {
+					if ( ! isset( $value['field_id'], $value['field_label'], $value['field_type'], $value['original_id'], $value['required_mark'] ) ) {
+						continue;
+					}
+
+					if ( 'et_pb_contact_et_number_' . $et_pb_contact_form_num === $value['field_id'] ) {
+						continue;
+					}
+
+					// Populate form map's fields.
+					$submitted_form_map['fields'][] = array(
+						'field_type'    => self::$_->array_get( $value, 'field_type', 'input' ),
+						'field_id'      => self::$_->array_get( $value, 'original_id' ),
+						'required_mark' => 'required' === self::$_->array_get( $value, 'required_mark', 'required' ) ? 'on' : 'off',
 					);
 
-					foreach ( $fields_data_array as $index => $value ) {
-						if ( isset( $value['field_id'] ) && 'et_pb_contact_et_number_' . $et_pb_contact_form_num === $value['field_id'] ) {
-							continue;
-						}
+					// Check all the required fields, generate error message if required field is empty.
+					// Use `sanitize_textarea_field` for message field content to preserve newlines.
+					$sanitize_callback = isset( $value['original_id'] ) && 'text' === $value['field_type'] ? 'sanitize_textarea_field' : 'sanitize_text_field';
 
-						// Populate form map's fields
-						$submitted_form_map['fields'][] = array(
-							'field_type'    => self::$_->array_get( $value, 'field_type', 'input' ),
-							'field_id'      => self::$_->array_get( $value, 'original_id' ),
-							'required_mark' => 'required' === self::$_->array_get( $value, 'required_mark', 'required' ) ? 'on' : 'off',
-						);
+					// phpcs:ignore ET.Sniffs.ValidatedSanitizedInput.InputNotSanitized -- The $sanitize_callback will sanitize the field value.
+					$field_value = isset( $_POST[ $value['field_id'] ] ) ? trim( call_user_func( $sanitize_callback, $_POST[ $value['field_id'] ] ) ) : '';
 
-						// check all the required fields, generate error message if required field is empty
-						$field_value = isset( $_POST[ $value['field_id'] ] ) ? trim( $_POST[ $value['field_id'] ] ) : '';
+					if ( 'required' === $value['required_mark'] && empty( $field_value ) && ! is_numeric( $field_value ) ) {
+						$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Make sure you fill in all required fields.', 'et_builder' ) );
+						$et_contact_error  = true;
+						continue;
+					}
 
-						if ( 'required' === $value['required_mark'] && empty( $field_value ) && ! is_numeric( $field_value ) ) {
-							$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Make sure you fill in all required fields.', 'et_builder' ) );
+					// additional check for email field.
+					if ( 'email' === $value['field_type'] && ! empty( $field_value ) ) {
+						$contact_email = isset( $_POST[ $value['field_id'] ] ) ? sanitize_email( $_POST[ $value['field_id'] ] ) : '';
+
+						if ( 'required' === $value['required_mark'] && ( empty( $contact_email ) || ! is_email( $contact_email ) ) ) {
+							$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Invalid Email.', 'et_builder' ) );
 							$et_contact_error  = true;
-							continue;
-						}
-
-						// additional check for email field
-						if ( 'email' === $value['field_type'] && 'required' === $value['required_mark'] && ! empty( $field_value ) ) {
-							$contact_email = isset( $_POST[ $value['field_id'] ] ) ? sanitize_email( $_POST[ $value['field_id'] ] ) : '';
-
-							if ( ! empty( $contact_email ) && ! is_email( $contact_email ) ) {
-								$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Invalid Email.', 'et_builder' ) );
-								$et_contact_error  = true;
-							}
-						}
-
-						// prepare the array of processed field values in convenient format
-						if ( false === $et_contact_error ) {
-							$processed_fields_values[ $value['original_id'] ]['value'] = $field_value;
-							$processed_fields_values[ $value['original_id'] ]['label'] = $value['field_label'];
 						}
 					}
 
-					// Check form's integrity by comparing fields structure (used for required fields check, etc)
-					// stored in the shortcode against submitted value generated using JS on the front end
-					// to prevent data being altered by modifying form markup.
-					$form_map = $this->get_form_map( $shortcode_content, $et_pb_contact_form_num, $hidden_form_fields );
-
-					if ( serialize( $submitted_form_map ) !== serialize( $form_map ) ) {
-						$et_error_message .= sprintf(
-							'<p class="et_pb_contact_error_text">%1$s</p>',
-							esc_html__( 'Invalid submission. Please refresh the page and try again.', 'et_builder' )
-						);
-						$et_contact_error  = true;
+					// prepare the array of processed field values in convenient format.
+					if ( false === $et_contact_error ) {
+						$processed_fields_values[ $value['original_id'] ]['value'] = $field_value;
+						$processed_fields_values[ $value['original_id'] ]['label'] = $value['field_label'];
 					}
 				}
+
+				// Check form's integrity by comparing fields structure (used for required fields check, etc)
+				// stored in the shortcode against submitted value generated using JS on the front end
+				// to prevent data being altered by modifying form markup.
+				$form_map = $this->get_form_map( $shortcode_content, $et_pb_contact_form_num, $hidden_form_fields );
+
+				// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize -- doing equality check between two serialized arrays
+				if ( serialize( $submitted_form_map ) !== serialize( $form_map ) ) {
+					$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Invalid submission. Please refresh the page and try again.', 'et_builder' ) );
+					$et_contact_error  = true;
+				}
+
 			} else {
 				$et_error_message .= sprintf( '<p class="et_pb_contact_error_text">%1$s</p>', esc_html__( 'Make sure you fill in all required fields.', 'et_builder' ) );
 				$et_contact_error  = true;
@@ -663,7 +669,7 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 				<p class="clearfix">
 					<span class="et_pb_contact_captcha_question">%1$s</span> = <input type="text" size="2" class="input et_pb_contact_captcha" data-first_digit="%3$s" data-second_digit="%4$s" value="" name="et_pb_contact_captcha_%2$s" data-required_mark="required" autocomplete="off">
 				</p>
-			</div><!-- .et_pb_contact_right -->',
+			</div>',
 			sprintf( '%1$s + %2$s', esc_html( $et_pb_first_digit ), esc_html( $et_pb_second_digit ) ),
 			esc_attr( $et_pb_contact_form_num ),
 			esc_attr( $et_pb_first_digit ),
@@ -685,15 +691,15 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 				'
 				<div class="et_pb_contact">
 					<form class="et_pb_contact_form clearfix" method="post" action="%1$s">
-						%8$s
-						<input type="hidden" value="et_contact_proccess" name="et_pb_contactform_submit_%7$s"/>
+						%7$s
+						<input type="hidden" value="et_contact_proccess" name="et_pb_contactform_submit_%6$s"/>
 						<div class="et_contact_bottom_container">
 							%2$s
-							<button type="submit" name="et_builder_submit_button" class="et_pb_contact_submit et_pb_button%6$s"%5$s%9$s%10$s%11$s>%3$s</button>
+							<button type="submit" name="et_builder_submit_button" class="et_pb_contact_submit et_pb_button"%5$s%8$s%9$s%10$s>%3$s</button>
 						</div>
 						%4$s
 					</form>
-				</div> <!-- .et_pb_contact -->',
+				</div>',
 				esc_url( $current_url ),
 				( 'on' === $captcha && 'off' === $use_spam_service ? $et_pb_captcha : '' ),
 				esc_html( $multi_view->get_value( 'submit_button_text' ) ),
@@ -702,12 +708,11 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 					' data-icon="%1$s"',
 					esc_attr( et_pb_process_font_icon( $custom_icon ) )
 				) : '', // #5
-				'' !== $custom_icon && 'on' === $button_custom ? ' et_pb_custom_button_icon' : '',
 				esc_attr( $et_pb_contact_form_num ),
 				$content,
 				'' !== $custom_icon_tablet && 'on' === $button_custom ? sprintf( ' data-icon-tablet="%1$s"', esc_attr( et_pb_process_font_icon( $custom_icon_tablet ) ) ) : '',
-				'' !== $custom_icon_phone && 'on' === $button_custom ? sprintf( ' data-icon-phone="%1$s"', esc_attr( et_pb_process_font_icon( $custom_icon_phone ) ) ) : '', // #10
-				$multi_view_data_attr
+				'' !== $custom_icon_phone && 'on' === $button_custom ? sprintf( ' data-icon-phone="%1$s"', esc_attr( et_pb_process_font_icon( $custom_icon_phone ) ) ) : '',
+				$multi_view_data_attr // #10
 			);
 		}
 
@@ -734,7 +739,7 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 				%1$s
 				<div class="et-pb-contact-message">%2$s</div>
 				%3$s
-			</div> <!-- .et_pb_contact_form_container -->
+			</div>
 			',
 			$title,
 			$et_error_message,
@@ -793,4 +798,6 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 	}
 }
 
-new ET_Builder_Module_Contact_Form();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Contact_Form();
+}

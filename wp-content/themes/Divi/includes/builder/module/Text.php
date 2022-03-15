@@ -89,7 +89,7 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 				'text'     => array(
 					'label'           => et_builder_i18n( 'Text' ),
 					'css'             => array(
-						'line_height' => "{$this->main_css_element} p",
+						'line_height' => "{$this->main_css_element}",
 						'color'       => "{$this->main_css_element}.et_pb_text",
 					),
 					'line_height'     => array(
@@ -607,7 +607,7 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 				%5$s
 				%4$s
 				%1$s
-			</div> <!-- .et_pb_text -->',
+			</div>',
 			$content,
 			$this->module_classname( $render_slug ),
 			$this->module_id(),
@@ -620,4 +620,6 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Text();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Text();
+}

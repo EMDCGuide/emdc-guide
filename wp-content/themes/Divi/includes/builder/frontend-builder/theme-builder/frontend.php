@@ -74,10 +74,13 @@ add_filter( 'body_class', 'et_theme_builder_frontend_add_body_classes', 9 );
  * @return string
  */
 function et_theme_builder_frontend_override_template( $template ) {
-	$layouts         = et_theme_builder_get_template_layouts();
-	$override_header = et_theme_builder_overrides_layout( ET_THEME_BUILDER_HEADER_LAYOUT_POST_TYPE );
-	$override_body   = et_theme_builder_overrides_layout( ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE );
-	$override_footer = et_theme_builder_overrides_layout( ET_THEME_BUILDER_FOOTER_LAYOUT_POST_TYPE );
+	$layouts           = et_theme_builder_get_template_layouts();
+	$page_template     = locate_template( 'page.php' );
+	$override_header   = et_theme_builder_overrides_layout( ET_THEME_BUILDER_HEADER_LAYOUT_POST_TYPE );
+	$override_body     = et_theme_builder_overrides_layout( ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE );
+	$override_footer   = et_theme_builder_overrides_layout( ET_THEME_BUILDER_FOOTER_LAYOUT_POST_TYPE );
+	$is_visual_builder = isset( $_GET['et_fb'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Value is not used
+	$is_theme_builder  = et_builder_tb_enabled();
 
 	if ( ( $override_header || $override_body || $override_footer ) && et_core_is_fb_enabled() ) {
 		// When cached assets/definitions do not exist, a VB/BFB page will generate them inline.
@@ -100,8 +103,17 @@ function et_theme_builder_frontend_override_template( $template ) {
 
 	et_theme_builder_frontend_enqueue_styles( $layouts );
 
-	if ( $override_body ) {
+	// For other themes than Divi, use 'frontend-body-template.php'.
+	if ( $override_body && ! function_exists( 'et_divi_fonts_url' ) ) {
 		return ET_THEME_BUILDER_DIR . 'frontend-body-template.php';
+	}
+
+	if ( $override_body && ( $is_theme_builder || ! $is_visual_builder || ! $layouts['et_template'] || ! et_pb_is_allowed( 'theme_builder' ) ) ) {
+		return ET_THEME_BUILDER_DIR . 'frontend-body-template.php';
+	}
+
+	if ( $override_body && ! is_home() ) {
+		return $page_template;
 	}
 
 	return $template;
@@ -216,14 +228,10 @@ function et_theme_builder_frontend_override_partial( $partial, $name, $action = 
 function et_theme_builder_extract_head( $html ) {
 	// We could use DOMDocument here to guarantee proper parsing but we need
 	// the most performant solution since we cannot reliably cache the result.
-	$matches = array();
-	$matched = preg_match( '/^[\s\S]*?<head[\s\S]*?>([\s\S]*?)<\/head>[\s\S]*$/i', $html, $matches );
+	$head = array();
+	preg_match( '/^[\s\S]*?<head[\s\S]*?>([\s\S]*?)<\/head>[\s\S]*$/i', $html, $head );
 
-	if ( $matched && ! isset( $matches[1] ) ) {
-		return '';
-	}
-
-	return trim( $matches[1] );
+	return ! empty( $head[1] ) ? trim( $head[1] ) : '';
 }
 
 /**
@@ -263,12 +271,11 @@ function et_theme_builder_frontend_override_footer( $name ) {
  */
 function et_theme_builder_frontend_filter_add_outer_content_wrap( $wrap ) {
 	$override_header = et_theme_builder_overrides_layout( ET_THEME_BUILDER_HEADER_LAYOUT_POST_TYPE );
-	$override_body   = et_theme_builder_overrides_layout( ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE );
 	$override_footer = et_theme_builder_overrides_layout( ET_THEME_BUILDER_FOOTER_LAYOUT_POST_TYPE );
 
 	// Theme Builder layouts must not be individually wrapped as they are wrapped
-	// collectively, with the exception of the BFB.
-	if ( ( $override_header || $override_body || $override_footer ) && ! et_builder_bfb_enabled() ) {
+	// collectively, with the exception of the BFB or body layout.
+	if ( ( $override_header || $override_footer ) && ! et_builder_bfb_enabled() ) {
 		$wrap = false;
 	}
 
@@ -326,30 +333,73 @@ function et_theme_builder_frontend_render_layout( $layout_type, $layout_id ) {
 
 	ET_Post_Stack::replace( $layout );
 
-	echo et_builder_render_layout( get_the_content() );
+	$is_visual_builder     = isset( $_GET['et_fb'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Value is not used
+	$theme_builder_layouts = array( 'et_header_layout', 'et_footer_layout' );
+
+	// Do not pass header and footer content here if visual builder is loaded,
+	// they will be loaded inside the builder itself.
+	if ( et_pb_is_allowed( 'theme_builder' ) && $is_visual_builder && in_array( $layout_type, $theme_builder_layouts, true ) ) {
+		$post_content = '';
+	} else {
+		$post_content = get_the_content();
+	}
+
+	echo et_core_intentionally_unescaped( et_builder_render_layout( $post_content ), 'html' );
+
+	// Get dynamic content.
+	$has_dynamic_content = et_builder_get_dynamic_contents( get_the_content() );
 
 	// Handle style output.
 	if ( is_singular() && ! et_core_is_fb_enabled() ) {
 		$result = ET_Builder_Element::setup_advanced_styles_manager( ET_Post_Stack::get_main_post_id() );
+	} elseif ( is_tax() && ! empty( $has_dynamic_content ) ) {
+		// Set post id to 0 if its a taxonomy page.
+		// This is because of the dynamic content not working properly,
+		// With the theme builder cache.
+		$result = ET_Builder_Element::setup_advanced_styles_manager( 0 );
 	} else {
 		$result = ET_Builder_Element::setup_advanced_styles_manager( $layout->ID );
 	}
 
-	$manager = $result['manager'];
+	$advanced_styles_manager = $result['manager'];
+	if ( isset( $result['deferred'] ) ) {
+		$deferred_styles_manager = $result['deferred'];
+	}
 
-	if ( ET_Builder_Element::$forced_inline_styles || ! $manager->has_file() ) {
-		$styles = et_pb_get_page_custom_css( $layout->ID ) . ET_Builder_Element::get_style( false, $layout->ID ) . ET_Builder_Element::get_style( true, $layout->ID );
+	// Pass styles to page resource which will handle their output.
+	/**
+	 * Filters whether Critical CSS feature is enabled or not.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param bool $enabled Critical CSS enabled value.
+	 */
+	$is_critical_enabled = apply_filters( 'et_builder_critical_css_enabled', false );
 
-		if ( $styles ) {
-			$manager->set_data( $styles, 40 );
+	if ( ET_Builder_Element::$forced_inline_styles || ! $advanced_styles_manager->has_file() || $advanced_styles_manager->forced_inline ) {
+		$custom = et_pb_get_page_custom_css( $layout->ID );
 
-			// Output the styles inline in the footer on first render as we are already
-			// past "head-late" where they will be enqueued once static files are generated.
-			if ( ET_Builder_Element::$forced_inline_styles ) {
-				$manager->forced_inline = true;
+		$critical = $is_critical_enabled ? ET_Builder_Element::get_style( false, $layout->ID, true ) . ET_Builder_Element::get_style( true, $layout->ID, true ) : [];
+		$styles   = ET_Builder_Element::get_style( false, $layout->ID ) . ET_Builder_Element::get_style( true, $layout->ID );
+
+		if ( empty( $critical ) ) {
+			// No critical styles defined, just enqueue everything as usual.
+			$styles = $custom . $styles;
+			if ( ! empty( $styles ) ) {
+				if ( isset( $deferred_styles_manager ) ) {
+					$deferred_styles_manager->set_data( $styles, 40 );
+				} else {
+					$advanced_styles_manager->set_data( $styles, 40 );
+				}
 			}
-			$manager->write_file_location = 'footer';
-			$manager->set_output_location( 'footer' );
+		} else {
+			// Add page css to the critical section.
+			$critical = $custom . $critical;
+			$advanced_styles_manager->set_data( $critical, 40 );
+			if ( ! empty( $styles ) ) {
+				// Defer everything else.
+				$deferred_styles_manager->set_data( $styles, 40 );
+			}
 		}
 	}
 

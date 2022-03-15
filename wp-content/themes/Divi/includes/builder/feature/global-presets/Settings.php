@@ -11,7 +11,7 @@ class ET_Builder_Global_Presets_Settings {
 	const MODULE_INITIAL_PRESET_ID      = '_initial';
 
 	/**
-	 * @var array - The list of the product short names we allowing to do a Module Customizer settings migration rollback
+	 * @var array - The list of the product short names we allowing to do a Module Customizer settings migration rollback.
 	 */
 	public static $allowed_products = array(
 		'divi'  => '4.5',
@@ -81,7 +81,17 @@ class ET_Builder_Global_Presets_Settings {
 
 	protected function _register_hooks() {
 		add_action( 'et_after_version_rollback', array( $this, 'after_version_rollback' ), 10, 3 );
-		add_action( 'et_builder_modules_loaded', array( $this, 'migrate_custom_defaults' ), 100 );
+
+		// If migration is needed, ensure that all modules get fully loaded.
+		// phpcs:disable PEAR.Functions.FunctionCallSignature -- Anonymous functions.
+		add_action( 'et_builder_framework_loaded', function() {
+			if ( ! self::are_custom_defaults_migrated() ) {
+				add_filter( 'et_builder_should_load_all_module_data', '__return_true' );
+			}
+		});
+		// phpcs:enable
+
+		add_action( 'et_builder_ready', array( $this, 'migrate_custom_defaults' ), 100 );
 	}
 
 	/**
@@ -105,9 +115,9 @@ class ET_Builder_Global_Presets_Settings {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @param $module_slug - The module slug for which additional slugs are looked up
+	 * @param $module_slug - The module slug for which additional slugs are looked up.
 	 *
-	 * @return array       - The list of the additional slugs
+	 * @return array       - The list of the additional slugs.
 	 */
 	public function get_module_additional_slugs( $module_slug ) {
 		if ( ! empty( self::$_module_additional_slugs[ $module_slug ] ) ) {
@@ -202,8 +212,8 @@ class ET_Builder_Global_Presets_Settings {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @param string $module_slug - The module slug
-	 * @param array  $attrs        - The module attributes
+	 * @param string $module_slug The module slug.
+	 * @param array  $attrs       The module attributes.
 	 *
 	 * @return array
 	 */
@@ -216,7 +226,34 @@ class ET_Builder_Global_Presets_Settings {
 			$result = (array) $this->_settings->{$module_slug}->presets->{$real_preset_id}->settings;
 		}
 
+		$result = self::maybe_set_global_colors( $result );
+
 		return $result;
+	}
+
+	/**
+	 * Returns Global Presets settings with global colors injected.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @param array $attrs - The module attributes.
+	 *
+	 * @return array
+	 */
+	public static function maybe_set_global_colors( $attrs ) {
+		if ( empty( $attrs['global_colors_info'] ) ) {
+			return $attrs;
+		}
+
+		$gc_info = json_decode( $attrs['global_colors_info'], true );
+
+		foreach ( $gc_info as $color_id => $option_names ) {
+			foreach ( $option_names as $option_name ) {
+				$attrs[ $option_name ] = $color_id;
+			}
+		}
+
+		return $attrs;
 	}
 
 	/**
@@ -336,8 +373,10 @@ class ET_Builder_Global_Presets_Settings {
 			return;
 		}
 
+		$this->_settings = (array) $this->_settings;
+
 		// Re-run migration to Global Presets if a user has not yet saved any presets.
-		if ( et_is_builder_plugin_active() && ! empty( (array) $this->_settings ) ) {
+		if ( et_is_builder_plugin_active() && ! empty( $this->_settings ) ) {
 			et_update_option( self::CUSTOM_DEFAULTS_MIGRATED_FLAG, true );
 			return;
 		}
@@ -354,6 +393,34 @@ class ET_Builder_Global_Presets_Settings {
 		$this->_settings = $global_presets;
 
 		et_update_option( self::CUSTOM_DEFAULTS_MIGRATED_FLAG, true );
+	}
+
+	/**
+	 * Configuring and running migration of global presets via "et_pb_module_shortcode_attributes".
+	 *
+	 * @since ?
+	 *
+	 * @param object $preset Global preset object.
+	 * @param string $module_slug Module slug.
+	 *
+	 * @return void
+	 */
+	public static function migrate_settings_as_module_attributes( $preset, $module_slug ) {
+		$settings = (array) $preset->settings;
+
+		// Mimic preset settings as module attributes to re-use standard migration mechanism.
+		$settings['_builder_version'] = $preset->version;
+
+		// This flag will be used in migrations (see: ET_Builder_Module_Settings_Migration::_maybe_global_presets_migration ).
+		$maybe_global_presets_migration = true;
+
+		$migrated_settings = apply_filters( 'et_pb_module_shortcode_attributes', $settings, $settings, $module_slug, '0.0.0.0', '', $maybe_global_presets_migration );
+		if ( $settings['_builder_version'] !== $migrated_settings['_builder_version'] ) {
+			$migrated_version = $migrated_settings['_builder_version'];
+			unset( $migrated_settings['_builder_version'] );
+			$preset->version  = $migrated_version;
+			$preset->settings = (object) $migrated_settings;
+		}
 	}
 
 	/**
@@ -382,8 +449,8 @@ class ET_Builder_Global_Presets_Settings {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @param string $type - The module type (slug)
-	 * @param array  $attrs - The module attributes
+	 * @param string $type - The module type (slug).
+	 * @param array  $attrs - The module attributes.
 	 *
 	 * @return string      - The converted module type (slug)
 	 */
@@ -460,8 +527,11 @@ class ET_Builder_Global_Presets_Settings {
 	}
 
 	/**
-	 * Filters Global Presets setting to avoid non plain values like arrays or objects
+	 * Filters Global Presets setting to avoid non plain values like arrays or objects.
 	 *
+	 * Returns FALSE when the value is an Object or an array.
+	 *
+	 * @since ?? Included PHPDoc description.
 	 * @since 4.5.0
 	 *
 	 * @param $value - The Global Presets setting value
@@ -475,6 +545,7 @@ class ET_Builder_Global_Presets_Settings {
 	/**
 	 * Performs Global Presets format normalization.
 	 * Usually used to cast format from array to object
+	 * Also used to normalize global colors
 	 *
 	 * @since 4.5.0
 	 *
@@ -516,6 +587,23 @@ class ET_Builder_Global_Presets_Settings {
 
 						foreach ( $settings_filtered as $setting_name => $value ) {
 							$result->$module->presets->$preset_id->settings->$setting_name = $value;
+						}
+
+						// Insert correct global color IDs for affected settings.
+						$global_colors_info = isset( $settings_filtered['global_colors_info'] ) ? json_decode( $settings_filtered['global_colors_info'], true ) : array();
+
+						if ( ! empty( $global_colors_info ) ) {
+							foreach ( $global_colors_info as $color_id => $options_list ) {
+								if ( empty( $options_list ) ) {
+									continue;
+								}
+
+								foreach ( $options_list as $global_color_option ) {
+									if ( isset( $result->$module->presets->$preset_id->settings->$global_color_option ) ) {
+										$result->$module->presets->$preset_id->settings->$global_color_option = $color_id;
+									}
+								}
+							}
 						}
 					} else {
 						$result->$module->presets->$preset->settings = (object) array();

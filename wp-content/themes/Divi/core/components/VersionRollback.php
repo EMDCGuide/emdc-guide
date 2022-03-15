@@ -1,6 +1,6 @@
 <?php
-
-if ( ! class_exists( 'ET_Core_VersionRollback' ) ):
+// phpcs:disable Generic.WhiteSpace.ScopeIndent -- our preference is to not indent the whole inner function in this scenario.
+if ( ! class_exists( 'ET_Core_VersionRollback' ) ) :
 /**
  * Handles version rollback.
  *
@@ -58,9 +58,9 @@ class ET_Core_VersionRollback {
 	 *
 	 * @since 3.10
 	 *
-	 * @param string $product_name
-	 * @param string $product_shortname
-	 * @param string $product_version
+	 * @param string $product_name Product name.
+	 * @param string $product_shortname Product shortname.
+	 * @param string $product_version Product version.
 	 */
 	public function __construct( $product_name, $product_shortname, $product_version ) {
 		$this->product_name = sanitize_text_field( $product_name );
@@ -425,7 +425,7 @@ class ET_Core_VersionRollback {
 			'id'              => 'et_version_rollback',
 			'type'            => 'callback_function',
 			'function_name'   => array( $this, 'render_epanel_option' ),
-			'desc'            => et_get_safe_localization( __( '<em>Before you can receive product updates, you must first authenticate your Elegant Themes subscription. To do this, you need to enter both your Elegant Themes Username and your Elegant Themes API Key into the Updates Tab in your theme and plugin settings. To locate your API Key, <a href="https://www.elegantthemes.com/members-area/api/" target="_blank">log in</a> to your Elegant Themes account and navigate to the <strong>Account > API Key</strong> page. <a href="http://www.elegantthemes.com/gallery/divi/documentation/update/" target="_blank">Learn more here</a></em>. If you still get this message, please make sure that your Username and API Key have been entered correctly', 'et-core' ) ),
+			'desc'            => et_get_safe_localization( __( 'If you recently updated to a new version and are experiencing problems, you can easily roll back to the previously-installed version. We always recommend using the latest version and testing updates on a staging site. However, if you run into problems after updating you always have the option to roll back.', 'et-core' ) ),
 		);
 	}
 
@@ -622,8 +622,23 @@ class ET_Core_VersionRollback {
 			$latest_installed_version = $theme_version;
 		}
 
+		/**
+		 * Fires after new version number is updated.
+		 *
+		 * @since 4.10.0
+		 */
+		do_action( 'et_store_before_new_version_update' );
+
 		$this->_set_previous_installed_version( $previous_installed_version );
 		$this->_set_latest_installed_version( $latest_installed_version );
+
+		/**
+		 * Fires after new version number is updated.
+		 *
+		 * @since 4.10.0
+		 */
+		do_action( 'et_store_after_new_version_update' );
 	}
+
 }
 endif;

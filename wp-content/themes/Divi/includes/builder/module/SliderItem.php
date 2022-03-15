@@ -896,8 +896,6 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 			$image_attrs = array(
 				'src'    => '{{image}}',
 				'alt'    => esc_attr( $image_alt ),
-				'height' => 'auto',
-				'width'  => 'auto',
 			);
 
 			$image_attachment_class = et_pb_media_options()->get_image_attachment_class( $this->props, 'image' );
@@ -1109,11 +1107,11 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 						<div class="et_pb_slide_description">
 							%1$s
 							%2$s
-						</div> <!-- .et_pb_slide_description -->
+						</div>
 					</div>
-				</div> <!-- .et_pb_container -->
+				</div>
 				%5$s
-			</div> <!-- .et_pb_slide -->
+			</div>
 			',
 			$slide_content,
 			$button,
@@ -1176,4 +1174,6 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Slider_Item();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Slider_Item();
+}

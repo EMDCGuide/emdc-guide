@@ -482,6 +482,22 @@ class ET_Builder_Module_Fullwidth_Portfolio extends ET_Builder_Module_Type_PostB
 			)
 		);
 
+		// Overlay Icon Styles.
+		$this->generate_styles(
+			array(
+				'hover'          => false,
+				'utility_arg'    => 'icon_font_family',
+				'render_slug'    => $render_slug,
+				'base_attr_name' => 'hover_icon',
+				'important'      => true,
+				'selector'       => "{$zoom_and_hover_selector} .et_overlay:before",
+				'processor'      => array(
+					'ET_Builder_Module_Helper_Style_Processor',
+					'process_extended_icon',
+				),
+			)
+		);
+
 		$projects = self::get_portfolio_item(
 			array(
 				'posts_number'       => $posts_number,
@@ -628,8 +644,8 @@ class ET_Builder_Module_Fullwidth_Portfolio extends ET_Builder_Module_Type_PostB
 				%6$s
 				<div class="et_pb_portfolio_items clearfix" data-portfolio-columns="">
 					%2$s
-				</div><!-- .et_pb_portfolio_items -->
-			</div> <!-- .et_pb_fullwidth_portfolio -->',
+				</div>
+			</div>',
 			$this->module_classname( $render_slug ),
 			$posts,
 			$this->module_id(),
@@ -681,4 +697,6 @@ class ET_Builder_Module_Fullwidth_Portfolio extends ET_Builder_Module_Type_PostB
 	}
 }
 
-new ET_Builder_Module_Fullwidth_Portfolio();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Fullwidth_Portfolio();
+}

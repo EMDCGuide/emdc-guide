@@ -140,6 +140,17 @@ class ET_Builder_Module_Video_Slider extends ET_Builder_Module {
 				'mobile_options' => true,
 				'sticky'         => true,
 			),
+			'font_icon'      => array(
+				'label'          => esc_html__( 'Icon', 'et_builder' ),
+				'toggle_slug'    => 'colors',
+				'type'           => 'select_icon',
+				'class'          => array( 'et-pb-font-icon' ),
+				'description'    => esc_html__( 'Choose an icon to display with your blurb.', 'et_builder' ),
+				'mobile_options' => true,
+				'hover'          => 'tabs',
+				'sticky'         => true,
+				'tab_slug'       => 'advanced',
+			),
 			'use_icon_font_size'      => array(
 				'label'            => esc_html__( 'Use Play Icon Font Size', 'et_builder' ),
 				'description'      => esc_html__( 'If you would like to control the size of the icon, you must first enable this option.', 'et_builder' ),
@@ -264,6 +275,21 @@ class ET_Builder_Module_Video_Slider extends ET_Builder_Module {
 			)
 		);
 
+		// Play Icon Styles.
+		$this->generate_styles(
+			array(
+				'utility_arg'    => 'icon_font_family_and_content',
+				'render_slug'    => $render_slug,
+				'base_attr_name' => 'font_icon',
+				'important'      => true,
+				'selector'       => '%%order_class%% .et_pb_video_play:before, %%order_class%% .et_pb_carousel .et_pb_video_play:before',
+				'processor'      => array(
+					'ET_Builder_Module_Helper_Style_Processor',
+					'process_extended_icon',
+				),
+			)
+		);
+
 		// Icon Size.
 		if ( 'off' !== $use_icon_font_size ) {
 			// Icon Font Size.
@@ -338,9 +364,9 @@ class ET_Builder_Module_Video_Slider extends ET_Builder_Module {
 				<div class="et_pb_slider et_pb_preload%1$s"%7$s>
 					<div class="et_pb_slides">
 						%2$s
-					</div> <!-- .et_pb_slides -->
-				</div> <!-- .et_pb_slider -->
-			</div> <!-- .et_pb_video_slider -->
+					</div>
+				</div>
+			</div>
 			',
 			esc_attr( $slider_classname ),
 			$content,
@@ -355,4 +381,6 @@ class ET_Builder_Module_Video_Slider extends ET_Builder_Module {
 	}
 }
 
-new ET_Builder_Module_Video_Slider();
+if ( et_builder_should_load_all_module_data() ) {
+	new ET_Builder_Module_Video_Slider();
+}
