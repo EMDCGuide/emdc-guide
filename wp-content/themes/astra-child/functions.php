@@ -36,10 +36,11 @@ function child_init() {
 		'hierarchical'		=>	false,
 		'menu_icon'			=>	'dashicons-admin-media',
 		'menu_position'		=>	20,
-		'rewrite'			=>	false,
+		'rewrite' 			=> 	array('slug' => 'resources'),
 		'query_var'			=>	false,
 		'taxonomies'		=>	array('post_tag','category'),
-		'supports'			=>	array('title')
+		'supports'			=>	array('title', 'editor', 'thumbnail'),
+        'show_in_rest' 		=> 	true
 	));
 }
 
