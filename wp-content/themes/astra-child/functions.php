@@ -27,6 +27,7 @@ function child_enqueue_styles() {
  */
 function child_init() {
 	register_post_type('guide_resource', array(
+		'has_archive'		=>	true,
 		'label'				=>	__('Resources'),
 		'singular_label'	=>	__('Resource'),
 		'description'		=>	__('Scripture engagement resources to support your ministry.'),

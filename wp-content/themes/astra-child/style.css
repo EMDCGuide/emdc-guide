@@ -9,3 +9,6 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: astra-child
 Template: astra
 */
+.post-thumb > img {
+    width: 100% !important;
+}
