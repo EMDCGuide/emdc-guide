@@ -12,3 +12,13 @@ Template: astra
 .post-thumb > img {
     width: 100% !important;
 }
+/**
+ * Created styles to strech out columns with a column and a group inside. Used on begin journey page.
+ * In advanced settings add is-stretched class to columns.
+ */
+.wp-block-columns.is-stretched .wp-block-column {
+    align-self: stretch;
+}
+.wp-block-columns.is-stretched .wp-block-column .wp-block-group {
+    height: 100%;
+}
