@@ -22,3 +22,40 @@ Template: astra
 .wp-block-columns.is-stretched .wp-block-column .wp-block-group {
     height: 100%;
 }
+.wp-block-button a:hover {
+    opacity: .75;
+}
+.widget-area.secondary {
+    padding-left: 20px;
+}
+.widget-area.secondary .widget ul {
+    list-style-type: none;
+    padding-left: 0px;
+}
+.widget-area.secondary .widget ul > li > ul {
+    list-style-type: disc;
+    padding-left: 30px;
+}
+.widget-area.secondary .widget_nav_menu ul ul.sub-menu li {
+    padding-left: 5px;
+}
+@media (min-width: 769px) {
+    #content .ast-container {
+        display: flex;
+    }
+
+    #content .sidebar-main {
+        height: 100%;
+    }
+
+    #content .sidebar-main aside:last-child {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 50px;
+    }
+}
+@media (max-width: 921px) {
+    .ast-primary-header-bar.ast-primary-header {
+        background-color: var(--ast-global-color-0);
+    }
+}
