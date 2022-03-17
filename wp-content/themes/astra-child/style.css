@@ -1,4 +1,4 @@
-/**
+.archive-content/**
 Theme Name: Astra Child
 Author: Brainstorm Force
 Author URI: http://wpastra.com/about/
@@ -59,3 +59,130 @@ Template: astra
         background-color: var(--ast-global-color-0);
     }
 }
+@media (min-width: 922px) {
+    .blog .site-content > .ast-container,
+    .archive .site-content > .ast-container,
+    .search .site-content > .ast-container {
+        max-width: 100%;
+    }
+}
+/**
+ * Responsive cards
+ * https://codepen.io/winge/pen/VvmZXL
+ */
+ .archive-main {padding: 2em;}
+ .cards p {margin-bottom: 1.5em;}
+ .cards h2 {font-size: 1.5em;}
+
+ .card img {
+ 	display: block;
+ 	border: 0;
+ 	width: 100%;
+ 	height: auto;
+ }
+
+ /* Flexbox */
+ @media screen and (min-width: 50em) {
+
+     .archive-outer-wrap {
+         display: -webkit-flex;
+         display: -ms-flexbox;
+         display: flex;
+         -webkit-flex-direction: column;
+             -ms-flex-direction: column;
+                 flex-direction: column;
+     }
+
+     .archive-content {
+         display: -webkit-flex;
+         display: -ms-flexbox;
+         display: flex;
+     }
+
+     .archive-main {
+         -webkit-flex: 1 1 auto;
+             -ms-flex: 1 1 auto;
+                 flex: 1 1 auto;
+         -webkit-order: 1;
+             -ms-flex-order: 1;
+                 order: 1;
+     }
+
+ }
+
+ /* Card Based Layout - Base styles */
+
+ .card {
+ 	background: white;
+ 	margin-bottom: 2em;
+ }
+
+ .card a {
+ 	color: black;
+ 	text-decoration: none;
+ }
+
+ .card a:hover {
+ 	box-shadow: 3px 3px 8px hsl(0, 0%, 70%);
+   transition: all 0.4s;
+ }
+
+ .card-content {
+ 	padding: 1.4em;
+ }
+
+ .card-content h2 {
+ 	margin-top: 0;
+ 	margin-bottom: .5em;
+ 	font-weight: normal;
+ }
+
+ .card-content p {
+ 	font-size: 95%;
+ }
+
+ /* Flexbox stuff */
+
+ @media screen and (min-width: 40em) {
+     .cards {
+         display: -webkit-flex;
+         display: -ms-flexbox;
+         display: flex;
+         -webkit-flex-wrap: wrap;
+             -ms-flex-wrap: wrap;
+                 flex-wrap: wrap;
+         -webkit-justify-content: space-between;
+             -ms-flex-pack: justify;
+                 justify-content: space-between;
+         margin-top: -1em;
+     }
+
+     .card {
+         display: -webkit-flex;
+         display: -ms-flexbox;
+         display: flex;
+         -webkit-flex: 0 1 calc(50% - .5em);
+             -ms-flex: 0 1 calc(50% - .5em);
+                 flex: 0 1 calc(50% - .5em);
+         margin-bottom: 1em;
+     }
+ }
+
+ @media screen and (max-width: 39.9em) {
+
+   .archive-main {padding: 0em;}
+   .card {margin-bottom: 0em;}
+ }
+
+ @media screen and (min-width: 60em) {
+     .cards {
+         margin-top: inherit;
+     }
+
+     .card {
+         -webkit-flex: 0 1 calc(33% - 1em);
+             -ms-flex: 0 1 calc(33% - 1em);
+                 flex: 0 1 calc(33% - 1em);
+         margin-bottom: 2em;
+     }
+ }
