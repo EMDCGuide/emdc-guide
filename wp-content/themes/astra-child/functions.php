@@ -44,6 +44,13 @@ function child_init() {
         'show_in_rest' 		=> 	true
 	));
 }
+/**
+ * https://wpdevelopment.courses/articles/custom-spacing-settings/
+ */
+function child_enable_gutenberg_custom_spacing() {
+	add_theme_support( 'custom-spacing' );
+}
 
+add_action( 'after_setup_theme', 'child_enable_gutenberg_custom_spacing' );
 add_action( 'wp_enqueue_scripts', 'child_enqueue_styles', 15 );
 add_action( 'init', 'child_init' );
