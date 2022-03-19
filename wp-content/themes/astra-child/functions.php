@@ -38,7 +38,7 @@ function child_init() {
 		'rewrite' 			=> 	array('slug' => 'resources'),
 		'query_var'			=>	false,
 		'taxonomies'		=>	array('post_tag','category'),
-		'supports'			=>	array('title', 'editor', 'thumbnail'),
+		'supports'			=>	array('title', 'editor', 'excerpt', 'thumbnail'),
         'show_in_rest' 		=> 	true
 	));
 }
