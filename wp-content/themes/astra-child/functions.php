@@ -17,9 +17,7 @@ define( 'CHILD_THEME_ASTRA_CHILD_VERSION', '1.0.0' );
  * Enqueue styles
  */
 function child_enqueue_styles() {
-
 	wp_enqueue_style( 'astra-child-theme-css', get_stylesheet_directory_uri() . '/style.css', array('astra-theme-css'), CHILD_THEME_ASTRA_CHILD_VERSION, 'all' );
-
 }
 
 /**
@@ -51,16 +49,6 @@ function child_enable_gutenberg_custom_spacing() {
 	add_theme_support( 'custom-spacing' );
 }
 /**
- * Fixes the sort order on Archive page
- * https://wordpress.stackexchange.com/a/39818
- */
-function child_blog_change_sort_order($query) {
-	if(is_archive()) {
-		$query->set( 'order', 'ASC' );
-		$query->set( 'orderby', 'title' );
-	}
-};
-/**
  * Change the archive title
  *
  * @link https://wordpress.stackexchange.com/a/175903
@@ -71,9 +59,67 @@ function child_get_archive_title($title) {
 	}
 	return $title;
 }
+/**
+ * Fixes the sort order on Archive page
+ * https://wordpress.stackexchange.com/a/39818
+ */
+function child_blog_change_sort_order($query) {
+	if(is_post_type_archive('guide_resource')) {
+		$query->set( 'order', 'ASC' );
+		$query->set( 'orderby', 'title' );
+	}
+};
+/**
+ * Fix the ordering of our custom post type (Navigation)
+ *
+ * @link https://wordpress.stackexchange.com/a/184797
+ */
+function child_filter_next_post_sort($sort) {
+    global $post;
+    if (get_post_type($post) == 'guide_resource') {
+        $sort = "ORDER BY p.post_title ASC LIMIT 1";
+    }
+    else{
+        $sort = "ORDER BY p.post_date ASC LIMIT 1";
+    }
+    return $sort;
+}
+function child_filter_next_post_where($where) {
+    global $post, $wpdb;
+    if (get_post_type($post) == 'guide_resource') {
+        return $wpdb->prepare("WHERE p.post_title > '%s' AND p.post_type = '". get_post_type($post)."' AND p.post_status = 'publish'",$post->post_title);
+    }
+    else{
+        return $wpdb->prepare( "WHERE p.post_date > '%s' AND p.post_type = '". get_post_type($post)."' AND p.post_status = 'publish'", $post->post_date);
+    }
+}
+
+function child_filter_previous_post_sort($sort) {
+    global $post;
+    if (get_post_type($post) == 'guide_resource') {
+        $sort = "ORDER BY p.post_title DESC LIMIT 1";
+    }
+    else{
+        $sort = "ORDER BY p.post_date DESC LIMIT 1";
+    }
+    return $sort;
+}
+function child_filter_previous_post_where($where) {
+    global $post, $wpdb;
+    if (get_post_type($post) == 'guide_resource') {
+        return $wpdb->prepare("WHERE p.post_title < '%s' AND p.post_type = '". get_post_type($post)."' AND p.post_status = 'publish'",$post->post_title);
+    }
+    else{
+        return $wpdb->prepare( "WHERE p.post_date < '%s' AND p.post_type = '". get_post_type($post)."' AND p.post_status = 'publish'", $post->post_date);
+    }
+}
 
 add_action( 'after_setup_theme', 'child_enable_gutenberg_custom_spacing' );
 add_action( 'wp_enqueue_scripts', 'child_enqueue_styles', 15 );
 add_action( 'init', 'child_init' );
 add_action( 'pre_get_posts', 'child_blog_change_sort_order' );
 add_filter( 'get_the_archive_title', 'child_get_archive_title' );
+add_filter( 'get_next_post_sort',   'child_filter_next_post_sort' );
+add_filter( 'get_next_post_where',  'child_filter_next_post_where' );
+add_filter( 'get_previous_post_sort',  'child_filter_previous_post_sort' );
+add_filter( 'get_previous_post_where', 'child_filter_previous_post_where' );
