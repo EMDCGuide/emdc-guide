@@ -45,7 +45,7 @@ function child_init() {
 	));
 }
 /**
- * https://wpdevelopment.courses/articles/custom-spacing-settings/
+ * @link https://wpdevelopment.courses/articles/custom-spacing-settings/
  */
 function child_enable_gutenberg_custom_spacing() {
 	add_theme_support( 'custom-spacing' );
@@ -54,14 +54,26 @@ function child_enable_gutenberg_custom_spacing() {
  * Fixes the sort order on Archive page
  * https://wordpress.stackexchange.com/a/39818
  */
-function child_blog_change_sort_order($query){
+function child_blog_change_sort_order($query) {
 	if(is_archive()) {
 		$query->set( 'order', 'ASC' );
 		$query->set( 'orderby', 'title' );
 	}
 };
+/**
+ * Change the archive title
+ *
+ * @link https://wordpress.stackexchange.com/a/175903
+ */
+function child_get_archive_title($title) {
+	if (is_post_type_archive('guide_resource')) {
+		$title = 'Resources';
+	}
+	return $title;
+}
 
 add_action( 'after_setup_theme', 'child_enable_gutenberg_custom_spacing' );
 add_action( 'wp_enqueue_scripts', 'child_enqueue_styles', 15 );
 add_action( 'init', 'child_init' );
-add_action( 'pre_get_posts', 'child_blog_change_sort_order'); 
+add_action( 'pre_get_posts', 'child_blog_change_sort_order' );
+add_filter( 'get_the_archive_title', 'child_get_archive_title' );
