@@ -122,6 +122,18 @@ function child_filter_previous_post_where($where) {
         return $wpdb->prepare( "WHERE p.post_date < '%s' AND p.post_type = '". get_post_type($post)."' AND p.post_status = 'publish'", $post->post_date);
     }
 }
+/**
+ * ASTRA Theme Fix: Allow related posts on a custom post type
+ * This was a reply from their tech support.
+ */
+function child_related_posts_supported_post_types($type) {
+	global $post;
+
+	if ( get_post_type($post) === 'guide_resource') {
+		$type = 'guide_resource';
+	}
+	return $type;
+}
 
 add_action( 'after_setup_theme', 'child_enable_gutenberg_custom_spacing' );
 add_action( 'wp_enqueue_scripts', 'child_enqueue_styles', 15 );
@@ -132,3 +144,4 @@ add_filter( 'get_next_post_sort',   'child_filter_next_post_sort' );
 add_filter( 'get_next_post_where',  'child_filter_next_post_where' );
 add_filter( 'get_previous_post_sort',  'child_filter_previous_post_sort' );
 add_filter( 'get_previous_post_where', 'child_filter_previous_post_where' );
+add_filter( 'astra_related_posts_supported_post_types', 'child_related_posts_supported_post_types' );
