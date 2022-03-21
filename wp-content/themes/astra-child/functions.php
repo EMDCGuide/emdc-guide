@@ -25,21 +25,22 @@ function child_enqueue_styles() {
  */
 function child_init() {
 	register_post_type('guide_resource', array(
-		'has_archive'		=>	true,
-		'label'				=>	__('Resources'),
-		'singular_label'	=>	__('Resource'),
-		'description'		=>	__('Scripture engagement resources to support your ministry.'),
-		'public' 			=>	true,
-		'show_ui'			=>	true,
-		'capability_type'	=>	'post',
-		'hierarchical'		=>	false,
-		'menu_icon'			=>	'dashicons-admin-media',
-		'menu_position'		=>	20,
-		'rewrite' 			=> 	array('slug' => 'resources'),
-		'query_var'			=>	false,
-		'taxonomies'		=>	array('post_tag','category'),
-		'supports'			=>	array('title', 'editor', 'excerpt', 'thumbnail'),
-        'show_in_rest' 		=> 	true
+		'exclude_from_search'	=>	false,
+		'has_archive'			=>	true,
+		'label'					=>	__('Resources'),
+		'singular_label'		=>	__('Resource'),
+		'description'			=>	__('Scripture engagement resources to support your ministry.'),
+		'public' 				=>	true,
+		'show_ui'				=>	true,
+		'capability_type'		=>	'post',
+		'hierarchical'			=>	false,
+		'menu_icon'				=>	'dashicons-admin-media',
+		'menu_position'			=>	20,
+		'rewrite' 				=> 	array('slug' => 'resources'),
+		'query_var'				=>	false,
+		'taxonomies'			=>	array('post_tag','category'),
+		'supports'				=>	array('title', 'editor', 'excerpt', 'thumbnail'),
+        'show_in_rest' 			=> 	true
 	));
 }
 /**
@@ -61,13 +62,21 @@ function child_get_archive_title($title) {
 }
 /**
  * Fixes the sort order on Archive page
- * https://wordpress.stackexchange.com/a/39818
+ * Adds the resources to search
+ * @link https://wordpress.stackexchange.com/a/39818
+ * @link https://www.dhirenpatel.me/cpt-wordpress-search-result/
  */
-function child_blog_change_sort_order($query) {
+function child_pre_get_posts($query) {
 	if(is_post_type_archive('guide_resource')) {
 		$query->set( 'order', 'ASC' );
 		$query->set( 'orderby', 'title' );
 	}
+
+	if ( is_search() ) {
+		$query->set( 'post_type', array( 'post', 'page', 'guide_resource' ) );
+    }
+
+	return $query;
 };
 /**
  * Fix the ordering of our custom post type (Navigation)
@@ -117,7 +126,7 @@ function child_filter_previous_post_where($where) {
 add_action( 'after_setup_theme', 'child_enable_gutenberg_custom_spacing' );
 add_action( 'wp_enqueue_scripts', 'child_enqueue_styles', 15 );
 add_action( 'init', 'child_init' );
-add_action( 'pre_get_posts', 'child_blog_change_sort_order' );
+add_action( 'pre_get_posts', 'child_pre_get_posts' );
 add_filter( 'get_the_archive_title', 'child_get_archive_title' );
 add_filter( 'get_next_post_sort',   'child_filter_next_post_sort' );
 add_filter( 'get_next_post_where',  'child_filter_next_post_where' );
