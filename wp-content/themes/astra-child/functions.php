@@ -138,7 +138,7 @@ function child_related_posts_supported_post_types($type) {
  * Hide the search form on the resources page since it is in the sidebar.
  */
 function child_get_search_form($form) {
-	if(is_post_type_archive('guide_resource')) {
+	if ( is_post_type_archive('guide_resource') ) {
 		return '';
 	}
 	return $form;
