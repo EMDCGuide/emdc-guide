@@ -134,6 +134,15 @@ function child_related_posts_supported_post_types($type) {
 	}
 	return $type;
 }
+/**
+ * Hide the search form on the resources page since it is in the sidebar.
+ */
+function child_get_search_form($form) {
+	if(is_post_type_archive('guide_resource')) {
+		return '';
+	}
+	return $form;
+}
 
 add_action( 'after_setup_theme', 'child_enable_gutenberg_custom_spacing' );
 add_action( 'wp_enqueue_scripts', 'child_enqueue_styles', 15 );
@@ -144,4 +153,5 @@ add_filter( 'get_next_post_sort',   'child_filter_next_post_sort' );
 add_filter( 'get_next_post_where',  'child_filter_next_post_where' );
 add_filter( 'get_previous_post_sort',  'child_filter_previous_post_sort' );
 add_filter( 'get_previous_post_where', 'child_filter_previous_post_where' );
+add_filter( 'get_search_form', 'child_get_search_form' );
 add_filter( 'astra_related_posts_supported_post_types', 'child_related_posts_supported_post_types' );
