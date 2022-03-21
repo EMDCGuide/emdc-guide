@@ -48,6 +48,20 @@ Template: astra
 .ast-builder-menu-1 .menu-item > ul > .menu-item > .menu-link:hover {
     color: var(--ast-global-color-0);
 }
+/**
+ * Fix the sidebar for Resources
+ */
+.widget-area.secondary .sidebar-main .wp-block-group {
+    padding: 0em;
+}
+.widget-area.secondary .facetwp-search {
+    width: 100%;
+    min-width: unset !important;
+}
+.widget-area.secondary .facetwp-input-wrap {
+    width: 100%;
+}
+
 @media (min-width: 769px) {
     #content .ast-container {
         display: flex;
