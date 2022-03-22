@@ -68,6 +68,12 @@ Template: astra
     background-color: var(--ast-global-color-1);
     font-size: 0.75rem;
 }
+.resource-nav-buttons button.contact-provider {
+    background-color: var(--ast-global-color-0);
+}
+.resource-nav-buttons button:first-child {
+    margin-right: .75rem;
+}
 .resource-nav-buttons button:hover {
     opacity: .75;
 }
