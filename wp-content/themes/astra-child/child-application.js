@@ -40,5 +40,16 @@
             }
             return null;
         }
+
+        /**
+         * Make standard form fields to make read-only
+         * To apply, add CSS class 'wpf-disable-field' (no quotes) to field in form builder
+         *
+         * @link https://wpforms.com/developers/disable-a-form-field-to-prevent-user-input/
+         */
+        $( '.wpf-disable-field input, .wpf-disable-field textarea' ).attr({
+          readonly: 'readonly',
+          tabindex: '-1'
+        }).prop('disabled', true);
     });
 })(jQuery);
