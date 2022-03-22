@@ -71,6 +71,12 @@ Template: astra
 .resource-nav-buttons button:hover {
     opacity: .75;
 }
+/**
+ * Fix footer nav links
+ */
+.footer-bar-navigation a:hover, a:focus {
+    color: var(--ast-global-color-4);
+}
 
 @media (min-width: 769px) {
     #content .ast-container {
