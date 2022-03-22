@@ -155,6 +155,13 @@ function child_the_content($text) {
 	}
 	return $text;
 }
+/**
+ * Set the breakpoint for tablets
+ * @link https://wpastra.com/docs/set-update-breakpoints-tablet-mobile-in-astra/
+ */
+function child_astra_tablet_breakpoint() {
+	return 983;
+}
 
 add_action( 'after_setup_theme', 'child_enable_gutenberg_custom_spacing' );
 add_action( 'wp_enqueue_scripts', 'child_enqueue_styles', 15 );
@@ -167,4 +174,5 @@ add_filter( 'get_previous_post_sort',  'child_filter_previous_post_sort' );
 add_filter( 'get_previous_post_where', 'child_filter_previous_post_where' );
 add_filter( 'get_search_form', 'child_get_search_form' );
 add_filter( 'astra_related_posts_supported_post_types', 'child_related_posts_supported_post_types' );
+add_filter( 'astra_tablet_breakpoint', 'child_astra_tablet_breakpoint');
 add_filter( 'the_content', 'child_the_content', 1);
