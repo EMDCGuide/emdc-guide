@@ -50,6 +50,6 @@
         $( '.wpf-disable-field input, .wpf-disable-field textarea' ).attr({
           readonly: 'readonly',
           tabindex: '-1'
-        }).prop('disabled', true);
+        });
     });
 })(jQuery);
