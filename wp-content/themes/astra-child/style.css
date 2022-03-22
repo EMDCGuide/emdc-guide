@@ -61,6 +61,16 @@ Template: astra
 .widget-area.secondary .facetwp-input-wrap {
     width: 100%;
 }
+.resource-nav-buttons {
+    text-align: center;
+}
+.resource-nav-buttons button {
+    background-color: var(--ast-global-color-1);
+    font-size: 0.75rem;
+}
+.resource-nav-buttons button:hover {
+    opacity: .75;
+}
 
 @media (min-width: 769px) {
     #content .ast-container {

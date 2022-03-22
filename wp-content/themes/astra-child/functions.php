@@ -126,7 +126,7 @@ function child_filter_previous_post_where($where) {
 function child_related_posts_supported_post_types($type) {
 	global $post;
 
-	if ( get_post_type($post) === 'guide_resource') {
+	if ( get_post_type($post) === 'guide_resource' ) {
 		$type = 'guide_resource';
 	}
 	return $type;
@@ -140,6 +140,16 @@ function child_get_search_form($form) {
 	}
 	return $form;
 }
+/**
+ * Add special navigation to the footer of each resource
+ */
+function child_the_content($text) {
+	global $post;
+	if( get_post_type($post) === 'guide_resource' ) {
+		$text = $text . '<div class="resource-nav-buttons"><button onclick="location.href=\'/resources/\';">' . __('Back to Resources') . '</a></div>';
+	}
+	return $text;
+}
 
 add_action( 'after_setup_theme', 'child_enable_gutenberg_custom_spacing' );
 add_action( 'wp_enqueue_scripts', 'child_enqueue_styles', 15 );
@@ -152,3 +162,4 @@ add_filter( 'get_previous_post_sort',  'child_filter_previous_post_sort' );
 add_filter( 'get_previous_post_where', 'child_filter_previous_post_where' );
 add_filter( 'get_search_form', 'child_get_search_form' );
 add_filter( 'astra_related_posts_supported_post_types', 'child_related_posts_supported_post_types' );
+add_filter( 'the_content', 'child_the_content', 1);
