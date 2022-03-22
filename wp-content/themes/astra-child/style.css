@@ -58,9 +58,13 @@ Template: astra
     width: 100%;
     min-width: unset !important;
 }
-.widget-area.secondary .facetwp-input-wrap {
+.widget-area.secondary .facetwp-input-wrap,
+.widget-area.secondary .fs-wrap.multiple {
     width: 100%;
 }
+/**
+ * Fix the resource buttons
+ */
 .resource-nav-buttons {
     text-align: center;
 }
