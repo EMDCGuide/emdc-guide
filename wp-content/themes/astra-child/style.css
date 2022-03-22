@@ -1,4 +1,4 @@
-.archive-content/**
+/**
 Theme Name: Astra Child
 Author: Brainstorm Force
 Author URI: http://wpastra.com/about/
@@ -9,7 +9,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: astra-child
 Template: astra
 */
-.post-thumb > img {
+.archive-content .post-thumb > img {
     width: 100% !important;
 }
 /**
@@ -88,21 +88,28 @@ Template: astra
     color: var(--ast-global-color-4);
 }
 
+/**
+ * Sticky nav for pages with side nav but not resources.
+ */
 @media (min-width: 769px) {
-    #content .ast-container {
+    body.page #content .ast-container {
         display: flex;
     }
 
-    #content .sidebar-main {
+    body.page #content .sidebar-main {
         height: 100%;
     }
 
-    #content .sidebar-main aside:last-child {
+    body.page #content .sidebar-main aside:last-child {
         position: -webkit-sticky;
         position: sticky;
         top: 50px;
     }
 }
+
+/**
+ * Stretch out content to full screen on wide screens
+ */
 @media (min-width: 922px) {
     .blog .site-content > .ast-container,
     .archive .site-content > .ast-container,
