@@ -146,7 +146,7 @@ function child_get_search_form($form) {
 function child_the_content($text) {
 	global $post;
 	if( get_post_type($post) === 'guide_resource' ) {
-		$customField = 'wpf26052_4=' . urlencode('Project: ' . $post->post_title);
+		$customField = 'wpf26052_4=' . urlencode('Resource: ' . $post->post_title);
 		$buttons = '<div class="resource-nav-buttons">' .
 			'<button onclick="location.href=\'/resources/\';">' . __('Back to Resources') . '</button>' .
 			'<button class="contact-provider" onclick="location.href=\'/contact-resource-provider/?' . $customField . '\';">' . __('Contact Resource Provider') . '</button>' .
