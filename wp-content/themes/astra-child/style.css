@@ -39,6 +39,9 @@ Template: astra
 .widget-area.secondary .widget_nav_menu ul ul.sub-menu li {
     padding-left: 5px;
 }
+.ast-separate-container.ast-two-container #secondary .widget {
+    padding: 1em !important;
+}
 /**
  * Fix a navigation dropdown issue
  */
