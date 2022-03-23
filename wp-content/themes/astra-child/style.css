@@ -92,6 +92,13 @@ Template: astra
 }
 
 /**
+ * Adjust spacing in subnav
+ */
+div.main-navigation ul.sub-menu > li.menu-item > a {
+    padding-top: .4em;
+    padding-bottom: .4em;
+}
+/**
  * Sticky nav for pages with side nav but not resources.
  */
 @media (min-width: 769px) {
