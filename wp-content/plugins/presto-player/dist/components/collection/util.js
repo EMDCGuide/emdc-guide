@@ -129,16 +129,18 @@ export function exitFullScreen(player) {
   var _a, _b, _c, _d, _e;
   if (!isMobile())
     return;
-  if (!((_b = (_a = player === null || player === void 0 ? void 0 : player.config) === null || _a === void 0 ? void 0 : _a.blockAttributes) === null || _b === void 0 ? void 0 : _b.playsinline)) {
+  if (!((_b = (_a = player === null || player === void 0 ? void 0 : player.config) === null || _a === void 0 ? void 0 : _a.blockAttributes) === null || _b === void 0 ? void 0 : _b.playsInline)) {
     // html5
     typeof ((_c = player === null || player === void 0 ? void 0 : player.media) === null || _c === void 0 ? void 0 : _c.webkitExitFullScreen) === 'function' && (player === null || player === void 0 ? void 0 : player.media.webkitExitFullScreen());
     // vimeo
     typeof ((_d = player === null || player === void 0 ? void 0 : player.embed) === null || _d === void 0 ? void 0 : _d.exitFullscreen) === 'function' && ((_e = player === null || player === void 0 ? void 0 : player.embed) === null || _e === void 0 ? void 0 : _e.exitFullscreen());
     // youtube hack
-    const lastTime = player.currentTime;
-    player.currentTime = player.duration;
-    player.once('playing', () => {
-      player.currentTime = lastTime;
-    });
+    if (player.provider === 'youtube') {
+      const lastTime = player.currentTime;
+      player.currentTime = player.duration;
+      player.once('playing', () => {
+        player.currentTime = lastTime;
+      });
+    }
   }
 }

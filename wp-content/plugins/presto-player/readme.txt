@@ -4,7 +4,7 @@ Donate link: https://prestoplayer.com
 Tags: video, audio, youtube, vimeo, lms, elementor, learndash, beaver builder, lifterlms
 Requires at least: 5.6
 Tested up to: 5.9
-Stable tag: 1.9.2
+Stable tag: 1.9.3
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -152,6 +152,9 @@ It is also important to point out that BunnyNet has a $1 per month minimum.
 
 
 == Changelog ==
+
+= 1.9.3 - March 24, 2022 = 
+* Fix: Issue with CTA skip button sometimes not working on mobile.
 
 = 1.9.2 - March 09, 2022 = 
 * Fix: Player gets paused when multiple media have muted autoplay enabled on the same page.
