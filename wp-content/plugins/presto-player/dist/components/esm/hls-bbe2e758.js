@@ -1,7 +1,5 @@
-'use strict';
-
-const index = require('./index-c0b7f1dc.js');
-const prestoActionBar_prestoActionBarController_prestoActionBarUi_prestoAudio_prestoBunny_prestoBusinessSkin_prestoCtaOverlay_prestoCtaOverlayController_prestoCtaOverlayUi_prestoDynamicOverlayUi_prestoDynamicOverlays_prestoEmailOverlay_prestoEmailOverlayController_prestoEmailOverlayUi_prestoModernSkin_prestoMutedOverlay_prestoPlayer_prestoPlayerButton_prestoPlayerSpinner_prestoStackedSkin_prestoTimestamp_prestoVideo_prestoVimeo_prestoYoutube_prestoYoutubeSubscribeButton_entry = require('./presto-action-bar.presto-action-bar-controller.presto-action-bar-ui.presto-audio.presto-bunny.presto-business-skin.presto-cta-overlay.presto-cta-overlay-controller.presto-cta-overlay-ui.presto-dynamic-overlay-ui.presto-dynamic-overlays.presto-email-overlay.presto-email-overlay-controller.presto-email-overlay-ui.presto-modern-skin.presto-muted-overlay.presto-player.presto-player-button.presto-player-spinner.presto-stacked-skin.presto-timestamp.presto-video.presto-vimeo.presto-youtube.presto-youtube-subscribe-button-f6c939a4.js');
+import { m as _asyncToGenerator, a as _objectSpread2 } from './index-7a7ef49c.js';
+import { P as PrestoPlayer } from './presto-action-bar.presto-action-bar-controller.presto-action-bar-ui.presto-audio.presto-bunny.presto-business-skin.presto-cta-overlay.presto-cta-overlay-controller.presto-cta-overlay-ui.presto-dynamic-overlay-ui.presto-dynamic-overlays.presto-email-overlay.presto-email-overlay-controller.presto-email-overlay-ui.presto-modern-skin.presto-muted-overlay.presto-player.presto-player-button.presto-player-spinner.presto-stacked-skin.presto-timestamp.presto-video.presto-vimeo.presto-youtube.presto-youtube-subscribe-button-93a7d798.js';
 
 var loadHLS = function loadHLS(_ref) {
   var config = _ref.config,
@@ -9,7 +7,7 @@ var loadHLS = function loadHLS(_ref) {
       src = _ref.src,
       preload = _ref.preload;
   return new Promise( /*#__PURE__*/function () {
-    var _ref2 = index._asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(resolve, reject) {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(resolve, reject) {
       var _wp, autoStartLoad, hls;
 
       return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -104,7 +102,7 @@ var loadHLS = function loadHLS(_ref) {
                 hls.attachMedia(selector);
                 window.prestoHLS = hls; // Initialize player
 
-                var player = new prestoActionBar_prestoActionBarController_prestoActionBarUi_prestoAudio_prestoBunny_prestoBusinessSkin_prestoCtaOverlay_prestoCtaOverlayController_prestoCtaOverlayUi_prestoDynamicOverlayUi_prestoDynamicOverlays_prestoEmailOverlay_prestoEmailOverlayController_prestoEmailOverlayUi_prestoModernSkin_prestoMutedOverlay_prestoPlayer_prestoPlayerButton_prestoPlayerSpinner_prestoStackedSkin_prestoTimestamp_prestoVideo_prestoVimeo_prestoYoutube_prestoYoutubeSubscribeButton_entry.PrestoPlayer(selector, index._objectSpread2({}, config));
+                var player = new PrestoPlayer(selector, _objectSpread2({}, config));
                 player.hls = hls; // make sure we start loading on the first play
 
                 var firstPlay = function firstPlay() {
@@ -125,7 +123,7 @@ var loadHLS = function loadHLS(_ref) {
               return _context.abrupt("return");
 
             case 14:
-              return _context.abrupt("return", resolve(new prestoActionBar_prestoActionBarController_prestoActionBarUi_prestoAudio_prestoBunny_prestoBusinessSkin_prestoCtaOverlay_prestoCtaOverlayController_prestoCtaOverlayUi_prestoDynamicOverlayUi_prestoDynamicOverlays_prestoEmailOverlay_prestoEmailOverlayController_prestoEmailOverlayUi_prestoModernSkin_prestoMutedOverlay_prestoPlayer_prestoPlayerButton_prestoPlayerSpinner_prestoStackedSkin_prestoTimestamp_prestoVideo_prestoVimeo_prestoYoutube_prestoYoutubeSubscribeButton_entry.PrestoPlayer(selector, index._objectSpread2({}, config))));
+              return _context.abrupt("return", resolve(new PrestoPlayer(selector, _objectSpread2({}, config))));
 
             case 15:
             case "end":
@@ -141,4 +139,4 @@ var loadHLS = function loadHLS(_ref) {
   }());
 };
 
-exports.default = loadHLS;
+export default loadHLS;

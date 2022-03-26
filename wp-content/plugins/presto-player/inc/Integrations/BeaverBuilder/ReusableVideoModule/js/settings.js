@@ -142,7 +142,7 @@
   }
 })(
   {
-    "311uM": [
+    "47mcY": [
       function (require, module, exports) {
         var HMR_HOST = null;
         var HMR_PORT = 1234;
@@ -634,9 +634,9 @@ declare var HMR_SECURE: boolean;
           jQuery("select[name='video_select']").trigger("change");
         });
       },
-      { alpinejs: "hQj1j" },
+      { alpinejs: "7AogW" },
     ],
-    hQj1j: [
+    "7AogW": [
       function (require, module, exports) {
         (function (global, factory) {
           typeof exports === "object" && typeof module !== "undefined"
@@ -3089,7 +3089,7 @@ declare var HMR_SECURE: boolean;
       {},
     ],
   },
-  ["311uM", "8a4rd"],
+  ["47mcY", "8a4rd"],
   "8a4rd",
   "parcelRequire45a5"
 );

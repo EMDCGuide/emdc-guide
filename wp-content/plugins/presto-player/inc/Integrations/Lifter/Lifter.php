@@ -25,8 +25,8 @@ class Lifter
    * Load scripts if it is a LifterLMS ( lesson,Quiz,Course ) page. 
    */
   public function maybeLoadScripts( $has_player ) {
-    if( function_exists( 'is_lifterlms' ) ) {
-      return is_lifterlms();
+    if( function_exists( 'is_lifterlms' ) && is_lifterlms() ) {
+      return true;
     }
     return $has_player;
   }

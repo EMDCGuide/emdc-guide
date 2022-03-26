@@ -1,7 +1,5 @@
-'use strict';
-
-const prestoActionBar_prestoActionBarController_prestoActionBarUi_prestoAudio_prestoBunny_prestoBusinessSkin_prestoCtaOverlay_prestoCtaOverlayController_prestoCtaOverlayUi_prestoDynamicOverlayUi_prestoDynamicOverlays_prestoEmailOverlay_prestoEmailOverlayController_prestoEmailOverlayUi_prestoModernSkin_prestoMutedOverlay_prestoPlayer_prestoPlayerButton_prestoPlayerSpinner_prestoStackedSkin_prestoTimestamp_prestoVideo_prestoVimeo_prestoYoutube_prestoYoutubeSubscribeButton_entry = require('./presto-action-bar.presto-action-bar-controller.presto-action-bar-ui.presto-audio.presto-bunny.presto-business-skin.presto-cta-overlay.presto-cta-overlay-controller.presto-cta-overlay-ui.presto-dynamic-overlay-ui.presto-dynamic-overlays.presto-email-overlay.presto-email-overlay-controller.presto-email-overlay-ui.presto-modern-skin.presto-muted-overlay.presto-player.presto-player-button.presto-player-spinner.presto-stacked-skin.presto-timestamp.presto-video.presto-vimeo.presto-youtube.presto-youtube-subscribe-button-f6c939a4.js');
-require('./index-c0b7f1dc.js');
+import { r as resumeProgress } from './presto-action-bar.presto-action-bar-controller.presto-action-bar-ui.presto-audio.presto-bunny.presto-business-skin.presto-cta-overlay.presto-cta-overlay-controller.presto-cta-overlay-ui.presto-dynamic-overlay-ui.presto-dynamic-overlays.presto-email-overlay.presto-email-overlay-controller.presto-email-overlay-ui.presto-modern-skin.presto-muted-overlay.presto-player.presto-player-button.presto-player-spinner.presto-stacked-skin.presto-timestamp.presto-video.presto-vimeo.presto-youtube.presto-youtube-subscribe-button-93a7d798.js';
+import './index-7a7ef49c.js';
 
 const learndash = (function (player) {
   var _learndash_video_data, _prestoPlayer, _prestoPlayer$learnda, _learndash_video_data2, _prestoPlayer2, _prestoPlayer2$learnd, _prestoPlayer3, _prestoPlayer3$learnd, _prestoPlayer4, _prestoPlayer4$learnd, _learndash_video_data3;
@@ -10,7 +8,7 @@ const learndash = (function (player) {
     return;
   }
 
-  prestoActionBar_prestoActionBarController_prestoActionBarUi_prestoAudio_prestoBunny_prestoBusinessSkin_prestoCtaOverlay_prestoCtaOverlayController_prestoCtaOverlayUi_prestoDynamicOverlayUi_prestoDynamicOverlays_prestoEmailOverlay_prestoEmailOverlayController_prestoEmailOverlayUi_prestoModernSkin_prestoMutedOverlay_prestoPlayer_prestoPlayerButton_prestoPlayerSpinner_prestoStackedSkin_prestoTimestamp_prestoVideo_prestoVimeo_prestoYoutube_prestoYoutubeSubscribeButton_entry.resumeProgress(player); // maybe resume progress
+  resumeProgress(player); // maybe resume progress
   // Learndash has this logic in a shitty method on their php class
   // we have to fake it here since we don't have access to it
 
@@ -145,4 +143,4 @@ const learndash = (function (player) {
   }
 });
 
-exports.default = learndash;
+export default learndash;
