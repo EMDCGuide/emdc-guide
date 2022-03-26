@@ -99,6 +99,25 @@ div.main-navigation ul.sub-menu > li.menu-item > a {
     padding-bottom: .4em;
 }
 /**
+ * Remove hover from Mega titles
+ */
+.ast-container .menu-item .menu-link.ast-disable-link:hover,
+.ast-container .menu-item .sub-menu .menu-item:hover {
+    color: var(--ast-global-color-1) !important;
+}
+.ast-search-icon a, .ast-search-icon a:visited {
+    color: var(--ast-global-color-1);
+}
+.ast-search-icon a:hover{
+    color: var(--ast-global-color-0);
+}
+/**
+ * Fix a space on the homepage
+ */
+.wp-block-group.alignwide.no-btm-margin {
+    margin-bottom: 0;
+}
+/**
  * Sticky nav for pages with side nav but not resources.
  */
 @media (min-width: 769px) {
