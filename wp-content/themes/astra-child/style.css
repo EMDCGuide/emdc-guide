@@ -1,0 +1,148 @@
+/**
+Theme Name: Astra Child
+Author: Brainstorm Force
+Author URI: http://wpastra.com/about/
+Description: Astra is the fastest, fully customizable & beautiful theme suitable for blogs, personal portfolios and business websites. It is very lightweight (less than 50KB on frontend) and offers unparalleled speed. Built with SEO in mind, Astra comes with schema.org code integrated so search engines will love your site. Astra offers plenty of sidebar options and widget areas giving you a full control for customizations. Furthermore, we have included special features and templates so feel free to choose any of your favorite page builder plugin to create pages flexibly. Some of the other features: # WooCommerce Ready # Responsive # Compatible with major plugins # Translation Ready # Extendible with premium addons # Regularly updated # Designed, Developed, Maintained & Supported by Brainstorm Force. Looking for a perfect base theme? Look no further. Astra is fast, fully customizable and beautiful theme!
+Version: 1.0.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: astra-child
+Template: astra
+*/
+.archive-content .post-thumb > img {
+    width: 100% !important;
+}
+/**
+ * Created styles to strech out columns with a column and a group inside. Used on begin journey page.
+ * In advanced settings add is-stretched class to columns.
+ */
+.wp-block-columns.is-stretched .wp-block-column {
+    align-self: stretch;
+}
+.wp-block-columns.is-stretched .wp-block-column .wp-block-group {
+    height: 100%;
+}
+.wp-block-button a:hover {
+    opacity: .75;
+}
+.widget-area.secondary {
+    padding-left: 20px;
+}
+.widget-area.secondary .widget ul {
+    list-style-type: none;
+    padding-left: 0px;
+}
+.widget-area.secondary .widget ul > li > ul {
+    list-style-type: disc;
+    padding-left: 30px;
+}
+.widget-area.secondary .widget_nav_menu ul ul.sub-menu li {
+    padding-left: 5px;
+}
+.ast-separate-container.ast-two-container #secondary .widget {
+    padding: 1em !important;
+}
+/**
+ * Fix a navigation dropdown issue
+ */
+.ast-builder-menu-1 .menu-item > ul > .menu-item > .menu-link {
+    color: var(--ast-global-color-1);
+}
+.ast-builder-menu-1 .menu-item > ul > .menu-item > .menu-link:hover {
+    color: var(--ast-global-color-0);
+}
+/**
+ * Fix the sidebar for Resources
+ */
+.widget-area.secondary .sidebar-main .wp-block-group {
+    padding: 0em;
+}
+.widget-area.secondary .facetwp-search {
+    width: 100%;
+    min-width: unset !important;
+}
+.widget-area.secondary .facetwp-input-wrap,
+.widget-area.secondary .fs-wrap.multiple {
+    width: 100%;
+}
+/**
+ * Fix the resource buttons
+ */
+.resource-nav-buttons {
+    text-align: center;
+}
+.resource-nav-buttons button {
+    background-color: var(--ast-global-color-1);
+    font-size: 0.75rem;
+}
+.resource-nav-buttons button.contact-provider {
+    background-color: var(--ast-global-color-0);
+}
+.resource-nav-buttons button:first-child {
+    margin-right: .75rem;
+}
+.resource-nav-buttons button:hover {
+    opacity: .75;
+}
+/**
+ * Fix footer nav links
+ */
+.footer-bar-navigation a:hover, a:focus {
+    color: var(--ast-global-color-4);
+}
+
+/**
+ * Adjust spacing in subnav
+ */
+div.main-navigation ul.sub-menu > li.menu-item > a {
+    padding-top: .4em;
+    padding-bottom: .4em;
+}
+/**
+ * Remove hover from Mega titles
+ */
+.ast-container .menu-item .menu-link.ast-disable-link:hover,
+.ast-container .menu-item .sub-menu .menu-item:hover {
+    color: var(--ast-global-color-1) !important;
+}
+.ast-search-icon a, .ast-search-icon a:visited {
+    color: var(--ast-global-color-1);
+}
+.ast-search-icon a:hover{
+    color: var(--ast-global-color-0);
+}
+/**
+ * Fix a space on the homepage
+ */
+.wp-block-group.alignwide.no-btm-margin {
+    margin-bottom: 0;
+}
+/**
+ * Sticky nav for pages with side nav but not resources.
+ */
+@media (min-width: 769px) {
+    body.page #content .ast-container {
+        display: flex;
+    }
+
+    body.page #content .sidebar-main {
+        height: 100%;
+    }
+
+    body.page #content .sidebar-main aside:last-child {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 50px;
+    }
+}
+
+/**
+ * Stretch out content to full screen on wide screens
+ */
+@media (min-width: 922px) {
+    .blog .site-content > .ast-container,
+    .archive .site-content > .ast-container,
+    .search .site-content > .ast-container {
+        max-width: 100%;
+    }
+}
