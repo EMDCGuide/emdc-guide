@@ -8,6 +8,30 @@
         $(document).on('facetwp-loaded', function() {
             var date = new Date();
             var facets = window.location.search;
+            var searchTerm = gup('_search', window.location);
+            if (searchTerm) {
+              gtag('event','search', {'search_term': searchTerm});
+            }
+            var categoriesQuery = gup('_categories', window.location);
+            if (categoriesQuery) {
+              var categories = categoriesQuery.split('%2C');
+              for (var i = 0; i < categories.length; i++) {
+                gtag('event','filter_by_category', {
+                  'event_label': 'resource_category',
+                  'event_value': categories[i]
+                });
+              }
+            }
+            var tagsQuery = gup('_tags', window.location);
+            if (tagsQuery) {
+              var tags = tagsQuery.split('%2C');
+              for (var i = 0; i < tags.length; i++) {
+                gtag('event','filter_by_tag', {
+                  'event_label': 'resource_tag',
+                  'event_value': tags[i]
+                });
+              }
+            }
             date.setTime(date.getTime()+(24*60*60*1000));
             document.cookie = "facetdata="+facets+"; expires="+date.toGMTString()+"; path=/";
         });
@@ -20,6 +44,7 @@
             if (! FWP.loaded) {
                 var facets = window.location.search;
                 var facetdata = readCookie('facetdata');
+                console.log(facets);
                 if (null != facetdata && '' != facetdata && facets != facetdata) {
                     document.cookie = 'facetdata=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
                     window.location.search = facetdata;
@@ -39,6 +64,21 @@
                 if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
             }
             return null;
+        }
+
+        /**
+         * Get a parameter from the url
+         * @param  {string} name  The name of the parmeter
+         * @param  {string} url   The url
+         * @return {string}       The result
+         */
+        function gup( name, url ) {
+          if (!url) url = location.href;
+          name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+          var regexS = "[\\?&]"+name+"=([^&#]*)";
+          var regex = new RegExp( regexS );
+          var results = regex.exec( url );
+          return results == null ? null : results[1];
         }
 
         /**
