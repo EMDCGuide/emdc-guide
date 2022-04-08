@@ -16,9 +16,8 @@
             if (categoriesQuery) {
               var categories = categoriesQuery.split('%2C');
               for (var i = 0; i < categories.length; i++) {
-                gtag('event','filter_by_category', {
-                  'event_label': 'resource_category',
-                  'event_value': categories[i]
+                gtag('event','category_filter', {
+                  'event_category': categories[i]
                 });
               }
             }
@@ -26,9 +25,8 @@
             if (tagsQuery) {
               var tags = tagsQuery.split('%2C');
               for (var i = 0; i < tags.length; i++) {
-                gtag('event','filter_by_tag', {
-                  'event_label': 'resource_tag',
-                  'event_value': tags[i]
+                gtag('event','tag_filter', {
+                  'event_category': tags[i]
                 });
               }
             }
