@@ -30,8 +30,11 @@
                 });
               }
             }
-            date.setTime(date.getTime()+(24*60*60*1000));
-            document.cookie = "facetdata="+facets+"; expires="+date.toGMTString()+"; path=/";
+            if (facets && facets !== '') {
+              console.log('BEAR');
+              date.setTime(date.getTime()+(24*60*60*1000));
+              document.cookie = "facetdata="+facets+"; expires="+date.toGMTString()+"; path=/";
+            }
         });
 
         /*
@@ -42,8 +45,8 @@
             if (! FWP.loaded) {
                 var facets = window.location.search;
                 var facetdata = readCookie('facetdata');
-                console.log(facets);
                 if (null != facetdata && '' != facetdata && facets != facetdata) {
+                    console.log('HERE');
                     document.cookie = 'facetdata=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
                     window.location.search = facetdata;
                 }
