@@ -1600,11 +1600,9 @@ https://github.com/prestomade/presto-player/issues/140
   left: 0;
   right: 0;
   bottom: 0;
+  display: none;
   align-items: center;
   justify-content: center;
-}
-.presto-player__muted-overlay img {
-  display: none;
 }
 .presto-player__muted-overlay .plyr__control--overlaid {
   display: block;
@@ -1614,8 +1612,8 @@ https://github.com/prestomade/presto-player/issues/140
 .presto-player__wrapper.is-muted-overlay {
   cursor: pointer;
 }
-.presto-player__wrapper.is-muted-overlay.presto-player--playing .presto-player__muted-overlay img {
-  display: block;
+.presto-player__wrapper.is-muted-overlay.presto-player--playing .presto-player__muted-overlay {
+  display: flex;
 }
 .presto-player__wrapper.is-muted-overlay .plyr--playing .presto-player__muted-overlay .plyr__control--overlaid {
   opacity: 1;

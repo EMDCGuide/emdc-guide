@@ -17,13 +17,27 @@
 
             // pager, show more, user selections, hierarchy
             $('.facetwp-page, .facetwp-toggle, .facetwp-selection-value, .facetwp-link').each(function() {
-                $(this).attr('role', 'link');
-                $(this).attr('aria-label', $(this).text());
-                $(this).attr('tabindex', 0);
+                let $el = $(this);
+                let label = $el.text();
+
+                if ($el.hasClass('facetwp-page')) {
+                    label = 'Go to page ' + label;
+
+                    if ($el.hasClass('prev')) {
+                        label = 'Go to previous page';
+                    }
+                    else if ($el.hasClass('next')) {
+                        label = 'Go to next page';
+                    }
+                }
+
+                $el.attr('role', 'link');
+                $el.attr('aria-label', label);
+                $el.attr('tabindex', 0);
             });
 
             // dropdown, sort facet
-            $('.facetwp-dropdown, .facetwp-sort-select').each(function() {
+            $('.facetwp-type-dropdown select, .facetwp-type-sort select').each(function() {
                 $(this).attr('aria-label', $(this).find('option:selected').text());
             });
 
@@ -47,6 +61,7 @@
             });
 
             // pager
+            $('.facetwp-pager').attr('role', 'navigation');
             $('.facetwp-page.active').attr('aria-current', 'true');
 
             // focus on selection

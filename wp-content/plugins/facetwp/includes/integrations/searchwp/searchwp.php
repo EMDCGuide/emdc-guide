@@ -152,7 +152,7 @@ class FacetWP_Integration_SearchWP
         $facet = $params['facet'];
         $selected_values = $params['selected_values'];
         $selected_values = is_array( $selected_values ) ? $selected_values[0] : $selected_values;
-        $engine = isset( $facet['search_engine'] ) ? $facet['search_engine'] : '';
+        $engine = $facet['search_engine'] ?? '';
 
         if ( 'search' == $facet['type'] && 0 === strpos( $engine, 'swp_' ) ) {
             $return = [];
@@ -200,7 +200,7 @@ class FacetWP_Integration_SearchWP
             $settings = get_option( SEARCHWP_PREFIX . 'settings' );
 
             foreach ( $settings['engines'] as $key => $info ) {
-                $label = isset( $info['searchwp_engine_label'] ) ? $info['searchwp_engine_label'] : __( 'Default', 'fwp' );
+                $label = $info['searchwp_engine_label'] ?? __( 'Default', 'fwp' );
                 $engines[ 'swp_' . $key ] = 'SearchWP - ' . $label;
             }
         }
@@ -210,6 +210,6 @@ class FacetWP_Integration_SearchWP
 }
 
 
-if ( defined( 'SEARCHWP_VERSION' ) && version_compare( SEARCHWP_VERSION, '2.6', '>=' ) ) {
+if ( defined( 'SEARCHWP_VERSION' ) ) {
     new FacetWP_Integration_SearchWP();
 }

@@ -39,12 +39,14 @@ class FacetWP_Facet_Radio_Core extends FacetWP_Facet
             $selected = in_array( $row['facet_value'], $selected_values ) ? ' checked' : '';
             $selected .= ( 0 == $row['counter'] && '' == $selected ) ? ' disabled' : '';
             $output .= '<div class="facetwp-radio' . $selected . '" data-value="' . esc_attr( $row['facet_value'] ) . '">';
+            $output .= '<span class="facetwp-display-value">';
             $output .= apply_filters( 'facetwp_facet_display_value', $label, [
                 'selected' => ( '' !== $selected ),
                 'facet' => $facet,
                 'row' => $row
             ]);
-            $output .= ' <span class="facetwp-counter">(' . $row['counter'] . ')</span>';
+            $output .= '</span>';
+            $output .= '<span class="facetwp-counter">(' . $row['counter'] . ')</span>';
             $output .= '</div>';
         }
 

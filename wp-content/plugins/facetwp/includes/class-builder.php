@@ -10,6 +10,7 @@ class FacetWP_Builder
 
     function __construct() {
         add_filter( 'facetwp_query_args', [ $this, 'hydrate_date_values' ], 999 );
+        add_filter( 'facetwp_builder_dynamic_tag_value', [ $this, 'dynamic_tag_value' ], 0, 3 );
     }
 
 
@@ -34,7 +35,7 @@ class FacetWP_Builder
         $settings = $layout['settings'];
         $this->custom_css = $settings['custom_css'];
 
-        $this->css['.fwpl-layout'] = [
+        $this->css['.fwpl-layout.' . $settings['name'] ] = [
             'grid-template-columns' => trim( str_repeat( '1fr ', $settings['num_columns'] ) ),
             'grid-gap' => $settings['grid_gap'] . 'px'
         ];
@@ -57,10 +58,12 @@ class FacetWP_Builder
                     'post:url'      => get_permalink()
                 ];
 
-                $this->data = apply_filters( 'facetwp_builder_dynamic_tags', $tags, [
+                $params = [
                     'layout' => $layout,
                     'post' => $post
-                ] );
+                ];
+
+                $this->data = apply_filters( 'facetwp_builder_dynamic_tags', $tags, $params );
 
                 $output .= '<div class="fwpl-result r' . $counter . '">';
 
@@ -70,7 +73,7 @@ class FacetWP_Builder
 
                 $output .= '</div>';
 
-                $output = $this->short_tags( $output );
+                $output = $this->parse_dynamic_tags( $output, $params );
 
             endwhile;
         }
@@ -171,11 +174,8 @@ class FacetWP_Builder
                 $value = $user->$field;
             }
             elseif ( 'post_type' == $source ) {
-                $value = $post->$source;
-                $post_type = get_post_type_object( $value );
-                if ( isset( $post_type->labels->singular_name ) ) {
-                    $value = $post_type->labels->singular_name;
-                }
+                $pt_obj = get_post_type_object( $post->$source );
+                $value = $pt_obj->labels->singular_name ?? $post->$source;
             }
             else {
                 $value = $post->$source;
@@ -298,8 +298,8 @@ class FacetWP_Builder
         }
 
         $output = '';
-        $prefix = isset( $settings['prefix'] ) ? $settings['prefix'] : '';
-        $suffix = isset( $settings['suffix'] ) ? $settings['suffix'] : '';
+        $prefix = $settings['prefix'] ?? '';
+        $suffix = $settings['suffix'] ?? '';
 
         // Allow value hooks
         $value = apply_filters( 'facetwp_builder_item_value', $value, $item );
@@ -337,16 +337,29 @@ class FacetWP_Builder
 
 
     /**
-     * Populate short-tag content, e.g. {{ first_name }}
+     * Parse dynamic tags, e.g. {{ first_name }}
      */
-    function short_tags( $output ) {
-        foreach ( $this->data as $tag => $tag_value ) {
-            $pattern = '/({{[ ]?' . $tag . '[ ]?}})/s';
-            $tag_value = str_replace( '$', '\$', $tag_value );
-            $output = preg_replace( $pattern, $tag_value, $output );
+    function parse_dynamic_tags( $output, $params ) {
+        $pattern = '/({{[ ]?(.*?)[ ]?}})/s';
+
+        return preg_replace_callback( $pattern, function( $matches ) use( $params ) {
+            $tag_name = $matches[2];
+            $tag_value = $this->data[ $tag_name ] ?? '';
+            return apply_filters( 'facetwp_builder_dynamic_tag_value', $tag_value, $tag_name, $params );
+        }, $output );
+    }
+
+
+    /**
+     * Calculate some dynamic tag values on-the-fly, to prevent
+     * unnecessary queries and extra load time
+     */
+    function dynamic_tag_value( $tag_value, $tag_name, $params ) {
+        if ( 'post:image' == $tag_name ) {
+            $tag_value = get_the_post_thumbnail_url( $params['post']->ID, 'full' );
         }
 
-        return $output;
+        return $tag_value;
     }
 
 
@@ -789,7 +802,7 @@ class FacetWP_Builder
                 if ( isset( $tag_parts[2] ) ) {
                     $index = (int) $tag_parts[2];
                     $index = ( $index < 0 ) ? count( $uri_parts ) + $index : $index;
-                    $temp[ $key ] = isset( $uri_parts[ $index ] ) ? $uri_parts[ $index ] : '';
+                    $temp[ $key ] = $uri_parts[ $index ] ?? '';
                 }
                 else {
                     $temp[ $key ] = $uri;
@@ -797,12 +810,7 @@ class FacetWP_Builder
             }
             elseif ( 0 === strpos( $value, 'http:get:' ) ) {
                 $tag_parts = explode( ':', $value );
-                if ( isset( $_GET[ $tag_parts[2] ] ) ) {
-                    $temp[ $key ] = $_GET[ $tag_parts[2] ];
-                }
-                else {
-                    $temp[ $key ] = '';
-                }
+                $temp[ $key ] = $_GET[ $tag_parts[2] ] ?? '';
             }
         }
 

@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-03-25T14:47:50+00:00\n"
+"POT-Creation-Date: 2022-04-26T14:39:20+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 
@@ -518,7 +518,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: admin/blocks/blocks/bunny/popup/stream/collections/Collections.js:41
+#: admin/blocks/blocks/bunny/popup/stream/collections/Collections.js:42
 msgid "Collections"
 msgstr ""
 
@@ -2450,29 +2450,29 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
-#: Attachment.php:137
+#: Attachment.php:140
 msgid "The video files in the %s folder are not currently protected due to your site running on NGINX."
 msgstr ""
 
-#: Attachment.php:138
+#: Attachment.php:141
 msgid "If you plan on using private video, you will want to protect this directory. To protect them, you must add a firewall rule as explained in <a href=\"https://prestoplayer.com/protecting-videos-with-nginx\" target=\"_blank\">this guide</a>."
 msgstr ""
 
-#: Attachment.php:139
+#: Attachment.php:142
 msgid "If you have already added the rule, you may safely dismiss this notice"
 msgstr ""
 
-#: Attachment.php:140
+#: Attachment.php:143
 #: Services/ProCompatibility.php:42
 #: Services/ReusableVideos.php:37
 msgid "Dismiss Notice"
 msgstr ""
 
-#: Attachment.php:250
+#: Attachment.php:254
 msgid "Sorry %1$s! Access to this video is not allowed. An administrator will be informed."
 msgstr ""
 
-#: Attachment.php:253
+#: Attachment.php:257
 msgid "Forbidden"
 msgstr ""
 

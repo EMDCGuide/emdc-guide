@@ -5,7 +5,7 @@ Tags: Elementor,Beaver Builder,Templates,Gutenberg,Block Editor,Astra Starter Si
 Requires at least: 4.4
 Requires PHP: 5.3
 Tested up to: 5.9
-Stable tag: 3.1.7
+Stable tag: 3.1.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -132,6 +132,12 @@ We are open to suggestions and would love to work on topics that our users are l
 8. Free Images by Pixabay right inside the WordPress media popup.
 
 == Changelog ==
+
+v3.1.8 - 13-April-2022
+- Fix: Fixed an issue with the click action for category mega menu titles.
+- Fix: Fixed an issue with the Popular and Latest filters.
+- Fix: Improved import error messages.
+- Fix: UI improvement on the last screen for Starter Template import.
 
 v3.1.7 - 17-March-2022
 - Fix: Fixed an issue with multiple import processes being invoked when the theme is not activated.

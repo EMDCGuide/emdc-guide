@@ -84,9 +84,7 @@ class FacetWP_Renderer
             if ( $facet ) {
 
                 // Default to "OR" mode
-                if ( ! isset( $facet['operator'] ) ) {
-                    $facet['operator'] = 'or';
-                }
+                $facet['operator'] = $facet['operator'] ?? 'or';
 
                 // Support the "facetwp_preload_url_vars" hook
                 if ( $first_load && empty( $f['selected_values'] ) && ! empty( $this->http_params['url_vars'][ $name ] ) ) {
@@ -112,7 +110,7 @@ class FacetWP_Renderer
         // Get the template from $helper->settings
         if ( 'wp' == $params['template'] ) {
             $this->template = [ 'name' => 'wp' ];
-            $query_args = isset( FWP()->request->query_vars ) ? FWP()->request->query_vars : [];
+            $query_args = FWP()->request->query_vars ?? [];
         }
         else {
             $this->template = FWP()->helper->get_template_by_name( $params['template'] );
@@ -164,6 +162,13 @@ class FacetWP_Renderer
                 }
             }
 
+            // Sort the results by relevancy
+            $use_relevancy = apply_filters( 'facetwp_use_search_relevancy', true, $this );
+            $is_default_sort = ( 'default' == $sort_value && empty( $this->http_params['get']['orderby'] ) );
+            if ( $this->is_search && $use_relevancy && $is_default_sort && FWP()->is_filtered ) {
+                $this->query_args['orderby'] = 'post__in';
+            }
+
             // Sort facet
             if ( ! empty( $this->sort_facet ) && ! empty( $this->sort_facet['selected_values'] ) ) {
                 $chosen_sort = $this->sort_facet['selected_values'][0];
@@ -173,7 +178,7 @@ class FacetWP_Renderer
                         $args = FWP()->builder->parse_query_obj([ 'orderby' => $contents['orderby'] ]);
 
                         if ( isset( $args['meta_query'] ) ) {
-                            $meta_query = isset( $this->query_args['meta_query'] ) ? $this->query_args['meta_query'] : [];
+                            $meta_query = $this->query_args['meta_query'] ?? [];
                             $meta_query = array_merge( $meta_query, $args['meta_query'] );
                             $this->query_args['meta_query'] = $meta_query;
                         }
@@ -182,13 +187,6 @@ class FacetWP_Renderer
                         break;
                     }
                 }
-            }
-
-            // Sort the results by relevancy
-            $use_relevancy = apply_filters( 'facetwp_use_search_relevancy', true, $this );
-            $is_default_sort = ( 'default' == $sort_value && empty( $this->http_params['get']['orderby'] ) );
-            if ( $this->is_search && $use_relevancy && $is_default_sort && FWP()->is_filtered ) {
-                $this->query_args['orderby'] = 'post__in';
             }
 
             // Set the default limit
@@ -215,7 +213,7 @@ class FacetWP_Renderer
         // For performance gains, skip the template on pageload
         if ( 'wp' != $this->template['name'] ) {
             if ( ! $first_load || $is_bfcache || apply_filters( 'facetwp_template_force_load', false ) ) {
-                $output['template'] = $this->get_template_html( $params['template'] );
+                $output['template'] = $this->get_template_html();
             }
         }
 
@@ -704,7 +702,7 @@ class FacetWP_Renderer
      */
     function get_debug_info() {
         $last_indexed = get_option( 'facetwp_last_indexed' );
-        $last_indexed = $last_indexed ? human_time_diff( $last_indexed ) . ' ago' : 'never';
+        $last_indexed = $last_indexed ? human_time_diff( $last_indexed ) : 'never';
 
         $debug = [
             'query_args'    => $this->query_args,

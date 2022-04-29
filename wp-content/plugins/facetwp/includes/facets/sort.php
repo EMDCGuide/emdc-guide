@@ -16,8 +16,9 @@ class FacetWP_Facet_Sort extends FacetWP_Facet
         $output = '<select>';
         $output .= '<option value="">' . esc_attr( $facet['default_label'] ) . '</option>';
         foreach ( $facet['sort_options'] as $choice ) {
+            $label = facetwp_i18n( $choice['label'] );
             $selected = in_array( $choice['name'], $selected_values ) ? ' selected' : '';
-            $output .= '<option value="' . esc_attr( $choice['name'] ) . '"' . $selected . '>' . esc_attr( $choice['label'] ) . '</option>';
+            $output .= '<option value="' . esc_attr( $choice['name'] ) . '"' . $selected . '>' . esc_attr( $label ) . '</option>';
         }
         $output .= '</select>';
         return $output;
