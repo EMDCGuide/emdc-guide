@@ -60,8 +60,8 @@ class FacetWP_API_Fetch
         $facets = [];
 
         // Validate input
-        $page = isset( $params['query_args']['paged'] ) ? (int) $params['query_args']['paged'] : 1;
-        $per_page = isset( $params['query_args']['posts_per_page'] ) ? (int) $params['query_args']['posts_per_page'] : 10;
+        $page = (int) ( $params['query_args']['paged'] ?? 1 );
+        $per_page = (int) ( $params['query_args']['posts_per_page'] ?? 10 );
 
         $page = max( $page, 1 );
         $per_page = ( 0 === $per_page ) ? 10 : $per_page;

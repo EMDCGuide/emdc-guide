@@ -59,7 +59,7 @@ class FacetWP_Diff
 
 
     function is_indexable( $facet ) {
-        return ! in_array( $facet['type'], [ 'search', 'pager', 'sort' ] );
+        return ! in_array( $facet['type'], [ 'search', 'pager', 'reset', 'sort' ] );
     }
 
 
@@ -68,10 +68,6 @@ class FacetWP_Diff
      * @since 3.0.9
      */
     function get_attr( $name, $collection ) {
-        if ( isset( $collection[ $name ] ) ) {
-            return $collection[ $name ];
-        }
-
-        return false;
+        return $collection[ $name ] ?? false;
     }
 }

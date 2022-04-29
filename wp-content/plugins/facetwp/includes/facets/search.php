@@ -17,7 +17,7 @@ class FacetWP_Facet_Search extends FacetWP_Facet
         $output = '';
         $value = (array) $params['selected_values'];
         $value = empty( $value ) ? '' : stripslashes( $value[0] );
-        $placeholder = isset( $params['facet']['placeholder'] ) ? $params['facet']['placeholder'] : __( 'Enter keywords', 'fwp-front' );
+        $placeholder = $params['facet']['placeholder'] ?? __( 'Enter keywords', 'fwp-front' );
         $placeholder = facetwp_i18n( $placeholder );
         $output .= '<span class="facetwp-input-wrap">';
         $output .= '<i class="facetwp-icon"></i>';

@@ -94,8 +94,8 @@ class FacetWP_Facet_Slider extends FacetWP_Facet
         $range_min = (float) $row->min;
         $range_max = (float) $row->max;
 
-        $selected_min = (float) ( isset( $selected_values[0] ) ? $selected_values[0] : $range_min );
-        $selected_max = (float) ( isset( $selected_values[1] ) ? $selected_values[1] : $range_max );
+        $selected_min = (float) ( $selected_values[0] ?? $range_min );
+        $selected_max = (float) ( $selected_values[1] ?? $range_max );
 
         return [
             'range' => [ // outer (bar)
@@ -172,6 +172,7 @@ class FacetWP_Facet_Slider extends FacetWP_Facet
                     'format' => [
                         'type' => 'select',
                         'label' => __( 'Format', 'fwp' ),
+                        'notes' => 'If the number separators are wrong, change the [Separators] setting in the Settings tab, then save and reload the page',
                         'choices' => $choices
                     ]
                 ]
