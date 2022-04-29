@@ -441,8 +441,8 @@ class FacetWP_Integration_ACF
         $field = get_field_object( $hierarchy[0], $object_id, false, false );
 
         $type = $field['type'];
-        $format = $field['return_format'] ?? '';
-        $is_multiple = (bool) ( $field['multiple'] ?? false );
+        $format = isset( $field['return_format'] ) ? $field['return_format'] : '';
+        $is_multiple = isset( $field['multiple'] ) ? (bool) $field['multiple'] : false;
 
         if ( ( 'post_object' == $type || 'relationship' == $type ) && 'object' == $format ) {
             $output = [];
@@ -467,7 +467,7 @@ class FacetWP_Integration_ACF
         }
 
         if ( ( 'select' == $type || 'checkbox' == $type || 'radio' == $type || 'button_group' == $type ) && 'array' == $format ) {
-            $value = $value['label'] ?? wp_list_pluck( $value, 'label' );
+            $value = isset( $value['label'] ) ? $value['label'] : wp_list_pluck( $value, 'label' );
         }
 
         if ( ( 'image' == $type || 'gallery' == $type ) && 'array' == $format ) {

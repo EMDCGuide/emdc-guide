@@ -16,9 +16,6 @@ class FacetWP_Facet_Autocomplete extends FacetWP_Facet
         // css-based template
         add_action( 'facetwp_init', [ $this, 'maybe_buffer_output' ] );
         add_action( 'facetwp_found_main_query', [ $this, 'template_handler' ] );
-
-        // result limit
-        $this->limit = (int) apply_filters( 'facetwp_facet_autocomplete_limit', 10 );
     }
 
 
@@ -58,7 +55,7 @@ class FacetWP_Facet_Autocomplete extends FacetWP_Facet
         $output = '';
         $value = (array) $params['selected_values'];
         $value = empty( $value ) ? '' : stripslashes( $value[0] );
-        $placeholder = $params['facet']['placeholder'] ?? __( 'Start typing', 'fwp-front' ) . '...';
+        $placeholder = isset( $params['facet']['placeholder'] ) ? $params['facet']['placeholder'] : __( 'Start typing', 'fwp-front' ) + '...';
         $placeholder = facetwp_i18n( $placeholder );
         $output .= '<input type="text" class="facetwp-autocomplete" value="' . esc_attr( $value ) . '" placeholder="' . esc_attr( $placeholder ) . '" autocomplete="off" />';
         $output .= '<input type="button" class="facetwp-autocomplete-update" value="' . __( 'Go', 'fwp-front' ) . '" />';
@@ -123,6 +120,9 @@ class FacetWP_Facet_Autocomplete extends FacetWP_Facet
         // then grab the matching post IDs
         $where_clause = $this->get_where_clause( [ 'name' => $facet_name ] );
 
+        // customize limit
+        $limit = (int) apply_filters( 'facetwp_facet_autocomplete_limit', 10 );
+
         if ( ! empty( $query ) && ! empty( $facet_name ) ) {
             $sql = "
             SELECT DISTINCT facet_display_value
@@ -132,7 +132,7 @@ class FacetWP_Facet_Autocomplete extends FacetWP_Facet
                 facet_display_value LIKE '%$query%'
                 $where_clause
             ORDER BY facet_display_value ASC
-            LIMIT $this->limit";
+            LIMIT $limit";
 
             $results = $wpdb->get_results( $sql );
 
@@ -155,8 +155,7 @@ class FacetWP_Facet_Autocomplete extends FacetWP_Facet
         return [
             'loadingText' => __( 'Loading', 'fwp-front' ) . '...',
             'minCharsText' => __( 'Enter {n} or more characters', 'fwp-front' ),
-            'noResultsText' => __( 'No results', 'fwp-front' ),
-            'maxResults' => $this->limit
+            'noResultsText' => __( 'No results', 'fwp-front' )
         ];
     }
 }

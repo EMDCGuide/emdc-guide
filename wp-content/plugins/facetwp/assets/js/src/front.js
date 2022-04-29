@@ -66,10 +66,8 @@ window.FWP = (($) => {
                 FWP.hooks.addAction('facetwp/loaded', () => {
 
                     var selections = '';
-                    var skipped = ['pager', 'reset', 'sort'];
-
                     $.each(FWP.facets, (val, key) => {
-                        if (val.length < 1 || ! $.isset(FWP.settings.labels[key]) || skipped.includes(FWP.facet_type[key])) {
+                        if (val.length < 1 || ! $.isset(FWP.settings.labels[key]) || 'pager' == FWP.facet_type[key]) {
                             return true; // skip facet
                         }
 
@@ -508,7 +506,6 @@ window.FWP = (($) => {
             });
 
             if (reset_all) {
-                FWP.extras.per_page = 'default';
                 FWP.extras.sort = 'default';
                 FWP.frozen_facets = {};
             }

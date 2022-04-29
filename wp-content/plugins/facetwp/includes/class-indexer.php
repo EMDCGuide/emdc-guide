@@ -207,8 +207,8 @@ class FacetWP_Indexer
         }
 
         // Resume indexing?
-        $offset = (int) ( $_POST['offset'] ?? 0 );
-        $attempt = (int) ( $_POST['retries'] ?? 0 );
+        $offset = isset( $_POST['offset'] ) ? (int) $_POST['offset'] : 0;
+        $attempt = isset( $_POST['retries'] ) ? (int) $_POST['retries'] : 0;
 
         if ( 0 < $offset ) {
             $post_ids = json_decode( get_option( 'facetwp_indexing' ), true );
@@ -337,7 +337,7 @@ class FacetWP_Indexer
             }
 
             $this->facet = $facet;
-            $source = $facet['source'] ?? '';
+            $source = isset( $facet['source'] ) ? $facet['source'] : '';
 
             // Set default index_row() params
             $defaults = [
@@ -607,7 +607,7 @@ class FacetWP_Indexer
         if ( ! empty( $transients ) ) {
             $transients = json_decode( $transients, true );
             if ( $name ) {
-                return $transients[ $name ] ?? false;
+                return isset( $transients[ $name ] ) ? $transients[ $name ] : false;
             }
 
             return $transients;

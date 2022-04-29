@@ -18,11 +18,9 @@ class MonsterInsights_Notification_Multiple_Gtags extends MonsterInsights_Notifi
             $content = $response['body'];
 
             $document = new DOMDocument();
-			libxml_use_internal_errors(true);
-            @$document->loadHTML( $content );
-			libxml_clear_errors();
+            $document->loadHTML( $content );
 
-			$gtag_count = 0;
+            $gtag_count = 0;
 
             foreach( $document->getElementsByTagName('script') as $script ) {
                 $script_src = $script->getAttribute('src');

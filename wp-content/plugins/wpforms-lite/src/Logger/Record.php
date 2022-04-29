@@ -155,8 +155,7 @@ class Record {
 	public function get_types( $view = 'key' ) {
 
 		$this->types = is_array( $this->types ) ? $this->types : explode( ',', $this->types );
-
-		if ( $view === 'label' ) {
+		if ( 'label' === $view ) {
 			return array_intersect_key(
 				Log::get_log_types(),
 				array_flip( $this->types )
@@ -177,35 +176,23 @@ class Record {
 	 */
 	public function get_date( $format = 'short' ) {
 
-		switch ( $format ) {
-			case 'short':
-				$date = date_i18n(
-					get_option( 'date_format' ),
-					$this->create_at + ( get_option( 'gmt_offset' ) * 3600 )
-				);
-				break;
-
-			case 'full':
-				$date = date_i18n(
-					sprintf( '%s %s', get_option( 'date_format' ), get_option( 'time_format' ) ),
-					$this->create_at + ( get_option( 'gmt_offset' ) * 3600 )
-				);
-				break;
-
-			case 'sql':
-				$date = gmdate( 'Y-m-d H:i:s', $this->create_at );
-				break;
-
-			default:
-				$date = '';
-				break;
+		if ( 'short' === $format ) {
+			return date_i18n(
+				get_option( 'date_format' ),
+				$this->create_at + ( get_option( 'gmt_offset' ) * 3600 )
+			);
+		} elseif ( 'sql' === $format ) {
+			return gmdate( 'Y-m-d H:i:s', $this->create_at );
+		} else {
+			return date_i18n(
+				sprintf( '%s %s', get_option( 'date_format' ), get_option( 'time_format' ) ),
+				$this->create_at + ( get_option( 'gmt_offset' ) * 3600 )
+			);
 		}
-
-		return $date;
 	}
 
 	/**
-	 * Get form ID.
+	 * Get record form id.
 	 *
 	 * @since 1.6.3
 	 *
@@ -217,7 +204,7 @@ class Record {
 	}
 
 	/**
-	 * Get entry ID.
+	 * Get record entry id.
 	 *
 	 * @since 1.6.3
 	 *
@@ -229,7 +216,7 @@ class Record {
 	}
 
 	/**
-	 * Get user ID.
+	 * Get record user id.
 	 *
 	 * @since 1.6.3
 	 *
@@ -252,7 +239,7 @@ class Record {
 	 * @param int          $entry_id Record entry ID.
 	 * @param int          $user_id  Record user ID.
 	 *
-	 * @return Record
+	 * @return \WPForms\Logger\Record
 	 */
 	public static function create( $title, $message, $types, $form_id = 0, $entry_id = 0, $user_id = 0 ) {
 

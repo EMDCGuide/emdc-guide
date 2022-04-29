@@ -4,7 +4,7 @@ Donate link: https://prestoplayer.com
 Tags: video, audio, youtube, vimeo, lms, elementor, learndash, beaver builder, lifterlms
 Requires at least: 5.6
 Tested up to: 5.9
-Stable tag: 1.9.6
+Stable tag: 1.9.4
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -152,15 +152,6 @@ It is also important to point out that BunnyNet has a $1 per month minimum.
 
 
 == Changelog ==
-
-= 1.9.6 - April 26, 2022 = 
-* Fix: Add function checks in case wp_get_attachment_url is called before WP loads. 
-* Fix: Removing videos database table on uninstall. 
-* Fix: Error removing data on plugin uninstall.
-
-= 1.9.5 - April 13, 2022 = 
-* Improvement: Increased limit for Bunny.net stream collection list.
-* Fix: Double play button on iOS mobile devices when Muted Autoplay Preview is enabled.
 
 = 1.9.4 - March 25, 2022 = 
 * Fix: Media was not loading on non LifterLMS pages. 

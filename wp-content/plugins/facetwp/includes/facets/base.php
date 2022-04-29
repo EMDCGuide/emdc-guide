@@ -35,10 +35,8 @@ class FacetWP_Facet
             }
         }
 
-        // Sort by depth
-        if ( FWP()->helper->facet_is( $facet, 'hierarchical', 'yes' ) ) {
-            $orderby = "f.depth, $orderby";
-        }
+        // Sort by depth just in case
+        $orderby = "f.depth, $orderby";
 
         return $orderby;
     }

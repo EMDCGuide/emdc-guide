@@ -186,11 +186,10 @@ class Preview {
 		}
 
 		$content  = '<p>';
-		$content .= esc_html__( 'This is a preview of the latest saved revision of your form. If this preview does not match your form, save your changes and then refresh this page. This form preview is not publicly accessible.', 'wpforms-lite' );
+		$content .= esc_html__( 'This is a preview of your form. This page is not publicly accessible.', 'wpforms-lite' );
 
 		if ( ! empty( $links ) ) {
 			$content .= '<br>';
-			$content .= '<span class="wpforms-preview-notice-links">';
 
 			foreach ( $links as $key => $link ) {
 				$content .= '<a href="' . $link['url'] . '">' . $link['text'] . '</a>';
@@ -200,8 +199,6 @@ class Preview {
 					$content .= ' <span style="display:inline-block;margin:0 6px;opacity: 0.5">|</span> ';
 				}
 			}
-
-			$content .= '</span>';
 		}
 		$content .= '</p>';
 

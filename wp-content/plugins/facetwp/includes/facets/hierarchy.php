@@ -118,7 +118,7 @@ class FacetWP_Facet_Hierarchy extends FacetWP_Facet
 
         if ( ! empty( $values ) ) {
             foreach ( $values as $row ) {
-                $last_depth = $last_depth ?? $row['depth'];
+                $last_depth = isset( $last_depth ) ? $last_depth : $row['depth'];
                 $selected = ( ! empty( $selected_values ) && $row['facet_value'] == $selected_values[0] );
 
                 $label = esc_html( $row['facet_display_value'] );

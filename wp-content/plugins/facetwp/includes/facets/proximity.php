@@ -335,10 +335,8 @@ function facetwp_get_distance( $post_id = false ) {
     // Get the proximity class
     $facet_type = FWP()->helper->facet_types['proximity'];
 
-    // Get the distance
-    $distance = $facet_type->distance[ $post_id ] ?? -1;
-
-    if ( -1 < $distance ) {
+    if ( isset( $facet_type->distance[ $post_id ] ) ) {
+        $distance = $facet_type->distance[ $post_id ];
         return apply_filters( 'facetwp_proximity_distance_output', $distance );
     }
 

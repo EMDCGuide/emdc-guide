@@ -46,7 +46,7 @@ class FacetWP_Facet_Date_Range extends FacetWP_Facet
         $min = empty( $values[0] ) ? false : $values[0];
         $max = empty( $values[1] ) ? false : $values[1];
 
-        $fields = $facet['fields'] ?? 'both';
+        $fields = isset( $facet['fields'] ) ? $facet['fields'] : 'both';
         $compare_type = empty( $facet['compare_type'] ) ? 'basic' : $facet['compare_type'];
         $is_dual = ! empty( $facet['source_other'] );
 

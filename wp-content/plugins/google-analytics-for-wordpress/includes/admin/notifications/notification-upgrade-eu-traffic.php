@@ -18,7 +18,7 @@ final class MonsterInsights_Notification_Upgrade_EU_Traffic extends MonsterInsig
     /**
      * Build Notification
      *
-     * @return array|false $notification notification is ready to add
+     * @return array $notification notification is ready to add
      *
      * @since 7.12.3
      */
@@ -28,9 +28,6 @@ final class MonsterInsights_Notification_Upgrade_EU_Traffic extends MonsterInsig
             'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE'];
 
         $report  = $this->get_report();
-		if ( ! $report || ! $report['success'] ) {
-			return false;
-		}
 
         $sessions = isset( $report['data']['infobox']['sessions']['value'] ) ? $report['data']['infobox']['sessions']['value'] : 0;
         $all_countries = isset( $report['data']['countries'] ) ? $report['data']['countries'] : [];
@@ -42,10 +39,6 @@ final class MonsterInsights_Notification_Upgrade_EU_Traffic extends MonsterInsig
                 $eu_sessions += intval($country['sessions']);
             }
         }
-
-		if ( empty( $sessions ) ) {
-			return false;
-		}
 
         $eu_sessions_percentage = $eu_sessions / $sessions * 100;
 

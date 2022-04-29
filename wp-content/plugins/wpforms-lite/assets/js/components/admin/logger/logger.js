@@ -59,7 +59,7 @@ var WPFormsLogger = window.WPFormsLogger || ( function( document, window, $ ) {
 
 			$.dialog( {
 				title: false,
-				boxWidth: Math.min( 1200, $( window ).width() * 0.8 ),
+				boxWidth: Math.min( 550, $( window ).width() ),
 				content: function() {
 
 					var self = this;
@@ -91,7 +91,6 @@ var WPFormsLogger = window.WPFormsLogger || ( function( document, window, $ ) {
 				columnClass: 'medium',
 				closeIcon: true,
 				closeAnimation: 'scale',
-				backgroundDismiss: true,
 			} );
 		},
 

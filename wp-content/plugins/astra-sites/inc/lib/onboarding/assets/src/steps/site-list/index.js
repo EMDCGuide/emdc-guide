@@ -148,7 +148,6 @@ const SiteList = () => {
 													siteSearchTerm:
 														childItem.title,
 													onMyFavorite: false,
-													siteOrder: 'popular',
 												} );
 												const urlParam = setURLParmsValue(
 													's',
@@ -178,15 +177,7 @@ const SiteList = () => {
 													type: 'set',
 													siteOrder: order.id,
 													onMyFavorite: false,
-													siteBusinessType: '',
-													selectedMegaMenu: '',
-													siteSearchTerm: '',
 												} );
-												const urlParam = setURLParmsValue(
-													's',
-													''
-												);
-												history( `?${ urlParam }` );
 											} }
 										/>
 									</div>

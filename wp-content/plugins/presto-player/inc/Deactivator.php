@@ -5,7 +5,6 @@ namespace PrestoPlayer;
 use PrestoPlayer\Database\Table;
 use PrestoPlayer\Database\Visits;
 use PrestoPlayer\Database\Presets;
-use PrestoPlayer\Database\Videos;
 use PrestoPlayer\Database\AudioPresets;
 use PrestoPlayer\Models\ReusableVideo;
 
@@ -52,17 +51,12 @@ class Deactivator
     delete_option('presto_player_presets_database_version');
     delete_option('presto_zone_token');
     delete_option('presto_player_visits_upgrade_version');
-    delete_option('presto_player_pro_update_performance');
-    delete_option('presto_player_audio_presets_database_version');
-    delete_option('presto_player_email_collection_database_version');
-    delete_option('presto_audio_preset_seed_version');
 
     // delete our tables
     $table = new Table();
     (new Visits($table))->uninstall();
     (new Presets($table))->uninstall();
     (new AudioPresets($table))->uninstall();
-    (new Videos($table))->uninstall();
 
     // delete all reusable videos
     $videos = new ReusableVideo();

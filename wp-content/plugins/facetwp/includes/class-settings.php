@@ -32,7 +32,7 @@ class FacetWP_Settings
                         ])
                     ],
                     'load_jquery' => [
-                        'label' => __( 'Load jQuery', 'fwp' ),
+                        'label' => __( 'Load jQuery?', 'fwp' ),
                         'notes' => 'FacetWP no longer requires jQuery, but enable if needed',
                         'html' => $this->get_setting_html( 'load_jquery', 'toggle', [
                             'true_value' => 'yes',
@@ -40,7 +40,7 @@ class FacetWP_Settings
                         ])
                     ],
                     'load_a11y' => [
-                        'label' => __( 'Load a11y support', 'fwp' ),
+                        'label' => __( 'Load a11y support?', 'fwp' ),
                         'notes' => 'Improved accessibility for users with disabilities',
                         'html' => $this->get_setting_html( 'load_a11y', 'toggle', [
                             'true_value' => 'yes',
@@ -210,7 +210,6 @@ class FacetWP_Settings
             'compare_type' => [
                 'type' => 'select',
                 'label' => __( 'Compare type', 'fwp' ),
-                'notes' => "<strong>Basic</strong> - the post's range is inside the user-selected range<br /><strong>Enclose</strong> - the post's range surrounds the user-selected range<br /><strong>Intersect</strong> - the post's range overlaps at any point with the the user-selected range",
                 'choices' => [
                     '' => __( 'Basic', 'fwp' ),
                     'enclose' => __( 'Enclose', 'fwp' ),
@@ -267,11 +266,11 @@ class FacetWP_Settings
      */
     function render_facet_field( $field ) {
         $name = str_replace( '_', '-', $field['name'] );
-        $type = $field['type'] ?? 'text';
-        $placeholder = $field['placeholder'] ?? '';
+        $type = isset( $field['type'] ) ? $field['type'] : 'text';
+        $placeholder = isset( $field['placeholder'] ) ? $field['placeholder'] : '';
         $show = isset( $field['show'] ) ? ' v-show="' . $field['show'] . '"' : '';
         $default = isset( $field['default'] ) ? ' value="' . $field['default'] . '"' : '';
-        $label = empty( $field['label'] ) ? '' : $field['label'];
+        $label = empty( $field['label'] ) ? '' : $field['label'] . ':';
 
         if ( isset( $field['notes'] ) ) {
             $label = '<div class="facetwp-tooltip">' . $label . '<div class="facetwp-tooltip-content">' . $field['notes'] . '</div></div>';
@@ -375,8 +374,8 @@ class FacetWP_Settings
 <?php elseif ( 'toggle' == $field_type ) : ?>
 <?php
 
-$true_value = $atts['true_value'] ?? 'yes';
-$false_value = $atts['false_value'] ?? 'no';
+$true_value = isset( $atts['true_value'] ) ? $atts['true_value'] : 'yes';
+$false_value = isset( $atts['false_value'] ) ? $atts['false_value'] : 'no';
 
 ?>
         <label class="facetwp-switch">
@@ -445,8 +444,8 @@ $false_value = $atts['false_value'] ?? 'no';
      */
     function get_i18n_strings() {
         return [
-            'Number of grid columns' => __( 'Number of grid columns', 'fwp' ),
-            'Spacing between results' => __( 'Spacing between results', 'fwp' ),
+            'Grid columns' => __( 'Grid columns', 'fwp' ),
+            'Grid gap' => __( 'Grid gap', 'fwp' ),
             'Text style' => __( 'Text style', 'fwp' ),
             'Text color' => __( 'Text color', 'fwp' ),
             'Font size' => __( 'Font size', 'fwp' ),
@@ -507,8 +506,8 @@ $false_value = $atts['false_value'] ?? 'no';
             'Custom Fields' => __( 'Custom Fields', 'fwp' ),
             'Narrow results by' => __( 'Narrow results by', 'fwp' ),
             'Hit Enter' => __( 'Hit Enter', 'fwp' ),
-            'Add query sort' => __( 'Add query sort', 'fwp' ),
-            'Add query filter' => __( 'Add query filter', 'fwp' ),
+            'Add sort' => __( 'Add sort', 'fwp' ),
+            'Add filter' => __( 'Add filter', 'fwp' ),
             'Clear' => __( 'Clear', 'fwp' ),
             'Enter term slugs' => __( 'Enter term slugs', 'fwp' ),
             'Enter values' => __( 'Enter values', 'fwp' ),

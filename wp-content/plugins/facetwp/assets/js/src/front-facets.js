@@ -379,9 +379,7 @@
     });
 
     $().on('fs:changed', function() {
-        if (! FWP.is_refresh) {
-            FWP.autoload();
-        }
+        FWP.autoload();
     });
 
     $().on('fs:closed', function() {
@@ -911,48 +909,6 @@
         if (! FWP.loaded || ! FWP.is_load_more) {
             FWP.load_more_paged = 1;
         }
-    });
-
-    /* ======== Reset ======== */
-
-    $().on('click', '.facetwp-reset', function() {
-       let values = $(this).nodes[0]._facets;
-        FWP.reset(values);
-    });
-
-    $().on('facetwp-loaded', function() {
-        if (! FWP.loaded) {
-            $('.facetwp-reset').each(function() {
-                let $this = $(this);
-                let mode = $this.attr('data-mode');
-                let values = $this.attr('data-values');
-
-                values = (null == values) ? Object.keys(FWP.facets) : values.split(',');
-
-                if ('exclude' == mode) {
-                    values = Object.keys(FWP.facets).filter(name => {
-                        return !values.includes(name);
-                    });
-                }
-
-                // ignore pseudo-facet types
-                values = values.filter(name => {
-                    return !['pager','reset','sort'].includes(FWP.facet_type[name]);
-                });
-
-                // store the target facets (array) within the DOM element
-                $this.nodes[0]._facets = values;
-            });
-        }
-
-        // hide the reset if its target facets are all empty
-        $('.facetwp-hide-empty').each(function() {
-            let $this = $(this);
-            let $wrap = $this.closest('.facetwp-facet');
-            let facets = $this.nodes[0]._facets;
-            let all_empty = facets.every(val => FWP.facets[val].length < 1);
-            all_empty ? $wrap.addClass('facetwp-hidden') : $wrap.removeClass('facetwp-hidden');
-        });
     });
 
 })(fUtil);

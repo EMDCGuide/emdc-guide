@@ -6,7 +6,6 @@ import { useStateValue } from '../../store/store';
 import './style.scss';
 import ICONS from '../../../icons';
 import { whiteLabelEnabled } from '../../utils/functions';
-import { Button } from '../../components';
 const { siteUrl } = starterTemplates;
 
 const getTotalTime = ( value ) => {
@@ -76,6 +75,8 @@ const Congrats = () => {
 	const [ {} ] = useStateValue();
 	const [ showClickToPlay, setShowClickToPlay ] = useState( true );
 
+	const link = `<a href=${ siteUrl } target="_blank">View Your Website</a>`;
+
 	const start = localStorage.getItem( 'st-import-start' );
 	const end = localStorage.getItem( 'st-import-end' );
 	const diff = end - start;
@@ -96,15 +97,20 @@ const Congrats = () => {
 		descMessage = sprintf(
 			//translators: %1$s Time taken %2$s Time Type %3$s Website Url.
 			__(
-				`Your Website is ready and it took just %1$s %2$s to build.`,
+				`Your Website is ready and it took just %1$s %2$s to build. %3$s`,
 				'astra-sites'
 			),
 			timeTaken,
-			typeOfTime
+			typeOfTime,
+			link
 		);
 		tweetMessage = `I just built my website in ${ timeTaken } ${ typeOfTime } with Starter Templates by @AstraWP. Can't believe how easy it is! 😍`;
 	} else {
-		descMessage = __( 'Your Website is up and ready!.', 'astra-sites' );
+		descMessage = sprintf(
+			//translators: Website URL.
+			__( 'Your Website is up and ready!. %1$s', 'astra-sites' ),
+			link
+		);
 		tweetMessage = `I just built my website with Starter Templates by @AstraWP in minutes. Can't believe how easy it is! 😍`;
 	}
 
@@ -128,16 +134,10 @@ const Congrats = () => {
 						{ __( 'Congratulations!', 'astra-sites' ) }
 						{ ICONS.tada }
 					</h1>
-					<p className="screen-description p-bold">{ descMessage }</p>
-					<Button
-						className="view-website-btn"
-						after
-						onClick={ () => {
-							window.open( siteUrl, '_blank' );
-						} }
-					>
-						{ __( 'View Your Website', 'astra-sites' ) }
-					</Button>
+					<p
+						className="screen-description p-bold"
+						dangerouslySetInnerHTML={ { __html: descMessage } }
+					/>
 					{ ! whiteLabelEnabled() && (
 						<>
 							<div

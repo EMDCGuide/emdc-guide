@@ -59,10 +59,7 @@ class Attachment
 
     public function getTransientKey()
     {
-        if (!function_exists('wp_get_current_user')) {
-            return '';
-        }
-        $current_user = \wp_get_current_user();
+        $current_user = wp_get_current_user();
         return 'presto-player-user-' . $current_user->ID;
     }
 
@@ -187,7 +184,6 @@ class Attachment
 
     public static function getPrivateSrc($id)
     {
-        if (!function_exists('wp_create_nonce')) return '';
         // set temporary user transient for access for 1 hour
         (new self())->setVideoTransient($id);
         if (!get_option('permalink_structure')) {
@@ -242,7 +238,7 @@ class Attachment
             /**
              * Start video stream to show the video
              */
-            $video_stream = new Streamer($video_file, $file_type['type']);
+            $video_stream = new Streamer($video_file, $file_type['type'] );
             $video_stream->start();
             exit();
         } else {

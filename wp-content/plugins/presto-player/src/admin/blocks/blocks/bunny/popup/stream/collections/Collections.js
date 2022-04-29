@@ -20,7 +20,6 @@ export default () => {
       const response = await wp.apiFetch({
         path: wp.url.addQueryArgs(`presto-player/v1/bunny/stream/collections`, {
           type,
-          items_per_page: 500,
         }),
       });
       dispatch("presto-player/bunny-popup").setCollections(response?.items);

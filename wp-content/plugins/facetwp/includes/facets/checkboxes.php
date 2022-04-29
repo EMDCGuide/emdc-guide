@@ -187,14 +187,12 @@ class FacetWP_Facet_Checkboxes extends FacetWP_Facet
         $selected = in_array( $row['facet_value'], $selected_values ) ? ' checked' : '';
         $selected .= ( '' != $row['counter'] && 0 == $row['counter'] && '' == $selected ) ? ' disabled' : '';
         $output .= '<div class="facetwp-checkbox' . $selected . '" data-value="' . esc_attr( $row['facet_value'] ) . '">';
-        $output .= '<span class="facetwp-display-value">';
         $output .= apply_filters( 'facetwp_facet_display_value', $label, [
             'selected' => ( '' !== $selected ),
             'facet' => $params['facet'],
             'row' => $row
         ]);
-        $output .= '</span>';
-        $output .= '<span class="facetwp-counter">(' . $row['counter'] . ')</span>';
+        $output .= ' <span class="facetwp-counter">(' . $row['counter'] . ')</span>';
         $output .= '</div>';
         return $output;
     }

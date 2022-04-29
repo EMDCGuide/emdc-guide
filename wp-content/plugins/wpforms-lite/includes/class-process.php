@@ -436,17 +436,15 @@ class WPForms_Process {
 		$_POST['wpforms']['entry_id'] = $this->entry_id;
 
 		// Logs entry depending on log levels set.
-		if ( wpforms()->is_pro() ) {
-			wpforms_log(
-				$this->entry_id ? "Entry {$this->entry_id}" : 'Entry',
-				$this->fields,
-				[
-					'type'    => [ 'entry' ],
-					'parent'  => $this->entry_id,
-					'form_id' => $this->form_data['id'],
-				]
-			);
-		}
+		wpforms_log(
+			$this->entry_id ? "Entry {$this->entry_id}" : 'Entry',
+			$this->fields,
+			array(
+				'type'    => array( 'entry' ),
+				'parent'  => $this->entry_id,
+				'form_id' => $this->form_data['id'],
+			)
+		);
 
 		// Post-process hooks.
 		do_action( 'wpforms_process_complete', $this->fields, $entry, $this->form_data, $this->entry_id );

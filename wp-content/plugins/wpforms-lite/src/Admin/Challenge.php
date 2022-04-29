@@ -511,6 +511,7 @@ class Challenge {
 			$this->challenge_modal_html( 'progress' );
 			$this->challenge_embed_templates_html();
 		}
+
 	}
 
 	/**
@@ -550,21 +551,10 @@ class Challenge {
 	 */
 	public function challenge_embed_templates_html() {
 
-		/**
-		 * Filter the content of the Challenge Congrats popup footer.
-		 *
-		 * @since 1.7.4
-		 *
-		 * @param string $footer Footer markup.
-		 */
-		$congrats_popup_footer = apply_filters( 'wpforms_admin_challenge_embed_template_congrats_popup_footer', '' );
-
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo wpforms_render(
+		echo wpforms_render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			'admin/challenge/embed',
 			[
-				'minutes'               => $this->minutes,
-				'congrats_popup_footer' => $congrats_popup_footer,
+				'minutes' => $this->minutes,
 			],
 			true
 		);

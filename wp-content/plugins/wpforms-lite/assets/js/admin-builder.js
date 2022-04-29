@@ -118,13 +118,6 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 			// Cache builder element.
 			$builder = $( '#wpforms-builder' );
 
-			// Action buttons.
-			elements.$helpButton         = $( '#wpforms-help' );
-			elements.$previewButton      = $( '#wpforms-preview-btn' );
-			elements.$embedButton        = $( '#wpforms-embed' );
-			elements.$saveButton         = $( '#wpforms-save' );
-			elements.$exitButton         = $( '#wpforms-exit' );
-
 			// Cache other elements.
 			elements.$fieldOptions       = $( '#wpforms-field-options' );
 			elements.$sortableFieldsWrap = $( '#wpforms-panel-fields .wpforms-field-wrap' );
@@ -136,8 +129,8 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 
 			// Remove Embed button if builder opened in popup.
 			if ( app.isBuilderInPopup() ) {
-				elements.$embedButton.remove();
-				elements.$previewButton.addClass( 'wpforms-alone' );
+				$( '#wpforms-embed' ).remove();
+				$( '#wpforms-preview-btn' ).addClass( 'wpforms-alone' );
 			}
 
 			app.loadMsWinCSS();
@@ -2691,7 +2684,7 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 		 */
 		loadEntryPreviewFields: function() {
 
-			var $fields = $( '#wpforms-panel-fields .wpforms-field-wrap .wpforms-field-entry-preview' );
+			var $fields = $( '.wpforms-field-wrap .wpforms-field-entry-preview' );
 
 			if ( ! $fields.length ) {
 				return;
@@ -2847,7 +2840,7 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 				return;
 			}
 
-			var $fields = $( '#wpforms-panel-fields .wpforms-field-wrap .wpforms-field' ),
+			var $fields = $( '.wpforms-field-wrap .wpforms-field' ),
 				position = options && options.position ? options.position : $fields.length,
 				needPageBreakBefore = app.isEntryPreviewFieldRequiresPageBreakBefore( $fields, position ),
 				needPageBreakAfter = app.isEntryPreviewFieldRequiresPageBreakAfter( $fields, position );
@@ -2890,7 +2883,7 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 
 			var checkExist = setInterval( function() {
 
-				if ( $( '#wpforms-panel-fields .wpforms-field-wrap' ).find( '.wpforms-pagebreak-bottom, .wpforms-pagebreak-top' ).length === 2 ) {
+				if ( $( '.wpforms-field-wrap .wpforms-pagebreak-bottom, .wpforms-field-wrap .wpforms-pagebreak-top' ).length === 2 ) {
 					app.fieldAdd( 'entry-preview', options ).done( function( res ) {
 
 						app.lockEntryPreviewFieldsPosition( res.data.field.id );
@@ -2910,7 +2903,7 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 		 */
 		addPageBreakAndEntryPreviewFields: function( options, position ) {
 
-			var hasPageBreak = $( '#wpforms-panel-fields .wpforms-field-wrap .wpforms-field-pagebreak' ).length >= 3;
+			var hasPageBreak = $( '.wpforms-field-wrap .wpforms-field-pagebreak' ).length >= 3;
 
 			app.fieldAdd( 'pagebreak', { 'position': position } ).done( function( res ) {
 
@@ -3233,7 +3226,6 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 
 			adding = true;
 			app.disableDragAndDrop();
-			app.disableFormActions();
 
 			if ( app.isUncheckedEntryPreviewField( type, options ) ) {
 				app.addEntryPreviewField( type, options );
@@ -3363,7 +3355,6 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 
 				if ( ! adding ) {
 					app.enableDragAndDrop();
-					app.enableFormActions();
 				}
 			} );
 		},
@@ -3462,46 +3453,6 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 
 			elements.$addFieldsButtons.filter( '.ui-draggable' ).draggable( 'enable' );
 			elements.$sortableFieldsWrap.filter( '.ui-sortable' ).sortable( 'enable' );
-		},
-
-		/**
-		 * Disable Preview, Embed, Save form actions and Form Builder exit button.
-		 *
-		 * @since 1.7.4
-		 */
-		disableFormActions: function() {
-
-			$.each(
-				[
-					elements.$previewButton,
-					elements.$embedButton,
-					elements.$saveButton,
-					elements.$exitButton,
-				],
-				function( _index, button ) {
-					button.prop( 'disabled', true ).addClass( 'wpforms-disabled' );
-				}
-			);
-		},
-
-		/**
-		 * Enable Preview, Embed, Save form actions and Form Builder exit button.
-		 *
-		 * @since 1.7.4
-		 */
-		enableFormActions: function() {
-
-			$.each(
-				[
-					elements.$previewButton,
-					elements.$embedButton,
-					elements.$saveButton,
-					elements.$exitButton,
-				],
-				function( _index, button ) {
-					button.prop( 'disabled', false ).removeClass( 'wpforms-disabled' );
-				}
-			);
 		},
 
 		/**
@@ -5833,7 +5784,7 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 		 */
 		formSave: function( redirect ) {
 
-			var $saveBtn = elements.$saveButton,
+			var $saveBtn = $( '#wpforms-save' ),
 				$icon    = $saveBtn.find( 'i.fa-check' ),
 				$spinner = $saveBtn.find( 'i.wpforms-loading-spinner' ),
 				$label   = $saveBtn.find( 'span' ),
@@ -5851,7 +5802,6 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 			}
 
 			$label.text( wpforms_builder.saving );
-			$saveBtn.prop( 'disabled', true );
 			$icon.addClass( 'wpforms-hidden' );
 			$spinner.removeClass( 'wpforms-hidden' );
 
@@ -5889,7 +5839,6 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 			} ).always( function() {
 
 				$label.text( text );
-				$saveBtn.prop( 'disabled', false );
 				$spinner.addClass( 'wpforms-hidden' );
 				$icon.removeClass( 'wpforms-hidden' );
 			} );
@@ -6615,17 +6564,9 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 				}
 			}
 
-			if ( editor && ! editor.isHidden() ) {
-				editor.insertContent( smartTag );
-			} else {
-				smartTag = ' ' + smartTag + ' ';
-
+			editor && ! editor.isHidden() ?
+				editor.insertContent( smartTag ) :
 				$input.insertAtCaret( smartTag );
-
-				// Remove redundant spaces after wrapping smartTag into spaces.
-				$input.val( $input.val().trim().replace( '  ', ' ' ) );
-				$input.focus();
-			}
 
 			// remove list, all done!
 			$list.slideUp( '', function() {
@@ -6858,7 +6799,7 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 
 				switch ( e.keyCode ) {
 					case 72: // Open Help screen on Ctrl+H.
-						$( elements.$helpButton, $builder ).click();
+						$( '#wpforms-help', $builder ).click();
 						break;
 
 					case 80: // Open Form Preview tab on Ctrl+P.
@@ -6866,7 +6807,7 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 						break;
 
 					case 66: // Trigger the Embed modal on Ctrl+B.
-						$( elements.$embedButton, $builder ).click();
+						$( '#wpforms-embed', $builder ).click();
 						break;
 
 					case 69: // Open Entries tab on Ctrl+E.
@@ -6874,11 +6815,11 @@ var WPFormsBuilder = window.WPFormsBuilder || ( function( document, window, $ ) 
 						break;
 
 					case 83: // Trigger the Builder save on Ctrl+S.
-						$( elements.$saveButton, $builder ).click();
+						$( '#wpforms-save', $builder ).click();
 						break;
 
 					case 81: // Trigger the Exit on Ctrl+Q.
-						$( elements.$exitButton, $builder ).click();
+						$( '#wpforms-exit', $builder ).click();
 						break;
 
 					case 191: // Keyboard shortcuts modal on Ctrl+/.

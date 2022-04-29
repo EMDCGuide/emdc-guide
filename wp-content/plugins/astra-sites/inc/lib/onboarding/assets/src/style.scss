@@ -103,8 +103,7 @@ a {
 	height: calc( 100vh - 60px );
 	position: absolute;
 	inset: 0;
-	transition: transform 350ms linear;
-	transform: translateX(0);
+	transition: all 350ms linear;
 	box-shadow: 1px 0px 3px rgb(0 0 0 / 10%), 1px 0px 2px rgb(0 0 0 / 6%);
 	z-index: 9;
 }
@@ -510,7 +509,7 @@ body.step-import-site:not( .st-error ) .step-header a {
 .middle-content {
     margin: 0;
     position: absolute;
-    top: 50%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
 	&.middle-content-import {
@@ -663,7 +662,8 @@ body.step-import-site:not( .st-error ) .step-header a {
 		}
 		.hide-sidebar {
 			.step-col-left {
-				transform: translateX(-100%);
+				margin-left: calc(var(--sidebar-width) * -1);
+				transition: margin-left 350ms linear;
 			}
 			.step-col-right {
 				margin-left: 0%;

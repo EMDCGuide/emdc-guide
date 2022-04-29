@@ -603,7 +603,7 @@ WPFormsChallenge.core = window.WPFormsChallenge.core || ( function( document, wi
 
 			step = step || app.loadStep();
 
-			el.$listSteps.find( 'li:lt(' + step + ')' ).addClass( 'wpforms-challenge-item-completed' ).removeClass( 'wpforms-challenge-item-current' );
+			el.$listSteps.find( 'li:lt(' + step + ')' ).addClass( 'wpforms-challenge-item-completed' );
 			el.$listSteps.find( 'li:eq(' + step + ')' ).addClass( 'wpforms-challenge-item-current' );
 			el.$progressBar.find( 'div' ).css( 'width', ( step * 20 ) + '%' );
 		},
@@ -677,8 +677,6 @@ WPFormsChallenge.core = window.WPFormsChallenge.core || ( function( document, wi
 		 * @since 1.6.2
 		 *
 		 * @param {object} e Event object.
-		 *
-		 * @returns {Function|void} Return pause challenge function or void.
 		 */
 		resumeChallenge: function( e ) {
 
@@ -695,7 +693,7 @@ WPFormsChallenge.core = window.WPFormsChallenge.core || ( function( document, wi
 
 			vars.resumeEvent = e.type;
 
-			return app.pauseResumeChallenge( 'resume' );
+			app.pauseResumeChallenge( 'resume' );
 		},
 
 		/**
@@ -704,8 +702,6 @@ WPFormsChallenge.core = window.WPFormsChallenge.core || ( function( document, wi
 		 * @since 1.6.2
 		 *
 		 * @param {string} action Action to perform. `pause` or `resume`.
-		 *
-		 * @returns {Function} Save challenge option.
 		 */
 		pauseResumeChallenge: function( action ) {
 
@@ -719,9 +715,9 @@ WPFormsChallenge.core = window.WPFormsChallenge.core || ( function( document, wi
 				seconds_left : app.timer.getSecondsLeft(),
 			};
 
-			app.initListUI( optionData.status );
+			WPFormsChallenge.admin.saveChallengeOption( optionData );
 
-			return WPFormsChallenge.admin.saveChallengeOption( optionData );
+			app.initListUI( optionData.status );
 		},
 
 		/**

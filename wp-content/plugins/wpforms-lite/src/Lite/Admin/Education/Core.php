@@ -39,15 +39,5 @@ class Core extends \WPForms\Admin\Education\Core {
 			WPFORMS_VERSION,
 			false
 		);
-
-		// Builder Education styles.
-		if ( wpforms_is_admin_page( 'builder' ) ) {
-			wp_enqueue_style(
-				'wpforms-lite-admin-education-builder',
-				WPFORMS_PLUGIN_URL . "lite/assets/css/builder-education{$min}.css",
-				[],
-				WPFORMS_VERSION
-			);
-		}
 	}
 }

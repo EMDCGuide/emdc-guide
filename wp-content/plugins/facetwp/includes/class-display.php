@@ -69,32 +69,17 @@ class FacetWP_Display
             $template = FWP()->helper->get_template_by_name( $atts['template'] );
 
             if ( $template ) {
-                $class_name = 'facetwp-template';
+                global $wp_query;
 
-                // Static template
-                if ( isset( $atts['static'] ) ) {
-                    $renderer = new FacetWP_Renderer();
-                    $renderer->template = $template;
-                    $renderer->query_args = $renderer->get_query_args();
-                    $renderer->query = new WP_Query( $renderer->query_args );
-                    $html = $renderer->get_template_html();
-                    $class_name .= '-static';
-                }
-                // Preload template (search engine visible)
-                else {
-                    global $wp_query;
+                // Preload the template (search engine visible)
+                $temp_query = $wp_query;
+                $args = FWP()->request->process_preload_data( $template['name'] );
+                $preload_data = FWP()->facet->render( $args );
+                $wp_query = $temp_query;
 
-                    $temp_query = $wp_query;
-                    $args = FWP()->request->process_preload_data( $template['name'] );
-                    $preload_data = FWP()->facet->render( $args );
-                    $html = $preload_data['template'];
-                    $wp_query = $temp_query;
-                }
-
-                $output = '<div class="{class}" data-name="{name}">{html}</div>';
-                $output = str_replace( '{class}', $class_name, $output );
-                $output = str_replace( '{name}', $atts['template'], $output );
-                $output = str_replace( '{html}', $html, $output );
+                $output = '<div class="facetwp-template" data-name="' . $atts['template'] . '">';
+                $output .= $preload_data['template'];
+                $output .= '</div>';
 
                 $this->load_assets = true;
             }

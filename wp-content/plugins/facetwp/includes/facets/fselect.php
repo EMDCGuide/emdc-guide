@@ -4,7 +4,7 @@ class FacetWP_Facet_fSelect extends FacetWP_Facet
 {
 
     function __construct() {
-        $this->label = __( 'fSelect', 'fwp' );
+        $this->label = __( 'Dropdown (fSelect)', 'fwp' );
         $this->fields = [ 'label_any', 'parent_term', 'modifiers', 'hierarchical', 'multiple',
             'ghosts', 'operator', 'orderby', 'count' ];
     }
@@ -27,9 +27,8 @@ class FacetWP_Facet_fSelect extends FacetWP_Facet
         $facet = $params['facet'];
         $values = (array) $params['values'];
         $selected_values = (array) $params['selected_values'];
-        $is_hierarchical = FWP()->helper->facet_is( $facet, 'hierarchical', 'yes' );
 
-        if ( $is_hierarchical ) {
+        if ( FWP()->helper->facet_is( $facet, 'hierarchical', 'yes' ) ) {
             $values = FWP()->helper->sort_taxonomy_values( $params['values'], $facet['orderby'] );
         }
 
@@ -47,10 +46,9 @@ class FacetWP_Facet_fSelect extends FacetWP_Facet
             // Determine whether to show counts
             $display_value = esc_html( $result['facet_display_value'] );
             $show_counts = apply_filters( 'facetwp_facet_dropdown_show_counts', true, [ 'facet' => $facet ] );
-            $counter = $show_counts ? $result['counter'] : '';
-            $depth = $is_hierarchical ? $result['depth'] : 0;
+            $counter = ( $show_counts ) ? $result['counter'] : '';
 
-            $output .= '<option value="' . esc_attr( $result['facet_value'] ) . '" data-counter="' . $counter . '" class="d' . $depth . '"' . $selected . '>' . $display_value . '</option>';
+            $output .= '<option value="' . esc_attr( $result['facet_value'] ) . '" data-counter="' . $counter . '" class="d' . $result['depth'] . '"' . $selected . '>' . $display_value . '</option>';
         }
 
         $output .= '</select>';

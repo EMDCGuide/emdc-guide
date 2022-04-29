@@ -81,7 +81,10 @@ class Geolocation extends AddonsItemBase {
 		if (
 			empty( $addon ) ||
 			empty( $addon['status'] ) ||
-			empty( $addon['action'] )
+			empty( $addon['action'] ) || (
+				$addon['status'] === 'active' &&
+				$addon['action'] !== 'upgrade'
+			)
 		) {
 			return $settings;
 		}

@@ -57,16 +57,19 @@
 
                     return settings;
                 },
+                cloneObj(obj) {
+                    return JSON.parse(JSON.stringify(obj));
+                },
                 getSettingsMeta() {
                     let settings = {
                         num_columns: {
                             type: 'number',
-                            title: FWP.__('Number of grid columns '),
+                            title: FWP.__('Grid columns '),
                             defaultValue: 1
                         },
                         grid_gap: {
                             type: 'number',
-                            title: FWP.__('Spacing between results'),
+                            title: FWP.__('Grid gap'),
                             defaultValue: 10
                         },
                         text_style: {
@@ -298,11 +301,11 @@
                         }
                     };
 
-                    settings.button_border = this.$root.cloneObj(settings.border);
+                    settings.button_border = this.cloneObj(settings.border);
                     settings.button_border.title = FWP.__('Button border');
-                    settings.button_border.tab = 'basic';
+                    settings.button_border.tab = 'content';
 
-                    settings.term_link = this.$root.cloneObj(settings.link);
+                    settings.term_link = this.cloneObj(settings.link);
                     settings.term_link.children.type.choices = {
                         'none': FWP.__('None'),
                         'term': FWP.__('Term URL'),
@@ -402,7 +405,9 @@
             },
             template: `
             <div class="qb-wrap">
-                <h3>Which results should be in the listing?</h3>
+                <div class="side-link">
+                    <a href="javascript:;" @click="$root.getQueryArgs(template)">{{ 'Convert to query args' | i18n }}</a>
+                </div>
 
                 <div class="qb-condition">
                     {{ 'Fetch' | i18n }}
@@ -500,10 +505,9 @@
                     <span @click="deleteFilterCriteria(index)" class="qb-remove" v-html="FWP.svg['minus-circle']"></span>
                 </div>
 
-                <div class="qb-actions">
-                    <span class="facetwp-btn" @click="addSortCriteria">{{ 'Add query sort' | i18n }}</span>
-                    <span class="facetwp-btn" @click="addFilterCriteria">{{ 'Add query filter' | i18n }}</span>
-                    <span class="facetwp-btn" @click="$root.getQueryArgs(template)">{{ 'Convert to query args' | i18n }}</span>
+                <div>
+                    <button class="button" @click="addSortCriteria">{{ 'Add sort' | i18n }}</button>
+                    <button class="button" @click="addFilterCriteria">{{ 'Add filter' | i18n }}</button>
                 </div>
             </div>
             `,
@@ -600,7 +604,6 @@
             template: `
             <div class="builder-wrap">
                 <div class="builder-canvas-wrap">
-                    <h3>How should an individual result appear?</h3>
                     <div class="builder-canvas">
                         <draggable :list="layout.items" handle=".builder-row-actions.not-child">
                             <builder-row
@@ -611,6 +614,10 @@
                                 :key="index">
                             </builder-row>
                         </draggable>
+                    </div>
+                    <div class="builder-intro">
+                        In the above canvas, build the layout for an individual result.<br><br>
+                        Then in <strong>Layout</strong>, choose the number of grid columns.
                     </div>
                 </div>
                 <builder-settings :layout="layout"></builder-settings>
@@ -623,7 +630,7 @@
             props: ['settings', 'name', 'source', 'tab'],
             template: `
             <div class="builder-setting" v-show="isVisible">
-                <div class="setting-title" v-html="title"></div>
+                <div v-html="title"></div>
                 <component :is="getSettingComponent" v-bind="$props" :meta="meta"></component>
             </div>
             `,
@@ -636,7 +643,7 @@
                     let self = this;
 
                     if ('undefined' === typeof this.meta.tab) {
-                        this.meta.tab = 'basic';
+                        this.meta.tab = 'content';
                     }
 
                     if (this.meta.tab !== this.tab) {
@@ -873,20 +880,20 @@
                     type: 'layout',
                     settings: this.layout.settings,
                     source: '',
-                    active_tab: 'basic'
+                    active_tab: 'content'
                 }
             },
             template: `
             <div class="builder-settings-wrap">
                 <h3>
                     <div v-show="this.title" class="builder-crumb">
-                        <a href="javascript:;" @click="$root.$emit('edit-layout')">{{ 'Settings' | i18n }}</a> &raquo;
+                        <a href="javascript:;" @click="$root.$emit('edit-layout')">{{ 'Layout' | i18n }}</a> &raquo;
                     </div>
                     {{ settingTitle }}
                 </h3>
                 <div class="builder-settings">
                     <div class="template-tabs">
-                        <span @click="setActiveTab('basic')" :class="isActiveTab('basic')">{{ 'Basic' | i18n }}</span>
+                        <span @click="setActiveTab('content')" :class="isActiveTab('content')">{{ 'Content' | i18n }}</span>
                         <span @click="setActiveTab('style')" :class="isActiveTab('style')">{{ 'Style' | i18n }}</span>
                     </div>
                     <setting-wrap
@@ -902,7 +909,7 @@
             `,
             computed: {
                 settingTitle() {
-                    return ('' === this.title) ? FWP.__('Settings') : this.title;
+                    return ('' === this.title) ? FWP.__('Layout') : this.title;
                 },
                 settingsFields() {
                     return this.getDefaultFields(this.type, this.source);
@@ -1272,19 +1279,10 @@
                         <span class="label-text" :title="facet.name">{{ facet.label }}</span>
                         <span v-if="facet._code" v-html="FWP.svg['lock']"></span>
                     </div>
+                    <div class="card-delete" @click.stop="$root.deleteItem('facet', index)"></div>
                     <div class="card-type">{{ facet.type }}</div>
                     <div class="card-source" v-html="getSource(facet.source)"></div>
                     <div class="card-rows">{{ getRowCount(facet.name) }}</div>
-                    <div class="card-actions">
-                        <div class="actions-wrap">
-                            <div class="actions-btn" v-html="FWP.svg['cog']"></div>
-                            <div class="actions-modal">
-                                <div @click.stop="$root.copyToClipboard(facet.name, 'facet', $event)">Copy shortcode</div>
-                                <div @click.stop="$root.duplicateItem('facet', index)">Duplicate</div>
-                                <div @click.stop="$root.deleteItem('facet', index)">Delete</div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </draggable>
             `,
@@ -1315,18 +1313,9 @@
                         <span class="label-text" :title="template.name">{{ template.label }}</span>
                         <span v-if="template._code" v-html="FWP.svg['lock']"></span>
                     </div>
+                    <div class="card-delete" @click.stop="$root.deleteItem('template', index)"></div>
                     <div class="card-display-mode">{{ getDisplayMode(index) }}</div>
                     <div class="card-post-types">{{ getPostTypes(index) }}</div>
-                    <div class="card-actions">
-                        <div class="actions-wrap">
-                            <div class="actions-btn" v-html="FWP.svg['cog']"></div>
-                            <div class="actions-modal">
-                                <div @click.stop="$root.copyToClipboard(template.name, 'template', $event)">Copy shortcode</div>
-                                <div @click.stop="$root.duplicateItem('template', index)">Duplicate</div>
-                                <div @click.stop="$root.deleteItem('template', index)">Delete</div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </draggable>
             `,
@@ -1378,7 +1367,7 @@
                 </div>
                 <div class="facetwp-content" :class="[ 'type-' + facet.type, { locked: facet._code } ]">
                     <div class="facetwp-row">
-                        <div>{{ 'Label' | i18n }}</div>
+                        <div>{{ 'Label' | i18n }}:</div>
                         <div>
                             <input
                                 type="text"
@@ -1393,7 +1382,7 @@
                         </div>
                     </div>
                     <div class="facetwp-row">
-                        <div>{{ 'Facet type' | i18n }}</div>
+                        <div>{{ 'Facet type' | i18n }}:</div>
                         <div>
                             <facet-types
                                 :facet="facet"
@@ -1403,11 +1392,12 @@
                         </div>
                     </div>
                     <div class="facetwp-row field-data-source">
-                        <div>{{ 'Data source' | i18n }}</div>
+                        <div>{{ 'Data source' | i18n }}:</div>
                         <div>
                             <data-sources :facet="facet"></data-sources>
                         </div>
                     </div>
+                    <hr />
                     <facet-settings :facet="facet"></facet-settings>
                 </div>
             </div>
@@ -1483,9 +1473,8 @@
                         </span>
                     </div>
 
-                    <label class="facetwp-dev-mode">
-                        <input type="checkbox" :checked="isMode('advanced')" @change="switchMode()"> Dev mode?
-                    </label>
+                    <div @click="switchMode()" v-show="isMode('visual')" class="side-link">{{ 'Switch to advanced mode' | i18n }}</div>
+                    <div @click="switchMode()" v-show="isMode('advanced')" class="side-link">{{ 'Switch to visual mode' | i18n }}</div>
 
                     <div class="template-tabs top-level">
                         <span @click="tab = 'display'" :class="{ active: tab == 'display' }">{{ 'Display' | i18n }}</span>
@@ -1497,7 +1486,10 @@
                             <builder :layout="template.layout"></builder>
                         </div>
                         <div class="table-row" v-show="template.modes.display == 'advanced'">
-                            <h3>{{ 'Display Code' | i18n }} <a class="facetwp-btn" href="https://facetwp.com/help-center/listing-templates/advanced-listing-builder/#display-code" target="_blank">{{ 'Help' | i18n }}</a></h3>
+                            <div class="side-link">
+                                <a href="https://facetwp.com/help-center/templates/advanced-mode/" target="_blank">{{ 'Help' | i18n }}</a>
+                            </div>
+                            <div class="row-label">{{ 'Display Code' | i18n }}</div>
                             <textarea v-model="template.template"></textarea>
                         </div>
                     </div>
@@ -1507,7 +1499,10 @@
                             <query-builder :query_obj="template.query_obj" :template="template"></query-builder>
                         </div>
                         <div class="table-row" v-show="template.modes.query == 'advanced'">
-                            <h3>{{ 'Query Arguments' | i18n }} <a class="facetwp-btn" href="https://facetwp.com/help-center/listing-templates/advanced-listing-builder/#query-arguments" target="_blank">{{ 'Help' | i18n }}</a></h3>
+                            <div class="side-link">
+                                <a href="https://facetwp.com/help-center/templates/advanced-mode/" target="_blank">{{ 'Help' | i18n }}</a>
+                            </div>
+                            <div class="row-label">{{ 'Query Arguments' | i18n }}</div>
                             <textarea v-model="template.query"></textarea>
                         </div>
                     </div>
@@ -1638,7 +1633,7 @@
             },
             watch: {
                 'facet.type': function(val) {
-                    if ('search' == val || 'pager' == val || 'reset' == val || 'sort' == val) {
+                    if ('search' == val || 'pager' == val || 'sort' == val) {
                         Vue.delete(this.facet, 'source');
                     }
                 }
@@ -1668,38 +1663,6 @@
             },
             mounted() {
                 fSelect(this.$el);
-            }
-        });
-
-        Vue.component('facet-names', {
-            props: {
-                facet: Object,
-                setting: String
-            },
-            template: `
-            <select :class="className" v-model="facet[setting]" multiple>
-                <template v-for="(f) in FWP.data.facets">
-                    <option :value="f.name" :class="bindSelectedClass(f.name)">{{ f.label }}</option>
-                </template>
-            </select>
-            `,
-            computed: {
-                className() {
-                    return 'facet-' + this.setting.replace(/_/g, '-');
-                }
-            },
-            methods: {
-                bindSelectedClass(name) {
-                    return this.facet[this.setting].includes(name) ? 'selected' : '';
-                }
-            },
-            created() {
-                if ('undefined' === typeof this.facet[this.setting]) {
-                    this.facet[this.setting] = [];
-                }
-            },
-            mounted() {
-                fSelect(this.$el, { 'placeholder': 'Choose facets' });
             }
         });
 
@@ -1771,7 +1734,7 @@
                 </div>
 
                 <div>
-                    <span class="facetwp-btn" @click="addSort">{{ 'Add sort' | i18n }}</span>
+                    <button class="button" @click="addSort">{{ 'Add sort' | i18n }}</button>
                 </div>
             </div>
             `,
@@ -1826,31 +1789,23 @@
             methods: {
                 addItem(type) {
                     if ('facet' == type) {
-                        let len = this.app.facets.push({
+                        var index = this.app.facets.push({
                             'name': 'new_facet',
                             'label': 'New Facet',
                             'type': 'checkboxes',
                             'source': 'post_type'
                         });
-                        this.editItem('facet', this.app.facets[len-1]);
+                        this.editItem('facet', this.app.facets[index-1]);
                     }
                     else {
-                        let len = this.app.templates.push({
+                        var index = this.app.templates.push({
                             'name': 'new_template',
                             'label': 'New Template',
                             'query': '',
                             'template': ''
                         });
-                        this.editItem('template', this.app.templates[len-1]);
+                        this.editItem('template', this.app.templates[index-1]);
                     }
-                },
-                duplicateItem(type, index) {
-                    let facet = this.cloneObj(this.app[type + 's'][index]);
-                    facet.label += ' (copy)';
-                    facet.name += '_copy';
-
-                    this.app[type + 's'].splice(index+1, 0, facet)
-                    this.editItem(type, facet);
                 },
                 editItem(type, data) {
                     this['editing_' + type] = true;
@@ -2074,9 +2029,6 @@
                     if (! el.classList.contains('btn-caret')) {
                         this.is_rebuild_open = false;
                     }
-                },
-                cloneObj(obj) {
-                    return JSON.parse(JSON.stringify(obj));
                 }
             },
             computed: {

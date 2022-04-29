@@ -63,10 +63,6 @@
     float: right;
 }
 
-.facetwp-display-value {
-    padding-right: 5px;
-}
-
 /* Radio */
 
 .facetwp-radio {
@@ -315,7 +311,7 @@
 }
 
 @media (max-width: 480px) {
-    body .fwpl-layout {
+    .fwpl-layout {
         grid-template-columns: 1fr;
     }
 }
