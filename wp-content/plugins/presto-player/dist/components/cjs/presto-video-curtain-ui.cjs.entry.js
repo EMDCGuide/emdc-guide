@@ -2,7 +2,7 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-const index = require('./index-5011582e.js');
+const index = require('./index-f177ee59.js');
 
 const prestoVideoCurtainUiCss = ":host{font-size:16px}.curtain{position:relative;font-family:var(--presto-curtain-font-family, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\");background-color:var(--presto-curtain-background-color, #000);text-align:var(--presto-curtain-text-align, center);color:var(--presto-curtain-text-color, #fff);padding-bottom:var(--presto-curtain-size, 56.25%);font-size:var(--presto-curtain-font-size, 1.5em)}::slotted(:not(:first-child)){margin-top:14px}.content{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;flex-direction:column;padding:48px}";
 

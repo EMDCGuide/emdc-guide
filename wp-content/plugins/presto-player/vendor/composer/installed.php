@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '06dbce32f24e4ccdc7be624e055fd33e6aef9fa5',
+        'reference' => '8a73b9e840eeede4c7dffa0ee313d1214e44db28',
         'name' => 'course/player',
         'dev' => false,
     ),
@@ -20,12 +20,12 @@
             'dev_requirement' => false,
         ),
         'composer/installers' => array(
-            'pretty_version' => 'v2.0.1',
-            'version' => '2.0.1.0',
+            'pretty_version' => 'v2.1.1',
+            'version' => '2.1.1.0',
             'type' => 'composer-plugin',
             'install_path' => __DIR__ . '/./installers',
             'aliases' => array(),
-            'reference' => 'a241e78aaeb09781f5f5b92ac01ffd13ab43e5e8',
+            'reference' => 'af93ba6e52236418f07a278033eba6959ee5b983',
             'dev_requirement' => false,
         ),
         'course/player' => array(
@@ -34,7 +34,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '06dbce32f24e4ccdc7be624e055fd33e6aef9fa5',
+            'reference' => '8a73b9e840eeede4c7dffa0ee313d1214e44db28',
             'dev_requirement' => false,
         ),
         'level-2/dice' => array(

@@ -4,7 +4,7 @@ Donate link: http://www.wpbeginner.com/wpbeginner-needs-your-help/
 Tags: WordPress analytics, google analytics, google analytics dashboard, google analytics widget, WooCommerce stats, analytics dashboard, universal google analytics, statistics, tracking, stats, google, google analytics by yoast, ga, monster insights, monsterinsights, universal analytics, web stats, ecommerce, ecommerce tracking
 Requires at least: 4.8.0
 Tested up to: 5.9
-Stable tag: 8.4.0
+Stable tag: 8.5.0
 Requires PHP: 5.5
 License: GPL v3
 
@@ -43,7 +43,7 @@ With MonsterInsights, we made it "effortless" to properly setup Google Analytics
 
 If you can point-and-click, then you can set up Google Analytics inside WordPress and start seeing insights in under 15 minutes (no code necessary).
 
-We keep up with all Google Analytics updates, so you can sleep well at night knowing that your website will always stay up to date with the newest features.
+We keep up with all Google Analytics updates, including the new Google Analytics 4, so you can sleep well at night knowing that your website will always stay up to date with the newest features.
 
 See what one business owner is saying about MonsterInsights:
 
@@ -101,6 +101,10 @@ For those who want to go beyond our WooCommerce stats dashboard, you can easily 
 Aside from WooCommerce Google Analytics integration, MonsterInsights' eCommerce addon also offers seamless integration for the Easy Digital Downloads plugin.
 
 Our Easy Digital Downloads Google Analytics integration allows you to set up Enhanced Ecommerce Tracking on your store with just 1-click.
+
+Our eCommerce tracking works with other popular ecommerce plugins such as MemberPress, GiveWP, LifterLMS, Restrict Content Pro, and more.
+
+Each integration works automatically with Google Analytics Universal (GA3) and Google Analytics 4 (GA4), so that your site can be prepared for future changes.
 
 Simply put, MonsterInsights' Enhanced Ecommerce for WordPress feature is by far the easiest and most powerful in the market.
 
@@ -292,6 +296,12 @@ You can also learn about other <a href="http://www.wpbeginner.com/category/plugi
 4. Want more features? <a href="https://www.monsterinsights.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion">Purchase MonsterInsights Pro</a>!
 
 == Changelog ==
+= 8.5.0: March 31, 2022 =
+- Tweak: We enhanced and optimized the backend styles.
+- Fixed: We fixed a few PHP warnings when no add-ons are installed.
+- Fixed: We optimized the filters to add dynamic attributes in all frontend script tags.
+
+
 = 8.4.0: February 28, 2022 =
 - Fixed: We fixed the plugin requirements for Forms Addons version 2.2.1+
 - Fixed: We optimized the popular posts widgets display in edit screens
@@ -403,7 +413,7 @@ Google Analytics is the #1 analytics solution in the world. It comes with all th
 
 = Why choose Google Analytics by MonsterInsights vs Google Site Kit? =
 
-The MonsterInsights Google Analytics plugin is built for all types of websites, large or small, to get up and running quickly with Google Analytics.
+The MonsterInsights Google Analytics plugin is built for all types of websites, large or small, to get up and running quickly with Google Analytics and Google Analytics 4.
 
 Beyond simply providing a Google Analytics dashboard, our plugin makes configuring advanced features as easy as point-and-click that would otherwise still require a developer to implement.
 
