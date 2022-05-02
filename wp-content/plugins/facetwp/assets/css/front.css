@@ -315,7 +315,8 @@
 }
 
 @media (max-width: 480px) {
-    body .fwpl-layout {
+    body .facetwp-template .fwpl-layout,
+    body .facetwp-template-static .fwpl-layout {
         grid-template-columns: 1fr;
     }
 }

@@ -36,8 +36,8 @@
                 $el.attr('tabindex', 0);
             });
 
-            // dropdown, sort facet
-            $('.facetwp-type-dropdown select, .facetwp-type-sort select').each(function() {
+            // dropdown, sort facet, old sort feature
+            $('.facetwp-type-dropdown select, .facetwp-type-sort select, .facetwp-sort-select select').each(function() {
                 $(this).attr('aria-label', $(this).find('option:selected').text());
             });
 

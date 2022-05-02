@@ -36,8 +36,8 @@ class FacetWP_Facet_Pager extends FacetWP_Facet
         $next_label = facetwp_i18n( $facet['next_label'] );
 
         $output = '';
-        $page = $this->pager_args['page'];
-        $total_pages = $this->pager_args['total_pages'];
+        $page = (int) $this->pager_args['page'];
+        $total_pages = (int) $this->pager_args['total_pages'];
         $inner_first = max( $page - $inner_size, 2 );
         $inner_last = min( $page + $inner_size, $total_pages - 1 );
 
@@ -110,6 +110,10 @@ class FacetWP_Facet_Pager extends FacetWP_Facet
         $per_page = $this->pager_args['per_page'];
         $total_rows = $this->pager_args['total_rows'];
         $total_pages = $this->pager_args['total_pages'];
+
+        if ( -1 == $per_page ) {
+            $per_page = $total_rows;
+        }
 
         if ( 1 < $total_rows ) {
             $lower = ( 1 + ( ( $page - 1 ) * $per_page ) );

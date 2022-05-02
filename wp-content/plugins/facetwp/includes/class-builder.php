@@ -35,12 +35,16 @@ class FacetWP_Builder
         $settings = $layout['settings'];
         $this->custom_css = $settings['custom_css'];
 
-        $this->css['.fwpl-layout.' . $settings['name'] ] = [
-            'grid-template-columns' => trim( str_repeat( '1fr ', $settings['num_columns'] ) ),
-            'grid-gap' => $settings['grid_gap'] . 'px'
-        ];
+        $selector = '.fwpl-layout';
+        $selector .= empty( $settings['name'] ) ? '' : '.' . $settings['name'];
 
-        $this->css['.fwpl-result'] = $this->build_styles( $settings );
+        $this->css = [
+            $selector => [
+                'grid-template-columns' => 'repeat(' . $settings['num_columns'] . ', 1fr)',
+                'grid-gap' => $settings['grid_gap'] . 'px'
+            ],
+            $selector . ' .fwpl-result' => $this->build_styles( $settings )
+        ];
 
         $classes = $this->get_classes( 'fwpl-layout', $settings );
 

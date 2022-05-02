@@ -1269,9 +1269,10 @@
                 >
                     <div class="card-drag">&#9776;</div>
                     <div class="card-label">
-                        <span class="label-text" :title="facet.name">{{ facet.label }}</span>
+                        <span class="label-text">{{ facet.label }}</span>
                         <span v-if="facet._code" v-html="FWP.svg['lock']"></span>
                     </div>
+                    <div class="card-name">{{ facet.name }}</div>
                     <div class="card-type">{{ facet.type }}</div>
                     <div class="card-source" v-html="getSource(facet.source)"></div>
                     <div class="card-rows">{{ getRowCount(facet.name) }}</div>
@@ -1312,9 +1313,10 @@
                 >
                     <div class="card-drag">&#9776;</div>
                     <div class="card-label">
-                        <span class="label-text" :title="template.name">{{ template.label }}</span>
+                        <span class="label-text">{{ template.label }}</span>
                         <span v-if="template._code" v-html="FWP.svg['lock']"></span>
                     </div>
+                    <div class="card-name">{{ template.name }}</div>
                     <div class="card-display-mode">{{ getDisplayMode(index) }}</div>
                     <div class="card-post-types">{{ getPostTypes(index) }}</div>
                     <div class="card-actions">
@@ -1497,7 +1499,7 @@
                             <builder :layout="template.layout"></builder>
                         </div>
                         <div class="table-row" v-show="template.modes.display == 'advanced'">
-                            <h3>{{ 'Display Code' | i18n }} <a class="facetwp-btn" href="https://facetwp.com/help-center/listing-templates/advanced-listing-builder/#display-code" target="_blank">{{ 'Help' | i18n }}</a></h3>
+                            <h3>{{ 'Display Code' | i18n }} <a class="facetwp-btn" href="https://facetwp.com/help-center/listing-templates/listing-builder/using-the-listing-builder-in-dev-mode/#how-to-use-display-code-in-dev-mode" target="_blank">{{ 'Help' | i18n }}</a></h3>
                             <textarea v-model="template.template"></textarea>
                         </div>
                     </div>
@@ -1507,7 +1509,7 @@
                             <query-builder :query_obj="template.query_obj" :template="template"></query-builder>
                         </div>
                         <div class="table-row" v-show="template.modes.query == 'advanced'">
-                            <h3>{{ 'Query Arguments' | i18n }} <a class="facetwp-btn" href="https://facetwp.com/help-center/listing-templates/advanced-listing-builder/#query-arguments" target="_blank">{{ 'Help' | i18n }}</a></h3>
+                            <h3>{{ 'Query Arguments' | i18n }} <a class="facetwp-btn" href="https://facetwp.com/help-center/listing-templates/listing-builder/using-the-listing-builder-in-dev-mode/#how-to-use-query-arguments-in-dev-mode" target="_blank">{{ 'Help' | i18n }}</a></h3>
                             <textarea v-model="template.query"></textarea>
                         </div>
                     </div>
@@ -1679,7 +1681,7 @@
             template: `
             <select :class="className" v-model="facet[setting]" multiple>
                 <template v-for="(f) in FWP.data.facets">
-                    <option :value="f.name" :class="bindSelectedClass(f.name)">{{ f.label }}</option>
+                    <option v-if="!['reset'].includes(f.type)" :value="f.name" :class="bindSelectedClass(f.name)">{{ f.label }}</option>
                 </template>
             </select>
             `,
@@ -2165,12 +2167,6 @@
                 fTip(this, {
                     content: (node) => $(node).find('.facetwp-tooltip-content').html()
                 }).open();
-            }
-        });
-
-        $().on('mouseover', '.card-label .label-text', function() {
-            if (!this.classList.contains('.ftip-enabled')) {
-                fTip(this).open();
             }
         });
 

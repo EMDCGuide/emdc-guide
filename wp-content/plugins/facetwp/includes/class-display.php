@@ -45,9 +45,27 @@ class FacetWP_Display
 
 
     /**
+     * Set default values for atts
+     * 
+     * Old: [facetwp template="foo" static]
+     * New: [facetwp template="foo" static="true"]
+     */
+    function normalize_atts( $atts ) {
+        foreach ( $atts as $key => $val ) {
+            if ( is_int( $key ) ) {
+                $atts[ $val ] = true;
+                unset( $atts[ $key ] );
+            }
+        }
+        return $atts;
+    }
+
+
+    /**
      * Register shortcodes
      */
     function shortcode( $atts ) {
+        $atts = $this->normalize_atts( $atts );
         $this->shortcode_atts[] = $atts;
 
         $output = '';

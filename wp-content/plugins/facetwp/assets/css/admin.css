@@ -312,7 +312,7 @@ h3 .facetwp-btn {
 
 .facetwp-region .item-name {
     display: inline-block;
-    margin: 0 18px 0 6px;
+    margin: 0 12px;
 }
 
 .table-row {
@@ -410,14 +410,14 @@ h3 .facetwp-btn {
 .facetwp-card,
 .facetwp-table-header {
     display: grid;
-    grid-template-columns: 30px 1fr 1fr 1fr 90px 90px;
+    grid-template-columns: 30px 1fr 1fr 1fr 1fr 80px 80px;
     line-height: 22px;
     padding: 8px;
 }
 
 .facetwp-region-templates .facetwp-card,
 .facetwp-region-templates .facetwp-table-header {
-    grid-template-columns: 30px 1fr 1fr 1fr 90px;
+    grid-template-columns: 30px 1fr 1fr 1fr 1fr 80px;
 }
 
 .facetwp-table-header {
