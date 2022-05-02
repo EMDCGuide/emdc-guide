@@ -11,6 +11,9 @@
             if (facets && facets !== '') {
               date.setTime(date.getTime()+(24*60*60*1000));
               document.cookie = "facetdata="+facets+"; expires="+date.toGMTString()+"; path=/";
+            } else {
+              // Remove the cookie if it exists
+              document.cookie = 'facetdata=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
             }
             if (typeof gtag === 'undefined') {
               console.log('gtag is undefined!');
