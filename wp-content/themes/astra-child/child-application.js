@@ -8,6 +8,14 @@
         $(document).on('facetwp-loaded', function() {
             var date = new Date();
             var facets = window.location.search;
+            if (facets && facets !== '') {
+              date.setTime(date.getTime()+(24*60*60*1000));
+              document.cookie = "facetdata="+facets+"; expires="+date.toGMTString()+"; path=/";
+            }
+            if (typeof gtag === 'undefined') {
+              console.log('gtag is undefined!');
+              return;
+            }
             var searchTerm = gup('_search', window.location);
             if (searchTerm) {
               gtag('event','search', {'search_term': searchTerm});
@@ -29,10 +37,6 @@
                   'event_category': tags[i]
                 });
               }
-            }
-            if (facets && facets !== '') {
-              date.setTime(date.getTime()+(24*60*60*1000));
-              document.cookie = "facetdata="+facets+"; expires="+date.toGMTString()+"; path=/";
             }
         });
 
