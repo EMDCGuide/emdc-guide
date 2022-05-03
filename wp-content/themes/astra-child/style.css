@@ -118,6 +118,12 @@ div.main-navigation ul.sub-menu > li.menu-item > a {
     margin-bottom: 0;
 }
 /**
+ * Hide pagination on resources page.
+ */
+body.post-type-archive-guide_resource .ast-pagination {
+    display: none;
+}
+/**
  * Sticky nav for pages with side nav but not resources.
  */
 @media (min-width: 769px) {

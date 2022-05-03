@@ -71,6 +71,7 @@ function child_pre_get_posts($query) {
 	if((is_post_type_archive('guide_resource')) && (!isset($_GET['_search']))) {
 		$query->set( 'order', 'ASC' );
 		$query->set( 'orderby', 'title' );
+		$query->set( 'posts_per_page', 12 );
 	}
 
 	return $query;
