@@ -21,13 +21,13 @@
                 let label = $el.text();
 
                 if ($el.hasClass('facetwp-page')) {
-                    label = 'Go to page ' + label;
+                    label = FWP_JSON.a11y.label_page + ' ' + label;
 
-                    if ($el.hasClass('prev')) {
-                        label = 'Go to previous page';
+                    if ($el.hasClass('next')) {
+                        label = FWP_JSON.a11y.label_page_next;
                     }
-                    else if ($el.hasClass('next')) {
-                        label = 'Go to next page';
+                    else if ($el.hasClass('prev')) {
+                        label = FWP_JSON.a11y.label_page_prev;
                     }
                 }
 

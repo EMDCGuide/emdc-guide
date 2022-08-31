@@ -22,6 +22,11 @@ body.settings_page_facetwp {
     font-size: 14px;
 }
 
+body.settings_page_facetwp #screen-meta,
+body.settings_page_facetwp #screen-meta-links {
+    display: none;
+}
+
 a {
     color: var(--blue);
 }
@@ -221,6 +226,7 @@ a:hover {
 
 .facetwp-region {
     display: none;
+    padding-bottom: 30px;
 }
 
 .facetwp-region.active {
@@ -277,6 +283,7 @@ h3 .facetwp-btn {
 .facetwp-region input[type='number'],
 .facetwp-region select {
     width: 220px;
+    border-radius: 4px;
 }
 
 .facet-fields input.facet-step,
@@ -377,7 +384,7 @@ h3 .facetwp-btn {
 }
 
 .facetwp-region .fs-label-wrap .fs-arrow {
-    top: 5px;
+    top: 6px;
     right: 5px;
     bottom: initial;
     width: 16px;
@@ -580,7 +587,7 @@ h3 .facetwp-btn {
 .qb-wrap .qb-orderby,
 .qb-wrap .qb-type,
 .qb-wrap .qb-order {
-    width: 100px;
+    width: 120px;
 }
 
 .facet-fields .qb-row {
@@ -638,10 +645,17 @@ h3 .facetwp-btn {
 
 .qb-wrap .v-select .vs__search {
     background: none;
-    box-shadow: none;
-    border: none;
     height: 20px;
     min-height: auto;
+    margin: 4px 2px 0;
+    line-height: 20px;
+}
+
+.qb-wrap .v-select .vs__search,
+.qb-wrap .v-select .vs__search:focus {
+    font-size: 14px;
+    border: 1px solid var(--grey);
+    padding: 0 8px;
 }
 
 .qb-wrap .v-select .vs__dropdown-toggle {

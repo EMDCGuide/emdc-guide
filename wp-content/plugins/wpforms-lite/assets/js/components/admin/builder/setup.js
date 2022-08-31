@@ -34,6 +34,13 @@ WPForms.Admin.Builder.Setup = WPForms.Admin.Builder.Setup || ( function( documen
 	var vars = {};
 
 	/**
+	 * Active template name.
+	 *
+	 * @since 1.7.6
+	 */
+	const activeTemplateName = $( '.wpforms-template.selected .wpforms-template-name' ).text().trim();
+
+	/**
 	 * Public functions and properties.
 	 *
 	 * @since 1.6.8
@@ -174,7 +181,7 @@ WPForms.Admin.Builder.Setup = WPForms.Admin.Builder.Setup || ( function( documen
 		},
 
 		/**
-		 * Force focus on the form title field when switched to the the Setup panel.
+		 * Force focus on the form title field when switched to the Setup panel.
 		 *
 		 * @since 1.6.8
 		 *
@@ -256,8 +263,7 @@ WPForms.Admin.Builder.Setup = WPForms.Admin.Builder.Setup || ( function( documen
 
 			var $button      = $( e.target ),
 				template     = $button.data( 'template' ),
-				templateName = $button.data( 'template-name-raw' ),
-				formName     = el.$formName.val() || templateName;
+				formName     = app.getFormName( $button );
 
 			// Don't do anything for templates that trigger education modal OR addons-modal.
 			if ( $button.hasClass( 'education-modal' ) ) {
@@ -274,6 +280,25 @@ WPForms.Admin.Builder.Setup = WPForms.Admin.Builder.Setup || ( function( documen
 			$button.html( vars.spinner + wpforms_builder.loading );
 
 			app.applyTemplate( formName, template, $button );
+		},
+
+		/**
+		 * Get form name.
+		 *
+		 * @param {jQuery} $button Pressed template button.
+		 *
+		 * @returns {string} A new form name.
+		 */
+		getFormName: function( $button ) {
+
+			const templateName = $button.data( 'template-name-raw' );
+			const formName = el.$formName.val();
+
+			if ( ! formName ) {
+				return templateName;
+			}
+
+			return activeTemplateName === formName ? templateName : formName;
 		},
 
 		/**
@@ -419,16 +444,64 @@ WPForms.Admin.Builder.Setup = WPForms.Admin.Builder.Setup || ( function( documen
 						// We have already warned the user that unsaved changes will be ignored.
 						WPFormsBuilder.setCloseConfirmation( false );
 						window.location.href = res.data.redirect;
-					} else {
-						wpf.debug( res );
-						app.selectTemplateProcessError( res.data );
+
+						return;
 					}
+
+					wpf.debug( res );
+
+					if ( res.data.error_type === 'invalid_template' ) {
+						app.selectTemplateProcessInvalidTemplateError( res.data.message, formName );
+
+						return;
+					}
+
+					app.selectTemplateProcessError( res.data.message );
 				} )
 				.fail( function( xhr, textStatus, e ) {
 
 					wpf.debug( xhr.responseText || textStatus || '' );
 					app.selectTemplateProcessError( '' );
 				} );
+		},
+
+		/**
+		 * Select template AJAX call error modal for invalid template using.
+		 *
+		 * @since 1.7.5.3
+		 *
+		 * @param {string} errorMessage Error message.
+		 * @param {string}  formName  Name of the form.
+		 */
+		selectTemplateProcessInvalidTemplateError: function( errorMessage, formName ) {
+
+			$.alert( {
+				title: wpforms_builder.heads_up,
+				content: errorMessage,
+				icon: 'fa fa-exclamation-circle',
+				type: 'orange',
+				boxWidth: '600px',
+				buttons: {
+					confirm: {
+						text: wpforms_builder.use_simple_contact_form,
+						btnClass: 'btn-confirm',
+						keys: [ 'enter' ],
+						action: function() {
+
+							app.selectTemplateProcessAjax( formName, 'simple-contact-form-template' );
+							WPFormsBuilder.hideLoadingOverlay();
+						},
+					},
+					cancel: {
+						text: wpforms_builder.cancel,
+						action: function() {
+
+							app.selectTemplateCancel();
+							WPFormsBuilder.hideLoadingOverlay();
+						},
+					},
+				},
+			} );
 		},
 
 		/**

@@ -105,6 +105,8 @@ class Block
         'automations',
         'provider',
         'video_id',
+        'videoAttributes',
+        'audioAttributes',
         'provider_video_id',
         'youtube'
     ];

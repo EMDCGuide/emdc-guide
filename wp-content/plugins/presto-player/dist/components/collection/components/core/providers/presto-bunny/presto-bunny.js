@@ -4,7 +4,7 @@ export class PrestoBunny {
     this.poster = this.poster || this.thumbnail; // maybe add bunny thumbnail
   }
   render() {
-    return (h("presto-video", { getRef: this.getRef, player: this.player, autoplay: this.autoplay, preload: this.preload, poster: this.poster, playsinline: this.playsinline, src: this.src, tracks: this.tracks }));
+    return (h("presto-video", { getRef: this.getRef, player: this.player, autoplay: this.autoplay, preload: this.preload, poster: this.poster, playsinline: this.playsinline, src: this.src, tracks: this.tracks, videoAttributes: this.videoAttributes }));
   }
   static get is() { return "presto-bunny"; }
   static get properties() { return {
@@ -194,6 +194,21 @@ export class PrestoBunny {
       },
       "attribute": "preview-url",
       "reflect": false
+    },
+    "videoAttributes": {
+      "type": "unknown",
+      "mutable": false,
+      "complexType": {
+        "original": "object",
+        "resolved": "object",
+        "references": {}
+      },
+      "required": false,
+      "optional": false,
+      "docs": {
+        "tags": [],
+        "text": ""
+      }
     }
   }; }
 }

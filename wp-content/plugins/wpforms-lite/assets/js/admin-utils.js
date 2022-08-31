@@ -1,4 +1,4 @@
-/* global wpforms_builder */
+/* global wpforms_builder, WPFormsUtils */
 
 ;
 var wpf = {
@@ -122,6 +122,39 @@ var wpf = {
 	},
 
 	/**
+	 * Maintain multiselect dropdown with search.
+	 * If a multiple select has selected choices - hide a placeholder text.
+	 * In case if select is empty - we return placeholder text back.
+	 *
+	 * @since 1.7.6
+	 *
+	 * @param {object} self Current object.
+	 */
+	initMultipleSelectWithSearch: function( self ) {
+
+		const $element = jQuery( self.passedElement.element ),
+			$input   = jQuery( self.input.element );
+
+		if ( $element.prop( 'multiple' ) ) {
+
+			// On init event.
+			$input.data( 'placeholder', $input.attr( 'placeholder' ) );
+
+			if ( self.getValue( true ).length ) {
+				$input.removeAttr( 'placeholder' );
+			}
+
+			// On change event.
+			$element.on( 'change', function() {
+
+				self.getValue( true ).length ?
+					$input.removeAttr( 'placeholder' ) :
+					$input.attr( 'placeholder', $input.data( 'placeholder' ) );
+			} );
+		}
+	},
+
+	/**
 	 * Trigger fired for all field update related actions.
 	 *
 	 * @since 1.0.1
@@ -159,7 +192,7 @@ var wpf = {
 			// Normal processing, get fields from builder and prime cache.
 			var formData       = wpf.formObject( '#wpforms-field-options' ),
 				fields         = formData.fields,
-				fieldBlacklist = [ 'entry-preview', 'html', 'pagebreak' ];
+				fieldBlacklist = [ 'entry-preview', 'html', 'pagebreak', 'internal-information' ];
 
 			if (!fields) {
 				return false;
@@ -813,6 +846,26 @@ var wpf = {
 
 			return x;
 		} );
+	},
+
+	/**
+	 * Wrapper to trigger a native or custom event and return the event object.
+	 *
+	 * @since 1.7.5
+	 * @since 1.7.6 Deprecated.
+	 *
+	 * @deprecated Use `WPFormsUtils.triggerEvent` instead.
+	 *
+	 * @param {jQuery} $element  Element to trigger event on.
+	 * @param {string} eventName Event name to trigger (custom or native).
+	 *
+	 * @returns {Event} Event object.
+	 */
+	triggerEvent: function( $element, eventName ) {
+
+		console.warn( 'WARNING! Function "wpf.triggerEvent( $element, eventName )" has been deprecated, please use the new "WPFormsUtils.triggerEvent( $element, eventName, args )" function instead!' );
+
+		return WPFormsUtils.triggerEvent( $element, eventName );
 	},
 };
 

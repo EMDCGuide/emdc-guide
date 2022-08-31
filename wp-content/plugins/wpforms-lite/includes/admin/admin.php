@@ -21,7 +21,7 @@ function wpforms_admin_styles() {
 	// jQuery confirm.
 	wp_enqueue_style(
 		'jquery-confirm',
-		WPFORMS_PLUGIN_URL . 'assets/css/jquery-confirm.min.css',
+		WPFORMS_PLUGIN_URL . 'assets/lib/jquery.confirm/jquery-confirm.min.css',
 		array(),
 		'3.3.2'
 	);
@@ -29,7 +29,7 @@ function wpforms_admin_styles() {
 	// Minicolors (color picker).
 	wp_enqueue_style(
 		'minicolors',
-		WPFORMS_PLUGIN_URL . 'assets/css/jquery.minicolors.css',
+		WPFORMS_PLUGIN_URL . 'assets/lib/jquery.minicolors/jquery.minicolors.min.css',
 		array(),
 		'2.2.6'
 	);
@@ -37,7 +37,7 @@ function wpforms_admin_styles() {
 	// FontAwesome.
 	wp_enqueue_style(
 		'wpforms-font-awesome',
-		WPFORMS_PLUGIN_URL . 'assets/css/font-awesome.min.css',
+		WPFORMS_PLUGIN_URL . 'assets/lib/font-awesome/font-awesome.min.css',
 		null,
 		'4.7.0'
 	);
@@ -83,7 +83,7 @@ function wpforms_admin_scripts() {
 	// jQuery confirm.
 	wp_enqueue_script(
 		'jquery-confirm',
-		WPFORMS_PLUGIN_URL . 'assets/js/jquery.jquery-confirm.min.js',
+		WPFORMS_PLUGIN_URL . 'assets/lib/jquery.confirm/jquery-confirm.min.js',
 		[ 'jquery' ],
 		'3.3.2',
 		false
@@ -92,7 +92,7 @@ function wpforms_admin_scripts() {
 	// Minicolors (color picker).
 	wp_enqueue_script(
 		'minicolors',
-		WPFORMS_PLUGIN_URL . 'assets/js/jquery.minicolors.min.js',
+		WPFORMS_PLUGIN_URL . 'assets/lib/jquery.minicolors/jquery.minicolors.min.js',
 		[ 'jquery' ],
 		'2.2.6',
 		false
@@ -101,7 +101,7 @@ function wpforms_admin_scripts() {
 	// Choices.js.
 	wp_enqueue_script(
 		'choicesjs',
-		WPFORMS_PLUGIN_URL . 'assets/js/choices.min.js',
+		WPFORMS_PLUGIN_URL . 'assets/lib/choices.min.js',
 		[],
 		'9.0.1',
 		false
@@ -110,10 +110,27 @@ function wpforms_admin_scripts() {
 	// jQuery Conditionals.
 	wp_enqueue_script(
 		'jquery-conditionals',
-		WPFORMS_PLUGIN_URL . 'assets/js/jquery.conditionals.min.js',
+		WPFORMS_PLUGIN_URL . 'assets/lib/jquery.conditionals.min.js',
 		[ 'jquery' ],
 		'1.0.1',
 		false
+	);
+
+	wp_enqueue_script(
+		'wpforms-generic-utils',
+		WPFORMS_PLUGIN_URL . "assets/js/utils{$min}.js",
+		[ 'jquery' ],
+		WPFORMS_VERSION,
+		true
+	);
+
+	// Load admin utils JS.
+	wp_enqueue_script(
+		'wpforms-admin-utils',
+		WPFORMS_PLUGIN_URL . "assets/js/admin-utils{$min}.js",
+		[ 'jquery' ],
+		WPFORMS_VERSION,
+		true
 	);
 
 	// Main admin script.
@@ -256,6 +273,11 @@ function wpforms_admin_scripts() {
 		'wpforms_admin_scripts_choicesjs_config',
 		[
 			'searchEnabled'  => false,
+			// Forces the search to look for exact matches anywhere in the string.
+			'fuseOptions'    => [
+				'threshold' => 0.1,
+				'distance'  => 1000,
+			],
 			'loadingText'    => ! empty( $strings['choicesjs_loading'] ) ? $strings['choicesjs_loading'] : $default_choicesjs_loading_text,
 			'noResultsText'  => ! empty( $strings['choicesjs_no_results'] ) ? $strings['choicesjs_no_results'] : $default_choicesjs_no_results_text,
 			'noChoicesText'  => ! empty( $strings['choicesjs_no_choices'] ) ? $strings['choicesjs_no_choices'] : $default_choicesjs_no_choices_text,

@@ -9,6 +9,7 @@ const { useSelect, dispatch } = wp.data;
 import ProBadge from "@/admin/blocks/shared/components/ProBadge";
 import EditPreset from "./Edit";
 import Preset from "./Preset";
+import styled from "@emotion/styled";
 
 function PlayerPresets({ attributes, setAttributes }) {
   // modal
@@ -43,6 +44,12 @@ function PlayerPresets({ attributes, setAttributes }) {
     setAttributes({ preset: preset.id });
   };
 
+  const PresetWrap = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  `;
+
   if (loading) {
     return (
       <div className="presto-settings__loading">
@@ -65,7 +72,7 @@ function PlayerPresets({ attributes, setAttributes }) {
       )}
 
       <BaseControl>
-        <div className="block-editor-block-styles">
+        <PresetWrap>
           {(presets || []).length
             ? presets.map((preset, i) => {
                 return (
@@ -88,7 +95,7 @@ function PlayerPresets({ attributes, setAttributes }) {
                 "No style presets. You can create a new style by clicking 'Add New Style'.",
                 "presto-plugin"
               )}
-        </div>
+        </PresetWrap>
       </BaseControl>
       <BaseControl>
         <Button

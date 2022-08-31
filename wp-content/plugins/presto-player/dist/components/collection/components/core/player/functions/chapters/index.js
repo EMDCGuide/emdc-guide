@@ -1,7 +1,7 @@
 import button from './templates/button';
+import marker from './templates/timeline-marker';
 import toc from './templates/toc';
 import tocItem from './templates/toc-item';
-import marker from './templates/timeline-marker';
 
 export function addChapterControl(e) {
   let chapters,
@@ -113,7 +113,16 @@ export function addChapterControl(e) {
       $items[timestamp] = $item;
       $item.on('click', () => {
         player.currentTime = parseFloat(timestamp);
-        player.play();
+        // youtube fix.
+        if (!player.playing) {
+          player.play();
+          player.once('playing', () => {
+            setTimeout(() => {
+              player.pause();
+            }, 50);
+          });
+        }
+
         toggleToc(false);
       });
     });

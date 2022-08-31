@@ -35,6 +35,8 @@ export declare class PrestoPlayer {
   currentTime: number;
   mediaTitle: string;
   classes: string;
+  videoAttributes: object;
+  audioAttributes: object;
   /**
    * This element
    */
@@ -170,9 +172,6 @@ export declare class PrestoPlayer {
       id?: number;
       title?: string;
       src?: string;
-      /**
-       * State() variables
-       */
       poster?: string;
       playsInline?: boolean;
       autoplay?: boolean;
@@ -184,12 +183,6 @@ export declare class PrestoPlayer {
       constructor: Function;
       toString(): string;
       toLocaleString(): string;
-      /**
-       * Add an event listener for the specified event.
-       * @param event String
-       * @param func Function
-       * @returns Plyr
-       */
       valueOf(): Object;
       hasOwnProperty(v: PropertyKey): boolean;
       isPrototypeOf(v: Object): boolean;
@@ -222,7 +215,9 @@ export declare class PrestoPlayer {
     save_player_position: boolean;
     sticky_scroll: boolean;
     play_video_viewport: boolean;
-    autoplay: boolean;
+    autoplay: boolean; /**
+     * This element
+     */
   };
   /**
    * Get player data
@@ -280,9 +275,6 @@ export declare class PrestoPlayer {
         id?: number;
         title?: string;
         src?: string;
-        /**
-         * State() variables
-         */
         poster?: string;
         playsInline?: boolean;
         autoplay?: boolean;
@@ -294,12 +286,6 @@ export declare class PrestoPlayer {
         constructor: Function;
         toString(): string;
         toLocaleString(): string;
-        /**
-         * Add an event listener for the specified event.
-         * @param event String
-         * @param func Function
-         * @returns Plyr
-         */
         valueOf(): Object;
         hasOwnProperty(v: PropertyKey): boolean;
         isPrototypeOf(v: Object): boolean;
@@ -332,7 +318,9 @@ export declare class PrestoPlayer {
       save_player_position: boolean;
       sticky_scroll: boolean;
       play_video_viewport: boolean;
-      autoplay: boolean;
+      autoplay: boolean; /**
+       * This element
+       */
     };
     isAdmin: boolean;
   };

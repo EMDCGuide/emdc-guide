@@ -60,10 +60,6 @@ class FacetWP_Facet_Reset extends FacetWP_Facet
                     'link' => __( 'Link', 'fwp' )
                 ]
             ],
-            'reset_text' => [
-                'label' => __( 'Reset text', 'fwp' ),
-                'default' => 'Reset'
-            ],
             'reset_mode' => [
                 'type' => 'select',
                 'label' => __( 'Include / exclude', 'fwp' ),

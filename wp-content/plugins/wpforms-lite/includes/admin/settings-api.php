@@ -97,7 +97,7 @@ function wpforms_settings_content_callback( $args ) {
  *
  * @since 1.3.9
  *
- * @param array $args
+ * @param array $args Settings arguments.
  *
  * @return string
  */
@@ -113,15 +113,15 @@ function wpforms_settings_license_callback( $args ) {
 				wp_kses(
 					/* translators: %s - WPForms.com upgrade URL. */
 					__( 'To unlock more features consider <strong><a href="%s" target="_blank" rel="noopener noreferrer" class="wpforms-upgrade-modal">upgrading to PRO</a></strong>.', 'wpforms-lite' ),
-					array(
-						'a'      => array(
-							'href'   => array(),
-							'class'  => array(),
-							'target' => array(),
-							'rel'    => array(),
-						),
-						'strong' => array(),
-					)
+					[
+						'a'      => [
+							'href'   => [],
+							'class'  => [],
+							'target' => [],
+							'rel'    => [],
+						],
+						'strong' => [],
+					]
 				),
 				esc_url( wpforms_admin_upgrade_link( 'settings-license' ) )
 			) .
@@ -130,17 +130,17 @@ function wpforms_settings_license_callback( $args ) {
 			'<p class="discount-note">' .
 				wp_kses(
 					__( 'As a valued WPForms Lite user you receive <strong>50% off</strong>, automatically applied at checkout!', 'wpforms-lite' ),
-					array(
-						'strong' => array(),
-						'br'     => array(),
-					)
+					[
+						'strong' => [],
+						'br'     => [],
+					]
 				) .
 			'</p>';
 
-		$output .= '<hr><p>' . esc_html__( 'Already purchased?  Simply enter your license key below to connect with WPForms PRO!', 'wpforms-lite' ) . '</p>';
+		$output .= '<hr><p>' . esc_html__( 'Already purchased? Simply enter your license key below to enable WPForms PRO!', 'wpforms-lite' ) . '</p>';
 		$output .= '<p>';
 		$output .= '<input type="password" id="wpforms-settings-upgrade-license-key" placeholder="' . esc_attr__( 'Paste license key here', 'wpforms-lite' ) . '" value="" />';
-		$output .= '<button type="button" class="wpforms-btn wpforms-btn-md wpforms-btn-orange" id="wpforms-settings-connect-btn">' . esc_attr__( 'Connect', 'wpforms-lite' ) . '</button>';
+		$output .= '<button type="button" class="wpforms-btn wpforms-btn-md wpforms-btn-orange" id="wpforms-settings-connect-btn">' . esc_html__( 'Verify Key', 'wpforms-lite' ) . '</button>';
 		$output .= '</p>';
 
 		return $output;
@@ -373,11 +373,12 @@ function wpforms_settings_radio_callback( $args ) {
  */
 function wpforms_settings_toggle_callback( $args ) {
 
-	$value  = wpforms_setting( $args['id'] );
-	$id     = wpforms_sanitize_key( $args['id'] );
-	$class  = ! empty( $args['control-class'] ) ? $args['control-class'] : '';
-	$class .= ! empty( $args['is-important'] ) ? ' wpforms-important' : '';
-	$output = wpforms_panel_field_toggle_control(
+	$value      = wpforms_setting( $args['id'] );
+	$id         = wpforms_sanitize_key( $args['id'] );
+	$class      = ! empty( $args['control-class'] ) ? $args['control-class'] : '';
+	$class     .= ! empty( $args['is-important'] ) ? ' wpforms-important' : '';
+	$input_attr = ! empty( $args['input-attr'] ) ? $args['input-attr'] : '';
+	$output     = wpforms_panel_field_toggle_control(
 		[
 			'control-class' => $class,
 		],
@@ -385,7 +386,7 @@ function wpforms_settings_toggle_callback( $args ) {
 		$id,
 		! empty( $args['label'] ) ? $args['label'] : '',
 		$value,
-		''
+		$input_attr
 	);
 
 	$desc_on  = ! empty( $args['desc'] ) ? $args['desc'] : '';

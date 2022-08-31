@@ -81,7 +81,18 @@ export default function ({
         role="button"
         tabIndex={index}
         aria-label="Fill"
-        style={{ color: isActive ? "var(--wp-admin-theme-color)" : "inherit" }}
+        style={{
+          color: isActive ? "var(--wp-admin-theme-color)" : "inherit",
+          width: "calc(50% - 4px)",
+          margin: "4px 0",
+          "flex-shrink": "0",
+          cursor: "pointer",
+          overflow: "hidden",
+          "border-radius": "2px",
+          padding: "6px",
+          display: "flex",
+          "flex-direction": "column",
+        }}
       >
         <div
           className="block-editor-block-styles__item-preview"
@@ -90,9 +101,15 @@ export default function ({
               ? "2px solid var(--wp-admin-theme-color)"
               : "2px solid #e3e3e3",
             margin: 0,
+            outline: "1px solid transparent",
+            padding: "0",
             display: "flex",
+            overflow: "hidden",
+            background: "#fff",
             "align-items": "center",
-            "justify-content": "center",
+            "flex-grow": "1",
+            "min-height": "80px",
+            "max-height": "160px",
           }}
         >
           <Spinner />
@@ -110,7 +127,18 @@ export default function ({
       role="button"
       tabIndex={index}
       aria-label="Fill"
-      style={{ color: isActive ? "var(--wp-admin-theme-color)" : "inherit" }}
+      style={{
+        color: isActive ? "var(--wp-admin-theme-color)" : "inherit",
+        width: "calc(50% - 4px)",
+        margin: "4px 0",
+        "flex-shrink": "0",
+        cursor: "pointer",
+        overflow: "hidden",
+        "border-radius": "2px",
+        padding: "6px",
+        display: "flex",
+        "flex-direction": "column",
+      }}
     >
       <div
         className="block-editor-block-styles__item-preview"
@@ -119,6 +147,15 @@ export default function ({
             ? "2px solid var(--wp-admin-theme-color)"
             : "2px solid #e3e3e3",
           margin: 0,
+          outline: "1px solid transparent",
+          padding: "0",
+          display: "flex",
+          overflow: "hidden",
+          background: "#fff",
+          "align-items": "center",
+          "flex-grow": "1",
+          "min-height": "80px",
+          "max-height": "160px",
         }}
       >
         <div
@@ -147,7 +184,12 @@ export default function ({
       </div>
       <div
         className="block-editor-block-styles__item-label"
-        style={{ fontWeight: "bold", textTransform: "capitalize" }}
+        style={{
+          fontWeight: "bold",
+          textTransform: "capitalize",
+          "text-align": "center",
+          padding: "4px 0",
+        }}
       >
         {preset?.name || "Untitled"}
       </div>

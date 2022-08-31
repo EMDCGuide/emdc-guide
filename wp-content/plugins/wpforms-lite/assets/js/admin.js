@@ -1,4 +1,4 @@
-/* global wpforms_admin, jconfirm, wpCookies, Choices, List */
+/* global wpforms_admin, jconfirm, wpCookies, Choices, List, wpf */
 
 ;(function($) {
 
@@ -175,7 +175,6 @@
 
 					var self      = this,
 						$element  = $( self.passedElement.element ),
-						$input    = $( self.input.element ),
 						sizeClass = $element.data( 'size-class' );
 
 					// Add CSS-class for size.
@@ -183,27 +182,28 @@
 						$( self.containerOuter.element ).addClass( sizeClass );
 					}
 
-					/**
-					 * If a multiple select has selected choices - hide a placeholder input.
-					 * We use a custom styles like a `.screen-reader-text` for it,
-					 * because it avoid an issue with closing a dropdown.
-					 */
-					if ( $element.prop( 'multiple' ) ) {
-
-						// On init event.
-						if ( self.getValue( true ).length ) {
-							$input.addClass( self.config.classNames.input + '--hidden' );
-						}
-
-						// On change event.
-						$element.on( 'change', function() {
-
-							self.getValue( true ).length ? $input.addClass( self.config.classNames.input + '--hidden' ) : $input.removeClass( self.config.classNames.input + '--hidden' );
-						} );
-					}
+					wpf.initMultipleSelectWithSearch( this );
 				};
 
 				$this.data( 'choicesjs', new Choices( $this[0], args ) );
+			} );
+
+			// Add ability to close the drop-down menu.
+			$( document ).on( 'click', '.choices', function( e ) {
+
+				var $choices =  $( this ),
+					choicesObj = $choices.find( 'select' ).data( 'choicesjs' );
+
+				if (
+					choicesObj &&
+					$choices.hasClass( 'is-open' ) &&
+					(
+						e.target.classList.contains( 'choices__inner' ) ||
+						e.target.classList.contains( 'choices__arrow' )
+					)
+				) {
+					choicesObj.hideDropdown();
+				}
 			} );
 		},
 
@@ -714,6 +714,7 @@
 							noResultsText: wpforms_admin.choicesjs_no_results,
 							noChoicesText: wpforms_admin.choicesjs_no_choices,
 							itemSelectText: wpforms_admin.choicesjs_item_select,
+							fuseOptions: window.wpforms_admin_choicesjs_config.fuseOptions,
 							callbackOnInit: function() {
 								$modalContent.find( '.fa' ).remove();
 								$modalContent.find( 'form' ).show();

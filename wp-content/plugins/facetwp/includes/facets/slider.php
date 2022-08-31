@@ -5,7 +5,8 @@ class FacetWP_Facet_Slider extends FacetWP_Facet
 
     function __construct() {
         $this->label = __( 'Slider', 'fwp' );
-        $this->fields = [ 'source_other', 'compare_type', 'prefix', 'suffix', 'slider_format', 'step' ];
+        $this->fields = [ 'source_other', 'compare_type', 'prefix', 'suffix',
+            'reset_text', 'slider_format', 'step' ];
 
         add_filter( 'facetwp_render_output', [ $this, 'maybe_prevent_facet_html' ], 10, 2 );
     }
@@ -15,12 +16,18 @@ class FacetWP_Facet_Slider extends FacetWP_Facet
      * Generate the facet HTML
      */
     function render( $params ) {
+        $facet = $params['facet'];
+        $reset_text = __( 'Reset', 'fwp-front' );
+
+        if ( ! empty( $facet['reset_text'] ) ) {
+            $reset_text = facetwp_i18n( $facet['reset_text'] );
+        }
 
         $output = '<div class="facetwp-slider-wrap">';
         $output .= '<div class="facetwp-slider"></div>';
         $output .= '</div>';
         $output .= '<span class="facetwp-slider-label"></span>';
-        $output .= '<div><input type="button" class="facetwp-slider-reset" value="' . __( 'Reset', 'fwp-front' ) . '" /></div>';
+        $output .= '<div><input type="button" class="facetwp-slider-reset" value="' . esc_attr( $reset_text ) . '" /></div>';
         return $output;
     }
 
@@ -29,41 +36,7 @@ class FacetWP_Facet_Slider extends FacetWP_Facet
      * Filter the query based on selected values
      */
     function filter_posts( $params ) {
-        global $wpdb;
-
-        $facet = $params['facet'];
-        $values = $params['selected_values'];
-        $where = '';
-
-        $start = ( '' == $values[0] ) ? false : $values[0];
-        $end = ( '' == $values[1] ) ? false : $values[1];
-
-        $is_intersect = FWP()->helper->facet_is( $facet, 'compare_type', 'intersect' );
-
-        /**
-         * Intersect compare
-         * @link http://stackoverflow.com/a/325964
-         */
-        if ( $is_intersect ) {
-            $start = ( false !== $start ) ? $start : '-999999999999';
-            $end = ( false !== $end ) ? $end : '999999999999';
-
-            $where .= " AND (facet_value + 0) <= '$end'";
-            $where .= " AND (facet_display_value + 0) >= '$start'";
-        }
-        else {
-            if ( false !== $start ) {
-                $where .= " AND (facet_value + 0) >= '$start'";
-            }
-            if ( false !== $end ) {
-                $where .= " AND (facet_display_value + 0) <= '$end'";
-            }
-        }
-
-        $sql = "
-        SELECT DISTINCT post_id FROM {$wpdb->prefix}facetwp_index
-        WHERE facet_name = '{$facet['name']}' $where";
-        return facetwp_sql( $sql, $facet );
+        return FWP()->helper->facet_types['number_range']->filter_posts( $params );
     }
 
 

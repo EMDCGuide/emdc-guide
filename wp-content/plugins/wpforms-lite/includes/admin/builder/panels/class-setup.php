@@ -71,36 +71,6 @@ class WPForms_Builder_Panel_Setup extends WPForms_Builder_Panel {
 	}
 
 	/**
-	 * Get templates.
-	 *
-	 * @since 1.6.8
-	 *
-	 * @return array
-	 */
-	private function get_templates() {
-		/**
-		 * Form templates available in the WPForms core plugin.
-		 *
-		 * @since 1.4.0
-		 *
-		 * @param array $templates Core templates data.
-		 */
-		$core_templates = apply_filters( 'wpforms_form_templates_core', [] );
-
-		/**
-		 * Form templates available with the WPForms addons.
-		 * Allows developers to provide additional templates with an addons.
-		 *
-		 * @since 1.4.0
-		 *
-		 * @param array $templates Addons templates data.
-		 */
-		$additional_templates = apply_filters( 'wpforms_form_templates', [] );
-
-		return array_merge( (array) $core_templates, (array) $additional_templates );
-	}
-
-	/**
 	 * Output the Settings panel primary content.
 	 *
 	 * @since 1.0.0
@@ -133,15 +103,15 @@ class WPForms_Builder_Panel_Setup extends WPForms_Builder_Panel {
 						],
 					]
 				),
-				'https://wpforms.com/docs/how-to-create-a-custom-form-template/',
-				'https://wpforms.com/form-template-suggestion/'
+				esc_url( wpforms_utm_link( 'https://wpforms.com/docs/how-to-create-a-custom-form-template/', 'builder-templates', 'Create Your Own Template' ) ),
+				esc_url( wpforms_utm_link( 'https://wpforms.com/form-template-suggestion/', 'builder-templates', 'Form Template Suggestion' ) )
 			);
 			?>
 		</p>
 
 		<?php
 		ob_start();
-		$this->template_select_options( $this->get_templates() );
+		$this->template_select_options( wpforms()->get( 'builder_templates' )->get_templates() );
 		$templates = ob_get_clean();
 		?>
 
@@ -253,13 +223,7 @@ class WPForms_Builder_Panel_Setup extends WPForms_Builder_Panel {
 		$args['demo_url']    = '';
 
 		if ( ! empty( $template['url'] ) ) {
-			$utm_campaign     = wpforms()->is_pro() ? 'plugin' : 'liteplugin';
-			$args['demo_url'] = add_query_arg(
-				[
-					'utm_content' => $template['name'],
-				],
-				$template['url'] . "?utm_source=WordPress&utm_campaign={$utm_campaign}&utm_medium=builder-templates"
-			);
+			$args['demo_url'] = wpforms_utm_link( $template['url'], 'builder-templates', $template['name'] );
 		}
 
 		$template_license = ! empty( $template['license'] ) ? $template['license'] : '';
@@ -278,6 +242,13 @@ class WPForms_Builder_Panel_Setup extends WPForms_Builder_Panel {
 
 			// At least one addon template available.
 			$this->is_addon_templates_available = true;
+		}
+
+		if ( $template['source'] === 'wpforms-custom' ) {
+			$args['badge_text'] = esc_html__( 'Custom', 'wpforms-lite' );
+
+			// At least one custom template available.
+			$this->is_custom_templates_available = true;
 		}
 
 		if ( empty( $template['has_access'] ) ) {
@@ -348,6 +319,7 @@ class WPForms_Builder_Panel_Setup extends WPForms_Builder_Panel {
 	 * Determine the template source.
 	 *
 	 * @since 1.6.9
+	 * @since 1.7.6 Added support for custom templates.
 	 *
 	 * @param array $template Template data.
 	 *
@@ -359,11 +331,23 @@ class WPForms_Builder_Panel_Setup extends WPForms_Builder_Panel {
 			return $template['source'];
 		}
 
-		if ( $template['plugin_dir'] === 'wpforms' || $template['plugin_dir'] === 'wpforms-lite' ) {
-			return 'wpforms-core';
+		$source = 'wpforms-addon';
+
+		static $addons = null;
+
+		if ( $addons === null ) {
+			$addons = array_keys( $this->addons_obj->get_all() );
 		}
 
-		return 'wpforms-addon';
+		if ( $template['plugin_dir'] === 'wpforms' || $template['plugin_dir'] === 'wpforms-lite' ) {
+			$source = 'wpforms-core';
+		}
+
+		if ( $source !== 'wpforms-core' && ! in_array( $template['plugin_dir'], $addons, true ) ) {
+			$source = 'wpforms-custom';
+		}
+
+		return $source;
 	}
 
 	/**
@@ -378,27 +362,14 @@ class WPForms_Builder_Panel_Setup extends WPForms_Builder_Panel {
 	private function get_template_categories( $template ) {
 
 		$categories = ! empty( $template['categories'] ) ? (array) $template['categories'] : [];
+		$source     = $this->get_template_source( $template );
 
-		if ( isset( $template['source'] ) && $template['source'] === 'wpforms-addon' ) {
+		if ( $source === 'wpforms-addon' ) {
 			$categories[] = 'addons';
 		}
 
-		static $addons = null;
-
-		if ( $addons === null ) {
-			$addons = array_keys( $this->addons_obj->get_all() );
-		}
-
-		if (
-			isset( $template['source'] ) &&
-			$template['source'] !== 'wpforms-core' &&
-			$template['source'] !== 'wpforms-api' &&
-			! in_array( $template['plugin_dir'], $addons, true )
-		) {
+		if ( $source === 'wpforms-custom' ) {
 			$categories[] = 'custom';
-
-			// At least one custom template available.
-			$this->is_custom_templates_available = true;
 		}
 
 		return implode( ',', $categories );

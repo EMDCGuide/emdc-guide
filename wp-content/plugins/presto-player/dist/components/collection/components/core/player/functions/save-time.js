@@ -3,6 +3,7 @@ export default function (player) {
   player.on('timeupdate', () => saveProgress(player));
   player.on('ready', () => resumeProgress(player));
   player.on('loadeddata', () => resumeProgress(player));
+  player.on('ended', () => clearProgress(player));
 }
 
 export function getId(player) {
@@ -14,6 +15,10 @@ export function saveProgress(player) {
     return;
   }
   updateTime(player);
+}
+
+export function clearProgress(player) {
+  localStorage.removeItem(`player-progress-${getId(player)}`);
 }
 
 export function resumeProgress(player, force = false) {

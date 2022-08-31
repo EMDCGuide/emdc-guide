@@ -935,7 +935,7 @@ abstract class WPForms_Field {
 			 * Field Meta (field type and ID).
 			 */
 			case 'meta':
-				_deprecated_argument( __CLASS__ . '::' . __METHOD__ . '( [ \'slug\' => \'meta\' ] )', '1.7.1' );
+				_deprecated_argument( __CLASS__ . '::' . __METHOD__ . '( [ \'slug\' => \'meta\' ] )', '1.7.1 of the WPForms plugin' );
 
 				$output = sprintf( '<label>%s</label>', esc_html__( 'Type', 'wpforms-lite' ) );
 
@@ -1014,6 +1014,7 @@ abstract class WPForms_Field {
 				foreach ( $values as $key => $value ) {
 					$default        = ! empty( $value['default'] ) ? $value['default'] : '';
 					$base           = sprintf( 'fields[%d][choices][%d]', absint( $field['id'] ), absint( $key ) );
+					$label          = isset( $value['label'] ) ? $value['label'] : '';
 					$image          = ! empty( $value['image'] ) ? $value['image'] : '';
 					$hide_image_btn = false;
 
@@ -1028,7 +1029,7 @@ abstract class WPForms_Field {
 					$fld .= sprintf(
 						'<input type="text" name="%s[label]" value="%s" class="label">',
 						esc_attr( $base ),
-						esc_attr( $value['label'] )
+						esc_attr( $label )
 					);
 					$fld .= '<a class="add" href="#"><i class="fa fa-plus-circle"></i></a><a class="remove" href="#"><i class="fa fa-minus-circle"></i></a>';
 					$fld .= sprintf(
@@ -1354,11 +1355,14 @@ abstract class WPForms_Field {
 			 * Placeholder.
 			 */
 			case 'placeholder':
+				$class   = ! empty( $args['class'] ) ? esc_html( $args['class'] ) : '';
 				$value   = ! empty( $field['placeholder'] ) ? esc_attr( $field['placeholder'] ) : '';
 				$tooltip = esc_html__( 'Enter text for the form field placeholder.', 'wpforms-lite' );
-				$output  = $this->field_element( 'label', $field, array( 'slug' => 'placeholder', 'value' => esc_html__( 'Placeholder Text', 'wpforms-lite' ), 'tooltip' => $tooltip ), false );
-				$output .= $this->field_element( 'text',  $field, array( 'slug' => 'placeholder', 'value' => $value ), false );
-				$output  = $this->field_element( 'row',   $field, array( 'slug' => 'placeholder', 'content' => $output ), false );
+				// phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+				$output  = $this->field_element( 'label', $field, [ 'slug' => 'placeholder', 'value' => esc_html__( 'Placeholder Text', 'wpforms-lite' ), 'tooltip' => $tooltip ], false );
+				$output .= $this->field_element( 'text',  $field, [ 'slug' => 'placeholder', 'value' => $value ], false );
+				$output  = $this->field_element( 'row',   $field, [ 'slug' => 'placeholder', 'content' => $output, 'class' => $class ], false );
+				// phpcs:enable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 				break;
 
 			/*
@@ -1692,7 +1696,7 @@ abstract class WPForms_Field {
 
 							foreach ( $posts as $post ) {
 								$values[] = [
-									'label' => $post->post_title,
+									'label' => esc_html( wpforms_get_post_title( $post ) ),
 								];
 							}
 							break;
@@ -1717,20 +1721,11 @@ abstract class WPForms_Field {
 
 							foreach ( $terms as $term ) {
 								$values[] = [
-									'label' => $term->name,
+									'label' => esc_html( wpforms_get_term_name( $term ) ),
 								];
 							}
 							break;
 					}
-				}
-
-				// Notify if dynamic choices source is currently empty.
-				if ( empty( $values ) ) {
-					$values = [
-						[
-							'label' => esc_html__( '(empty)', 'wpforms-lite' ),
-						],
-					];
 				}
 
 				// Build output.
@@ -1769,6 +1764,10 @@ abstract class WPForms_Field {
 
 				// Special rules for <select>-based fields.
 				if ( $type === 'select' ) {
+					if ( empty( $values ) ) {
+						$list_class[] = 'wpforms-hidden';
+					}
+
 					$multiple    = ! empty( $field['multiple'] ) ? ' multiple' : '';
 					$placeholder = ! empty( $field['placeholder'] ) ? $field['placeholder'] : '';
 
@@ -1850,7 +1849,7 @@ abstract class WPForms_Field {
 							$output .= sprintf(
 								'<span class="wpforms-image-choices-image"><img src="%s" alt="%s"%s></span>',
 								! empty( $value['image'] ) ? esc_url( $value['image'] ) : WPFORMS_PLUGIN_URL . 'assets/images/builder/placeholder-200x125.svg',
-								esc_attr( $value['label'] ),
+								esc_attr( $label ),
 								! empty( $value['label'] ) ? ' title="' . esc_attr( $value['label'] ) . '"' : ''
 							);
 
@@ -2172,14 +2171,14 @@ abstract class WPForms_Field {
 	 */
 	protected function enqueue_choicesjs_once( $forms ) {
 
-		if ( wpforms()->frontend->is_choicesjs_enqueued ) {
+		if ( wpforms()->get( 'frontend' )->is_choicesjs_enqueued ) {
 			return;
 		}
 
 		wp_enqueue_script(
 			'wpforms-choicesjs',
-			WPFORMS_PLUGIN_URL . 'assets/js/choices.min.js',
-			array(),
+			WPFORMS_PLUGIN_URL . 'assets/lib/choices.min.js',
+			[],
 			'9.0.1',
 			true
 		);
@@ -2187,15 +2186,28 @@ abstract class WPForms_Field {
 		$config = [
 			'removeItemButton'  => true,
 			'shouldSort'        => false,
+			// Forces the search to look for exact matches anywhere in the string.
+			'fuseOptions'       => [
+				'threshold' => 0.1,
+				'distance'  => 1000,
+			],
 			'loadingText'       => esc_html__( 'Loading...', 'wpforms-lite' ),
-			'noResultsText'     => esc_html__( 'No results found.', 'wpforms-lite' ),
-			'noChoicesText'     => esc_html__( 'No choices to choose from.', 'wpforms-lite' ),
-			'itemSelectText'    => esc_attr__( 'Press to select.', 'wpforms-lite' ),
-			'uniqueItemText'    => esc_html__( 'Only unique values can be added.', 'wpforms-lite' ),
-			'customAddItemText' => esc_html__( 'Only values matching specific conditions can be added.', 'wpforms-lite' ),
+			'noResultsText'     => esc_html__( 'No results found', 'wpforms-lite' ),
+			'noChoicesText'     => esc_html__( 'No choices to choose from', 'wpforms-lite' ),
+			'itemSelectText'    => esc_attr__( 'Press to select', 'wpforms-lite' ),
+			'uniqueItemText'    => esc_html__( 'Only unique values can be added', 'wpforms-lite' ),
+			'customAddItemText' => esc_html__( 'Only values matching specific conditions can be added', 'wpforms-lite' ),
 		];
 
-		// Allow theme/plugin developers to modify the provided or add own Choices.js settings.
+		/**
+		 * Allow theme/plugin developers to modify the provided or add own Choices.js settings.
+		 *
+		 * @since 1.6.1
+		 *
+		 * @param array         $config    Choices.js settings.
+		 * @param array         $forms     Forms on the current page.
+		 * @param WPForms_Field $field_obj Field object.
+		 */
 		$config = apply_filters( 'wpforms_field_select_choicesjs_config', $config, $forms, $this );
 
 		wp_localize_script(
@@ -2204,7 +2216,7 @@ abstract class WPForms_Field {
 			$config
 		);
 
-		wpforms()->frontend->is_choicesjs_enqueued = true;
+		wpforms()->get( 'frontend' )->is_choicesjs_enqueued = true;
 	}
 
 	/**

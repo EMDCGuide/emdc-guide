@@ -1,10 +1,10 @@
 import { Component, h, Prop } from '@stencil/core';
 export class PrestoVideo {
   render() {
-    return (h("video", { class: {
+    return (h("video", Object.assign({ class: {
         'presto-player__player': true,
         'plyr__video-embed': ['youtube', 'vimeo'].includes(this.provider),
-      }, part: "video", ref: this.getRef, autoplay: this.autoplay, preload: this.preload, "data-poster": this.poster, playsinline: this.playsinline },
+      }, part: "video", ref: this.getRef, autoplay: this.autoplay, preload: this.preload, "data-poster": this.poster, playsinline: this.playsinline }, this.videoAttributes),
       h("source", { src: this.src }),
       !!this.tracks &&
         !!this.tracks.length &&
@@ -170,6 +170,21 @@ export class PrestoVideo {
       },
       "attribute": "provider",
       "reflect": false
+    },
+    "videoAttributes": {
+      "type": "unknown",
+      "mutable": false,
+      "complexType": {
+        "original": "object",
+        "resolved": "object",
+        "references": {}
+      },
+      "required": false,
+      "optional": false,
+      "docs": {
+        "tags": [],
+        "text": ""
+      }
     }
   }; }
 }

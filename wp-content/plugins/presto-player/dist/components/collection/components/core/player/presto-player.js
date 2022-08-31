@@ -537,11 +537,11 @@ export class PrestoPlayer {
       case 'youtube':
         return (h("presto-youtube", { onReload: ev => this.onReload(ev === null || ev === void 0 ? void 0 : ev.detail), player: this.player, getRef: el => (this.playerEl = el), lazyLoad: this.shouldLazyLoad, poster: this.poster, src: this.src }));
       case 'bunny':
-        return (h("presto-bunny", { thumbnail: (_a = this === null || this === void 0 ? void 0 : this.bunny) === null || _a === void 0 ? void 0 : _a.thumbnail, getRef: el => (this.playerEl = el), player: this.player, autoplay: this.autoplay, preload: this.preload, poster: this.poster, playsinline: this.playsinline, src: this.src, tracks: this.tracks }));
+        return (h("presto-bunny", { thumbnail: (_a = this === null || this === void 0 ? void 0 : this.bunny) === null || _a === void 0 ? void 0 : _a.thumbnail, getRef: el => (this.playerEl = el), player: this.player, autoplay: this.autoplay, preload: this.preload, poster: this.poster, playsinline: this.playsinline, src: this.src, tracks: this.tracks, videoAttributes: this.videoAttributes }));
       case 'audio':
-        return (h("presto-audio", { getRef: el => (this.playerEl = el), player: this.player, autoplay: this.autoplay, preload: this.preload, poster: this.poster, preset: this.preset, src: this.src, tracks: this.tracks, mediaTitle: this.mediaTitle }));
+        return (h("presto-audio", { getRef: el => (this.playerEl = el), player: this.player, autoplay: this.autoplay, preload: this.preload, poster: this.poster, preset: this.preset, src: this.src, tracks: this.tracks, mediaTitle: this.mediaTitle, audioAttributes: this.audioAttributes }));
       default:
-        return (h("presto-video", { getRef: el => (this.playerEl = el), player: this.player, autoplay: this.autoplay, preload: this.preload, poster: this.poster, playsinline: this.playsinline, src: this.src, tracks: this.tracks }));
+        return (h("presto-video", { getRef: el => (this.playerEl = el), player: this.player, autoplay: this.autoplay, preload: this.preload, poster: this.poster, playsinline: this.playsinline, src: this.src, tracks: this.tracks, videoAttributes: this.videoAttributes }));
     }
   }
   renderVideoCTA() {
@@ -1203,6 +1203,36 @@ export class PrestoPlayer {
       },
       "attribute": "classes",
       "reflect": false
+    },
+    "videoAttributes": {
+      "type": "unknown",
+      "mutable": false,
+      "complexType": {
+        "original": "object",
+        "resolved": "object",
+        "references": {}
+      },
+      "required": false,
+      "optional": false,
+      "docs": {
+        "tags": [],
+        "text": ""
+      }
+    },
+    "audioAttributes": {
+      "type": "unknown",
+      "mutable": false,
+      "complexType": {
+        "original": "object",
+        "resolved": "object",
+        "references": {}
+      },
+      "required": false,
+      "optional": false,
+      "docs": {
+        "tags": [],
+        "text": ""
+      }
     }
   }; }
   static get states() { return {

@@ -25,6 +25,7 @@ export namespace Components {
         "open"?: boolean;
     }
     interface PrestoAudio {
+        "audioAttributes": object;
         "autoplay": boolean;
         "getRef"?: (elm?: HTMLAudioElement) => void;
         "mediaTitle": string;
@@ -48,6 +49,7 @@ export namespace Components {
         "src": string;
         "thumbnail": string;
         "tracks": { label: string; src: string; srcLang: string }[];
+        "videoAttributes": object;
     }
     interface PrestoBusinessSkin {
     }
@@ -147,6 +149,7 @@ export namespace Components {
     interface PrestoPlayer {
         "actionBar": ActionBarConfig;
         "analytics": boolean;
+        "audioAttributes": object;
         "automations": boolean;
         "autoplay": boolean;
         "blockAttributes": blockAttributes;
@@ -222,6 +225,7 @@ export namespace Components {
         "stop": () => Promise<any>;
         "tracks": { label: string; src: string; srcLang: string }[];
         "type": string;
+        "videoAttributes": object;
         "video_id": number;
         "youtube": YoutubeConfig;
     }
@@ -287,6 +291,7 @@ export namespace Components {
         "provider": string;
         "src": string;
         "tracks": { label: string; src: string; srcLang: string }[];
+        "videoAttributes": object;
     }
     interface PrestoVideoCurtainUi {
         /**
@@ -526,6 +531,7 @@ declare namespace LocalJSX {
         "open"?: boolean;
     }
     interface PrestoAudio {
+        "audioAttributes"?: object;
         "autoplay"?: boolean;
         "getRef"?: (elm?: HTMLAudioElement) => void;
         "mediaTitle"?: string;
@@ -551,6 +557,7 @@ declare namespace LocalJSX {
         "src"?: string;
         "thumbnail"?: string;
         "tracks"?: { label: string; src: string; srcLang: string }[];
+        "videoAttributes"?: object;
     }
     interface PrestoBusinessSkin {
     }
@@ -670,6 +677,7 @@ declare namespace LocalJSX {
     interface PrestoPlayer {
         "actionBar"?: ActionBarConfig;
         "analytics"?: boolean;
+        "audioAttributes"?: object;
         "automations"?: boolean;
         "autoplay"?: boolean;
         "blockAttributes"?: blockAttributes;
@@ -699,6 +707,7 @@ declare namespace LocalJSX {
         "src"?: string;
         "tracks"?: { label: string; src: string; srcLang: string }[];
         "type"?: string;
+        "videoAttributes"?: object;
         "video_id"?: number;
         "youtube"?: YoutubeConfig;
     }
@@ -772,6 +781,7 @@ declare namespace LocalJSX {
         "provider"?: string;
         "src"?: string;
         "tracks"?: { label: string; src: string; srcLang: string }[];
+        "videoAttributes"?: object;
     }
     interface PrestoVideoCurtainUi {
         /**

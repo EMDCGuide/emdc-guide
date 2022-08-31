@@ -372,6 +372,7 @@ window.FWP = (($) => {
         }
 
         render(response) {
+            FWP.response = response;
 
             // Don't render CSS-based (or empty) templates on pageload
             // The template has already been pre-loaded

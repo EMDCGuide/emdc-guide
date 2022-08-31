@@ -6,7 +6,7 @@ const loadHLS = ({ config, selector, src, preload }) => {
       while (!window.hasOwnProperty('Hls')) await new Promise(resolve => setTimeout(resolve, 50));
     }
 
-    if (window.Hls.isSupported() || selector.canPlayType('application/vnd.apple.mpegurl')) {
+    if (window.Hls.isSupported()) {
       // should we autoload start
       let autoStartLoad = !['metadata', 'none'].includes(preload);
 
@@ -90,6 +90,8 @@ const loadHLS = ({ config, selector, src, preload }) => {
       });
 
       return;
+    } else if (selector.canPlayType('application/vnd.apple.mpegurl')) {
+      return resolve(new PrestoPlayer(selector, { ...config }));
     }
 
     return resolve(new PrestoPlayer(selector, { ...config }));

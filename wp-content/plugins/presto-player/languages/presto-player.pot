@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-04-26T14:39:20+00:00\n"
+"POT-Creation-Date: 2022-08-01T15:04:10+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 
@@ -30,14 +30,14 @@ msgstr ""
 #: admin/blocks/shared/audio-placeholder.js:140
 #: admin/blocks/shared/audio-placeholder.js:144
 #: admin/blocks/shared/audioPresets/Edit.js:340
-#: admin/blocks/shared/audioPresets/Preset.js:199
+#: admin/blocks/shared/audioPresets/Preset.js:241
 #: admin/blocks/shared/components/ColorPopup.js:73
 #: admin/blocks/shared/overlays/Edit.js:205
 #: admin/blocks/shared/placeholder.js:152
 #: admin/blocks/shared/placeholder.js:156
 #: admin/blocks/shared/presets/Edit.js:355
 #: admin/blocks/shared/presets/parts/YoutubeChannelId.js:99
-#: admin/blocks/shared/presets/Preset.js:199
+#: admin/blocks/shared/presets/Preset.js:241
 #: admin/settings/components/Integration.js:117
 #: admin/settings/components/ToggleControl.js:56
 msgid "Cancel"
@@ -1122,17 +1122,17 @@ msgstr ""
 msgid "Create Preset"
 msgstr ""
 
-#: admin/blocks/shared/audioPresets/index.js:58
+#: admin/blocks/shared/audioPresets/index.js:65
 msgid "Select a audio configuration preset, or add your own."
 msgstr ""
 
-#: admin/blocks/shared/audioPresets/index.js:87
-#: admin/blocks/shared/presets/index.js:86
+#: admin/blocks/shared/audioPresets/index.js:94
+#: admin/blocks/shared/presets/index.js:93
 msgid "No style presets. You can create a new style by clicking 'Add New Style'."
 msgstr ""
 
-#: admin/blocks/shared/audioPresets/index.js:105
-#: admin/blocks/shared/presets/index.js:104
+#: admin/blocks/shared/audioPresets/index.js:112
+#: admin/blocks/shared/presets/index.js:111
 msgid "Add New Preset"
 msgstr ""
 
@@ -1141,22 +1141,22 @@ msgstr ""
 msgid "Preset trashed."
 msgstr ""
 
-#: admin/blocks/shared/audioPresets/Preset.js:174
-#: admin/blocks/shared/presets/Preset.js:174
+#: admin/blocks/shared/audioPresets/Preset.js:216
+#: admin/blocks/shared/presets/Preset.js:216
 msgid "Trash Preset?"
 msgstr ""
 
-#: admin/blocks/shared/audioPresets/Preset.js:179
-#: admin/blocks/shared/presets/Preset.js:179
+#: admin/blocks/shared/audioPresets/Preset.js:221
+#: admin/blocks/shared/presets/Preset.js:221
 msgid "Warning!"
 msgstr ""
 
-#: admin/blocks/shared/audioPresets/Preset.js:180
+#: admin/blocks/shared/audioPresets/Preset.js:222
 msgid "Any audios assigned to this preset will automatically use the default preset."
 msgstr ""
 
-#: admin/blocks/shared/audioPresets/Preset.js:192
-#: admin/blocks/shared/presets/Preset.js:192
+#: admin/blocks/shared/audioPresets/Preset.js:234
+#: admin/blocks/shared/presets/Preset.js:234
 msgid "Trash"
 msgstr ""
 
@@ -1740,7 +1740,7 @@ msgstr ""
 msgid "Integrate"
 msgstr ""
 
-#: admin/blocks/shared/presets/index.js:57
+#: admin/blocks/shared/presets/index.js:64
 msgid "Select a video configuration preset, or add your own."
 msgstr ""
 
@@ -1802,7 +1802,7 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: admin/blocks/shared/presets/Preset.js:180
+#: admin/blocks/shared/presets/Preset.js:222
 msgid "Any videos assigned to this preset will automatically use the default preset."
 msgstr ""
 

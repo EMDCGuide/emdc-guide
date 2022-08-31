@@ -16,6 +16,7 @@ export declare class PrestoAudio {
   }[];
   provider: string;
   mediaTitle: string;
+  audioAttributes: object;
   playVideo: EventEmitter<void>;
   pauseVideo: EventEmitter<true>;
   width: number;

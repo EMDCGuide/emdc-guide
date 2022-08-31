@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the EditorsKit plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: EditorsKit 1.33.5\n"
+"Project-Id-Version: EditorsKit 1.33.7\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/block-options\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-02-04T10:35:27+00:00\n"
+"POT-Creation-Date: 2022-05-28T09:26:53+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: block-options\n"
@@ -921,21 +921,21 @@ msgstr ""
 msgid "Block navigation"
 msgstr ""
 
-#: src/extensions/block-panel/list-settings/index.js:40
+#: src/extensions/block-panel/list-settings/index.js:44
 msgid "Text Settings"
 msgstr ""
 
-#: src/extensions/block-panel/list-settings/index.js:53
+#: src/extensions/block-panel/list-settings/index.js:57
 msgid "Color Settings"
 msgstr ""
 
-#: src/extensions/block-panel/list-settings/index.js:59
+#: src/extensions/block-panel/list-settings/index.js:63
 #: src/extensions/formats/text-color/components/edit.js:13
 #: src/extensions/formats/text-color/index.js:18
 msgid "Text Color"
 msgstr ""
 
-#: src/extensions/block-panel/list-settings/index.js:64
+#: src/extensions/block-panel/list-settings/index.js:68
 msgid "Bullet/Icon Color"
 msgstr ""
 
@@ -1334,27 +1334,27 @@ msgstr ""
 msgid "Change Caption Alignment"
 msgstr ""
 
-#: src/extensions/formats/background-color/components/edit.js:23
+#: src/extensions/formats/background-color/components/edit.js:28
 msgid "Highlight Color"
 msgstr ""
 
-#: src/extensions/formats/background-color/components/edit.js:27
+#: src/extensions/formats/background-color/components/edit.js:31
 msgid "Orange Sunrise"
 msgstr ""
 
-#: src/extensions/formats/background-color/components/edit.js:32
+#: src/extensions/formats/background-color/components/edit.js:36
 msgid "Pink Flamingo"
 msgstr ""
 
-#: src/extensions/formats/background-color/components/edit.js:37
+#: src/extensions/formats/background-color/components/edit.js:41
 msgid "Spring Green"
 msgstr ""
 
-#: src/extensions/formats/background-color/components/edit.js:42
+#: src/extensions/formats/background-color/components/edit.js:46
 msgid "Blue Moon"
 msgstr ""
 
-#: src/extensions/formats/background-color/components/edit.js:47
+#: src/extensions/formats/background-color/components/edit.js:51
 msgid "Purple Mist"
 msgstr ""
 
@@ -1404,15 +1404,15 @@ msgstr ""
 msgid "Justify"
 msgstr ""
 
-#: src/extensions/formats/link/components/edit.js:29
+#: src/extensions/formats/link/components/edit.js:26
 msgid "Add Link"
 msgstr ""
 
-#: src/extensions/formats/link/components/edit.js:84
+#: src/extensions/formats/link/components/edit.js:89
 msgid "Link removed."
 msgstr ""
 
-#: src/extensions/formats/link/components/edit.js:128
+#: src/extensions/formats/link/components/edit.js:139
 msgid "Unlink"
 msgstr ""
 
@@ -1463,6 +1463,18 @@ msgstr ""
 
 #: src/extensions/formats/nbsp/components/edit.js:56
 msgid "Nonbreaking space"
+msgstr ""
+
+#: src/extensions/lock-block-edit/lock-option.js:37
+msgid "Editorskit"
+msgstr ""
+
+#: src/extensions/lock-block-edit/lock-option.js:42
+msgid "Restrict Settings"
+msgstr ""
+
+#: src/extensions/lock-block-edit/lock-option.js:59
+msgid "Restrict Toolbar"
 msgstr ""
 
 #: src/extensions/movable-block-options/components/detach-button/index.js:24

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit1f77020cd3d395828b281235884658c9
+class ComposerStaticInitfdc086e806ad416dbe51d76795891429
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -56,18 +56,11 @@ class ComposerStaticInit1f77020cd3d395828b281235884658c9
         ),
     );
 
-    public static $classMap = array (
-        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'XLSXWriter' => __DIR__ . '/..' . '/mk-j/php_xlsxwriter/xlsxwriter.class.php',
-        'XLSXWriter_BuffererWriter' => __DIR__ . '/..' . '/mk-j/php_xlsxwriter/xlsxwriter.class.php',
-    );
-
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit1f77020cd3d395828b281235884658c9::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit1f77020cd3d395828b281235884658c9::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit1f77020cd3d395828b281235884658c9::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitfdc086e806ad416dbe51d76795891429::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitfdc086e806ad416dbe51d76795891429::$prefixDirsPsr4;
 
         }, null, ClassLoader::class);
     }

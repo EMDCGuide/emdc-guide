@@ -154,13 +154,8 @@ class FacetWP_Builder
         $value = $source;
 
         $selector = '.fwpl-item.' . $name;
-
-        if ( 'button' == $source ) {
-            $this->css[ $selector . ' button'] = $this->build_styles( $settings );
-        }
-        else {
-            $this->css[ $selector ] = $this->build_styles( $settings );
-        }
+        $selector = ( 'button' == $source ) ? $selector . ' button' : $selector;
+        $this->css[ $selector ] = $this->build_styles( $settings );
 
         if ( 0 === strpos( $source, 'post_' ) || 'ID' == $source ) {
             if ( 'post_title' == $source ) {
@@ -578,16 +573,32 @@ class FacetWP_Builder
 
             // Cast as decimal for more accuracy
             $type = ( 'NUMERIC' == $type ) ? 'DECIMAL(16,4)' : $type;
+            $value_bypass = false;
 
-            $in_clause = in_array( $compare, [ 'IN', 'NOT IN' ] );
-            $exists_clause = in_array( $compare, [ 'EXISTS', 'NOT EXISTS' ] );
-
-            if ( empty( $value ) && ! $exists_clause ) {
-                continue;
+            // Clear the value for certain compare types
+            if ( in_array( $compare, [ 'EXISTS', 'NOT EXISTS', 'EMPTY', 'NOT EMPTY' ] ) ) {
+                $value_bypass = true;
+                $value = '';
             }
 
-            if ( ! $in_clause ) {
-                $value = $exists_clause ? '' : $value[0];
+            // If "EMPTY", use "=" compare type w/ empty string value
+            if ( in_array( $compare, [ 'EMPTY', 'NOT EMPTY' ] ) ) {
+                $compare = ( 'EMPTY' == $compare ) ? '=' : '!=';
+            }
+
+            // Handle multiple values
+            if ( is_array( $value ) ) {
+                if ( in_array( $compare, [ '=', '!=' ] ) ) {
+                    $compare = ( '=' == $compare ) ? 'IN' : 'NOT IN';
+                }
+
+                if ( ! in_array( $compare, [ 'IN', 'NOT IN' ] ) ) {
+                    $value = $value[0];
+                }
+            }
+
+            if ( empty( $value ) && ! $value_bypass ) {
+                continue;
             }
 
             // Support dynamic URL vars
@@ -765,10 +776,10 @@ class FacetWP_Builder
             'post_modified' => 'Post Modified'
         ];
 
-        return [
+        return apply_filters( 'facetwp_builder_query_data', [
             'post_types' => $builder_post_types,
             'filter_by' => $data_sources
-        ];
+        ] );
     }
 
 

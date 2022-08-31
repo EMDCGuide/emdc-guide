@@ -61,7 +61,7 @@ export class PrestoAudio {
       this.hasPosterArea() && this.renderMobilePoster(),
       h("div", { class: "presto-audio__controls-wrapper" },
         h("div", { class: "presto-audio__title" }, this.mediaTitle),
-        h("audio", { part: "audio-player", ref: this.getRef, autoplay: this.autoplay, preload: this.preload, "data-poster": this.poster },
+        h("audio", Object.assign({ part: "audio-player", ref: this.getRef, autoplay: this.autoplay, preload: this.preload, "data-poster": this.poster }, this.audioAttributes),
           h("source", { src: this.src }),
           !!this.tracks &&
             !!this.tracks.length &&
@@ -247,6 +247,21 @@ export class PrestoAudio {
       },
       "attribute": "media-title",
       "reflect": false
+    },
+    "audioAttributes": {
+      "type": "unknown",
+      "mutable": false,
+      "complexType": {
+        "original": "object",
+        "resolved": "object",
+        "references": {}
+      },
+      "required": false,
+      "optional": false,
+      "docs": {
+        "tags": [],
+        "text": ""
+      }
     }
   }; }
   static get states() { return {

@@ -3,8 +3,8 @@ Contributors: 2winfactor, wpcrafter
 Donate link: https://prestoplayer.com
 Tags: video, audio, youtube, vimeo, lms, elementor, learndash, beaver builder, lifterlms
 Requires at least: 5.6
-Tested up to: 5.9
-Stable tag: 1.9.6
+Tested up to: 6.0
+Stable tag: 1.9.13
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -152,6 +152,29 @@ It is also important to point out that BunnyNet has a $1 per month minimum.
 
 
 == Changelog ==
+
+= 1.9.13 - August 01, 2022 = 
+* Improvement: Add filters for HTML attributes to player. 
+
+= 1.9.12 - July 12, 2022 = 
+* Fix: Issue with fallback iframes not having a title attribute.
+
+= 1.9.11 - July 06, 2022 = 
+* Fix: Issue with volume when chapter is clicked. 
+* Fix: Player icons not working with cross origin URL.
+
+= 1.9.10 - June 07, 2022 = 
+* Improvement: Use native HLS implementation for iOS devices to increase compatibility with different HLS streaming services.
+
+= 1.9.9 - June 01, 2022 = 
+* Fix: Reset player progress on end of the video to prevent issue with TutorLMS.
+
+= 1.9.8 - May 31, 2022 = 
+* Fix: Styling for Preset list in the editor. 
+* Fix: Menu icon compatibility with WordPress 6.0.  
+
+= 1.9.7 - May 12, 2022 = 
+* Improvement: Remove temporary files. 
 
 = 1.9.6 - April 26, 2022 = 
 * Fix: Add function checks in case wp_get_attachment_url is called before WP loads. 

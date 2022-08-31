@@ -3,9 +3,6 @@
 class FacetWP_Facet_Proximity_Core extends FacetWP_Facet
 {
 
-    /* (array) Ordered array of post IDs */
-    public $ordered_posts = [];
-
     /* (array) Associative array containing each post ID and its distance */
     public $distance = [];
 
@@ -119,40 +116,42 @@ class FacetWP_Facet_Proximity_Core extends FacetWP_Facet
             return 'continue';
         }
 
-        $lat = (float) $selected_values[0];
-        $lng = (float) $selected_values[1];
+        $lat1 = (float) $selected_values[0];
+        $lng1 = (float) $selected_values[1];
         $radius = (float) $selected_values[2];
+        $rad = M_PI / 180;
 
         $sql = "
-        SELECT DISTINCT post_id, ( $earth_radius * acos(
-            greatest( -1, least( 1, ( /* acos() must be between -1 and 1 */
-                cos( radians( $lat ) ) *
-                cos( radians( facet_value ) ) *
-                cos( radians( facet_display_value ) - radians( $lng ) ) +
-                sin( radians( $lat ) ) *
-                sin( radians( facet_value ) )
-            ) ) )
-        ) ) AS distance
+        SELECT DISTINCT post_id, facet_value AS `lat`, facet_display_value AS `lng`
         FROM {$wpdb->prefix}facetwp_index
-        WHERE facet_name = '{$facet['name']}'
-        HAVING distance < $radius
-        ORDER BY distance";
+        WHERE facet_name = '{$facet['name']}'";
 
-        $this->ordered_posts = [];
-        $this->distance = [];
+        $results = $wpdb->get_results( $sql );
 
-        if ( apply_filters( 'facetwp_proximity_store_distance', false ) ) {
-            $results = $wpdb->get_results( $sql );
-            foreach ( $results as $row ) {
-                $this->ordered_posts[] = $row->post_id;
-                $this->distance[ $row->post_id ] = $row->distance;
+        foreach ( $results as $row ) {
+            $lat2 = (float) $row->lat;
+            $lng2 = (float) $row->lng;
+
+            if ( ( $lat1 == $lat2 ) && ( $lng1 == $lng2 ) ) {
+                $dist = 0;
+            }
+            else {
+                $calc = sin( $lat1 * $rad ) * sin( $lat2 * $rad ) +
+                        cos( $lat1 * $rad ) * cos( $lat2 * $rad ) *
+                        cos( $lng2 * $rad - $lng1 * $rad );
+
+                // acos() must be between -1 and 1
+                $dist = acos( max( -1, min( 1, $calc ) ) ) * $earth_radius;
+            }
+
+            if ( $dist <= $radius ) {
+                $this->distance[ $row->post_id ] = $dist;
             }
         }
-        else {
-            $this->ordered_posts = $wpdb->get_col( $sql );
-        }
 
-        return $this->ordered_posts;
+        asort( $this->distance, SORT_NUMERIC );
+
+        return array_keys( $this->distance );
     }
 
 
@@ -296,20 +295,19 @@ class FacetWP_Facet_Proximity_Core extends FacetWP_Facet
 
 
     /**
-     * After the final list of post IDs has been produced,
-     * sort them by distance if needed
+     * Sort the final (filtered) post IDs by distance
      */
     function sort_by_distance( $post_ids, $class ) {
 
-        $ordered_posts = FWP()->helper->facet_types['proximity']->ordered_posts;
+        $distance = FWP()->helper->facet_types['proximity']->distance;
 
-        if ( ! empty( $ordered_posts ) ) {
-
-            // Sort the post IDs according to distance
-            $intersected_ids = [ 0 ];
+        if ( ! empty( $distance ) ) {
+            $ordered_posts = array_keys( $distance );
+            $filtered_posts = array_flip( $post_ids );
+            $intersected_ids = [];
 
             foreach ( $ordered_posts as $p ) {
-                if ( in_array( $p, $post_ids ) ) {
+                if ( isset( $filtered_posts[ $p ] ) ) {
                     $intersected_ids[] = $p;
                 }
             }
@@ -324,7 +322,6 @@ class FacetWP_Facet_Proximity_Core extends FacetWP_Facet
 
 /**
  * Get a post's distance
- * NOTE: SET facetwp_proximity_store_distance filter = TRUE
  */
 function facetwp_get_distance( $post_id = false ) {
     global $post;

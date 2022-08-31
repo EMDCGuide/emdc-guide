@@ -378,8 +378,9 @@
         });
     });
 
-    $().on('fs:changed', function() {
-        if (! FWP.is_refresh) {
+    $().on('fs:changed', function(e) {
+        var is_facet = $(e.detail[0]).closest('.facetwp-type-fselect').len() > 0;
+        if (! FWP.is_refresh && is_facet) {
             FWP.autoload();
         }
     });
@@ -429,6 +430,12 @@
 
     FWP.hooks.addFilter('facetwp/selections/number_range', function(output, params) {
         return params.selected_values[0] + ' - ' + params.selected_values[1];
+    });
+
+    $().on('keyup', '.facetwp-type-number_range .facetwp-number', function(e) {
+        if (13 === e.which && ! FWP.is_refresh) {
+            FWP.autoload();
+        }
     });
 
     $().on('click', '.facetwp-type-number_range .facetwp-submit', function() {
@@ -743,9 +750,17 @@
             var facet_name = $parent.attr('data-name');
             var opts = FWP.settings[facet_name];
 
+            // custom slider options
+            var slider_opts = FWP.hooks.applyFilters('facetwp/set_options/slider', {
+                range: opts.range,
+                start: opts.start,
+                step: parseFloat(opts.step),
+                connect: true
+            }, { 'facet_name': facet_name });
+
             if ($this.hasClass('ready')) {
                 $this.nodes[0].noUiSlider.updateOptions({
-                    range: FWP.settings[facet_name].range
+                    range: slider_opts.range
                 }, false);
             }
             else {
@@ -756,7 +771,7 @@
                 }
 
                 // fail if start values are null
-                if (null === FWP.settings[facet_name].start[0]) {
+                if (null === slider_opts.start[0]) {
                     return;
                 }
 
@@ -767,15 +782,6 @@
                     FWP.hooks.doAction('facetwp/set_label/slider', $parent);
                     return;
                 }
-
-                // custom slider options
-                var slider_opts = FWP.hooks.applyFilters('facetwp/set_options/slider', {
-                    range: opts.range,
-                    start: opts.start,
-                    step: parseFloat(opts.step),
-                    connect: true
-                }, { 'facet_name': facet_name });
-
 
                 var slider = this;
                 noUiSlider.create(slider, slider_opts);

@@ -38,26 +38,25 @@ class FacetWP_Facet_Dropdown extends FacetWP_Facet
         $output .= '<select class="facetwp-dropdown">';
         $output .= '<option value="">' . esc_attr( $label_any ) . '</option>';
 
-        foreach ( $values as $result ) {
-            $selected = in_array( $result['facet_value'], $selected_values ) ? ' selected' : '';
-
-            $display_value = '';
-
-            if ( $is_hierarchical ) {
-                for ( $i = 0; $i < (int) $result['depth']; $i++ ) {
-                    $display_value .= '&nbsp;&nbsp;';
-                }
-            }
+        foreach ( $values as $row ) {
+            $selected = in_array( $row['facet_value'], $selected_values ) ? ' selected' : '';
+            $indent = $is_hierarchical ? str_repeat( '&nbsp;&nbsp;', (int) $row['depth'] ) : '';
 
             // Determine whether to show counts
-            $display_value .= esc_attr( $result['facet_display_value'] );
+            $label = esc_attr( $row['facet_display_value'] );
+            $label = apply_filters( 'facetwp_facet_display_value', $label, [
+                'selected' => ( '' !== $selected ),
+                'facet' => $facet,
+                'row' => $row
+            ]);
+
             $show_counts = apply_filters( 'facetwp_facet_dropdown_show_counts', true, [ 'facet' => $facet ] );
 
             if ( $show_counts ) {
-                $display_value .= ' (' . $result['counter'] . ')';
+                $label .= ' (' . $row['counter'] . ')';
             }
 
-            $output .= '<option value="' . esc_attr( $result['facet_value'] ) . '"' . $selected . '>' . $display_value . '</option>';
+            $output .= '<option value="' . esc_attr( $row['facet_value'] ) . '"' . $selected . '>' . $indent . $label . '</option>';
         }
 
         $output .= '</select>';

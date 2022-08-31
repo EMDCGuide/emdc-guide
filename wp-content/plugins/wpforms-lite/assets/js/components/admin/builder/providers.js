@@ -400,7 +400,7 @@ WPForms.Admin.Builder.Providers = WPForms.Admin.Builder.Providers || ( function(
 			// Save a current form fields state.
 			__private.fields = $.extend( {}, wpf.getFields( false, true ) );
 
-			app.panelHolder = $( '#wpforms-panel-providers' );
+			app.panelHolder = $( '#wpforms-panel-providers, #wpforms-panel-settings' );
 
 			app.Templates = WPForms.Admin.Builder.Templates;
 			app.Templates.add( __private.config.templates );
@@ -422,7 +422,7 @@ WPForms.Admin.Builder.Providers = WPForms.Admin.Builder.Providers || ( function(
 			// On Form save - notify user about required fields.
 			$( document ).on( 'wpformsSaved', function() {
 
-				var $connectionBlocks = $( '#wpforms-panel-providers' ).find( '.wpforms-builder-provider-connection' );
+				var $connectionBlocks = app.panelHolder.find( '.wpforms-builder-provider-connection' );
 
 				if ( ! $connectionBlocks.length ) {
 					return;
@@ -438,15 +438,17 @@ WPForms.Admin.Builder.Providers = WPForms.Admin.Builder.Providers || ( function(
 					// Do the actual required fields check.
 					$( this ).find( 'input.wpforms-required, select.wpforms-required, textarea.wpforms-required' ).each( function() {
 
-						var value = $( this ).val();
+						const $this = $( this ),
+							value = $this.val();
 
-						if ( _.isEmpty( value ) ) {
+						if ( _.isEmpty( value ) && ! $this.closest( '.wpforms-builder-provider-connection-block' ).hasClass( 'wpforms-hidden' ) ) {
 							$( this ).addClass( 'wpforms-error' );
 							isRequiredEmpty = true;
 
-						} else {
-							$( this ).removeClass( 'wpforms-error' );
+							return;
 						}
+
+						$( this ).removeClass( 'wpforms-error' );
 					} );
 
 					// Notify user.
@@ -485,10 +487,10 @@ WPForms.Admin.Builder.Providers = WPForms.Admin.Builder.Providers || ( function(
 			 * This will prevent a please-save-prompt to appear, when navigating
 			 * out and back to Marketing tab without doing any changes anywhere.
 			 */
-			$( '#wpforms-panel-providers' ).on( 'connectionRendered', function() {
+			app.panelHolder.on( 'connectionRendered', function() {
 
 				if ( wpf.initialSave === true ) {
-					wpf.savedState = wpf.getFormState( '#wpforms-builder-form');
+					wpf.savedState = wpf.getFormState( '#wpforms-builder-form' );
 				}
 			} );
 		},
@@ -656,7 +658,7 @@ WPForms.Admin.Builder.Providers = WPForms.Admin.Builder.Providers || ( function(
 					} );
 
 				// CONNECTION: Generated.
-				$( '#wpforms-panel-providers' ).on( 'connectionGenerated', function( e, data ) {
+				app.panelHolder.on( 'connectionGenerated', function( e, data ) {
 
 					wpf.initTooltips();
 
@@ -669,7 +671,7 @@ WPForms.Admin.Builder.Providers = WPForms.Admin.Builder.Providers || ( function(
 				} );
 
 				// CONNECTION: Rendered.
-				$( '#wpforms-panel-providers' ).on( 'connectionRendered', function( e, provider, connectionId ) {
+				app.panelHolder.on( 'connectionRendered', function( e, provider, connectionId ) {
 
 					wpf.initTooltips();
 

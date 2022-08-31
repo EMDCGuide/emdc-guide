@@ -1,3 +1,69 @@
+v3.9.1
+- Fix: Mobile menu flyout mode not working properly when old Header layout is active.
+- Fix: WooCommerce - Button variation is displaying the old deleted product attributes on single product.
+- Fix: WooCommerce - Shop active filter toggle not working properly due to incorrect customizer option handle.
+- Fix: Theme version rollback does not work on the initial page load of Astra Options.
+
+v3.9.0
+- New: Redesigned the entire customizer UI for better user experience.
+- New: WooCommerce - General - Quantity Plus Minus Button Options With Multiple Designs.
+- New: WooCommerce - General - Modern Input skin type.
+- New: WooCommerce - General - Ajax based quantity selector.
+- New: WooCommerce - General - Introduced Color and background option for Sale badge.
+- New: WooCommerce - Shop - Added new modern view option for shop style.
+- New: WooCommerce - Shop - Introduced unique filter panel design.
+- New: WooCommerce - Shop - Introduced sticky shop filter sidebar option.
+- New: WooCommerce - Shop - Added accordion compatibility for WooCommerce filter widgets.
+- New: WooCommerce - Shop - Added Flyout and Collapsible option for WooCommerce filters panel.
+- New: WooCommerce - Single Product - Added sticky add to cart on single product.
+- New: WooCommerce - Single Product - Product tabs heading - Product tabs heading - Added normal, hover, and active text color support.
+- New: WooCommerce - Single Product - Added Color and Typography options for Category text.
+- New: WooCommerce - Single Product - Added Enable/Disable Quantity Plus-Minus sign option.
+- New: WooCommerce - Single Product - Added Option to Add Extra Product Description.
+- New: WooCommerce - Single Product - Introduced tab style presets for product details. ( Accordion / Distributed ).
+- New: WooCommerce - Single Product - Introduced previous-next product preview option on navigation hover.
+- New: WooCommerce - Single Product - Payment options list in single product structure.
+- New: WooCommerce - Single Product - Introduced sticky product summary option.
+- New: WooCommerce - Single Product - Toggle to Convert Variation select dropdown to buttons UI on Single Product page.
+- New: WooCommerce - Added Multistep Navigation for Cart, Checkout and Order Received pages.
+- New: WooCommerce - Cart - Modern Cart Layout.
+- New: WooCommerce - Cart - Sticky Cart total on scroll on WooCommerce cart page.
+- New: WooCommerce - Checkout - Modern Layout.
+- Improvement: Single Product - Option to Show/Hide Category on WooCommerce single product page.
+- Improvement: Single Product - Product gallery Layout options ( First Image Large / Vertical Slider / Horizontal Slider ).
+- Improvement: Single Product - Product Navigation color options ( Normal & Hover ).
+- Fix: Related Products & Upsell columns not working on responsive devices.
+
+v3.6.11
+- Fix: Custom layout styling not loading on front-end.
+
+v3.6.10
+- Improvement: Moved Single Post and Page spacing option to theme.
+- Fix: Translated Taxonomies not listed under the target specific rule for Custom Layout with Polylang plugin.
+- Fix: Custom Layouts - Inside post/page content displays multiple time with entry_after hooks used.
+- Fix: Small space appearing between the Sticky Above and Primary header in the Beaver Builder editor.
+- Fix: Primary submenus not expandable on mobile when toggle button element is not added.
+- Fix: "Header Button" heading added to separate out Sticky Header options in old header.
+- Fix: Accessibility - LifterLMS profile link is missing aria-label and role attribute.
+- Fix: Fixed display Products from Same Category with Navigation. ( https://wpastra.com/docs/products-from-same-directed-category-with-navigation/ )
+
+v3.6.9
+- Fix: Improvements as per WordPress coding standards.
+- Fix: Header - Menus - Box Shadow not applying for submenus from customizer options
+- Fix: Single Product Quantity not working for decimal numbers.
+- Fix: Elementor page with Motion effect jerks on scroll when header is set to sticky and animation is None.
+- Fix: Submenu items expanded initially in offcanvas, when Toggle Button being used for desktop header.
+- Fix: Astra theme version number missing in Rollback section.
+
+v3.6.8
+- Improvement: Compatibility for enhancing block editor experience. ( https://wpastra.com/docs/improved-block-editor-experience/ )
+- Fix: Builder - Search - Search markup is loaded even when the search element is not added.
+- Fix: WooCommerce - Grouped product - Add to Cart not appearing properly on Quick view.
+- Fix: Some of the Search shortcodes are not working on the posts or pages.
+- Fix: W3 validation - aria-label attribute is missing for the close icon for the Off-canvas sidebar trigger on the Shop page.
+- Fix: Sticky header meta option is not working on the frontend.
+- Fix: Custom Layout - 'Header is built using Custom Layout' notice showing in customizer even the layout's toggle is disabled.
+
 v3.6.7
 - Fix: Blog - Infinite scroll is not working with Masonry Layout.
 

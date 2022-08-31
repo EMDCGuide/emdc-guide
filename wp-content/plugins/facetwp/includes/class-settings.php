@@ -215,11 +215,16 @@ class FacetWP_Settings
                     '' => __( 'Basic', 'fwp' ),
                     'enclose' => __( 'Enclose', 'fwp' ),
                     'intersect' => __( 'Intersect', 'fwp' )
-                ]
+                ],
+                'show' => "facet.source_other != ''"
             ],
             'ui_type' => [
                 'label' => __( 'UI type', 'fwp' ),
                 'html' => '<ui-type :facet="facet"></ui-type>'
+            ],
+            'reset_text' => [
+                'label' => __( 'Reset text', 'fwp' ),
+                'default' => 'Reset'
             ]
         ];
 

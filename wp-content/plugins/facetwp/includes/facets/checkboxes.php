@@ -107,7 +107,6 @@ class FacetWP_Facet_Checkboxes extends FacetWP_Facet
      * Generate the facet HTML
      */
     function render( $params ) {
-
         $facet = $params['facet'];
 
         if ( FWP()->helper->facet_is( $facet, 'hierarchical', 'yes' ) ) {

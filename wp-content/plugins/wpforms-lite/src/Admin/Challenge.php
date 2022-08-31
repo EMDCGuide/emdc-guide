@@ -119,7 +119,7 @@ class Challenge {
 
 		$screen = get_current_screen();
 
-		if ( ! isset( $screen->id ) || 'page' !== $screen->id ) {
+		if ( ! isset( $screen->id ) || $screen->id !== 'page' ) {
 			return false;
 		}
 
@@ -129,21 +129,26 @@ class Challenge {
 
 		$step = $this->get_challenge_option( 'step' );
 
-		if ( ! in_array( $step, [ 4, 5 ], true ) ) {
+		if ( ! in_array( $step, [ 3, 4, 5 ], true ) ) {
 			return false;
 		}
 
-		$embed_page = $this->get_challenge_option( 'embed_page' );
+		$embed_page    = $this->get_challenge_option( 'embed_page' );
+		$is_embed_page = false;
 
-		if ( isset( $screen->action ) && 'add' === $screen->action && 0 === $embed_page ) {
-			return true;
+		if ( isset( $screen->action ) && $screen->action === 'add' && $embed_page === 0 ) {
+			$is_embed_page = true;
 		}
 
 		if ( isset( $_GET['post'] ) && $embed_page === (int) $_GET['post'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return true;
+			$is_embed_page = true;
 		}
 
-		return false;
+		if ( $is_embed_page && $step < 4 ) {
+			$this->set_challenge_option( [ 'step' => 4 ] );
+		}
+
+		return $is_embed_page;
 	}
 
 	/**
@@ -191,14 +196,14 @@ class Challenge {
 
 			wp_enqueue_style(
 				'tooltipster',
-				WPFORMS_PLUGIN_URL . 'assets/css/tooltipster.css',
+				WPFORMS_PLUGIN_URL . 'assets/lib/jquery.tooltipster/jquery.tooltipster.min.css',
 				null,
 				'4.2.6'
 			);
 
 			wp_enqueue_script(
 				'tooltipster',
-				WPFORMS_PLUGIN_URL . 'assets/js/jquery.tooltipster.min.js',
+				WPFORMS_PLUGIN_URL . 'assets/lib/jquery.tooltipster/jquery.tooltipster.min.js',
 				[ 'jquery' ],
 				'4.2.6',
 				true
@@ -228,7 +233,7 @@ class Challenge {
 
 			wp_enqueue_style(
 				'wpforms-font-awesome',
-				WPFORMS_PLUGIN_URL . 'assets/css/font-awesome.min.css',
+				WPFORMS_PLUGIN_URL . 'assets/lib/font-awesome/font-awesome.min.css',
 				null,
 				'4.7.0'
 			);
@@ -440,6 +445,10 @@ class Challenge {
 			return $can_start;
 		}
 
+		if ( $this->challenge_force_skip() ) {
+			$can_start = false;
+		}
+
 		if ( $this->challenge_force_start() ) {
 			$can_start = true;
 
@@ -469,10 +478,6 @@ class Challenge {
 	 */
 	public function init_challenge() {
 
-		if ( ! isset( $_GET['challenge'] ) || 'init' !== $_GET['challenge'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return;
-		}
-
 		if ( ! $this->challenge_can_start() ) {
 			return;
 		}
@@ -483,8 +488,6 @@ class Challenge {
 				$this->get_challenge_option_schema()
 			)
 		);
-
-		wp_safe_redirect( remove_query_arg( 'challenge' ) );
 	}
 
 	/**
@@ -494,11 +497,15 @@ class Challenge {
 	 */
 	public function challenge_html() {
 
-		if ( $this->challenge_finished() && ! $this->challenge_force_start() ) {
+		if ( $this->challenge_force_skip() || ( $this->challenge_finished() && ! $this->challenge_force_start() ) ) {
 			return;
 		}
 
 		if ( wpforms_is_admin_page() && ! wpforms_is_admin_page( 'getting-started' ) && $this->challenge_can_start() ) {
+
+			// Before showing the Challenge in the `start` state we should reset the option.
+			// In this way we ensure the Challenge will not appear somewhere in the builder where it is not should be.
+			$this->set_challenge_option( [ 'status' => '' ] );
 			$this->challenge_modal_html( 'start' );
 		}
 
@@ -671,5 +678,17 @@ class Challenge {
 
 		$this->set_challenge_option( [ 'feedback_sent' => true ] );
 		wp_send_json_success();
+	}
+
+	/**
+	 * Force WPForms Challenge to skip.
+	 *
+	 * @since 1.7.6
+	 *
+	 * @return bool
+	 */
+	private function challenge_force_skip() {
+
+		return defined( 'WPFORMS_SKIP_CHALLENGE' ) && WPFORMS_SKIP_CHALLENGE;
 	}
 }

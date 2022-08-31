@@ -43,8 +43,28 @@ function astrawpWooQuantityButtons( $quantitySelector ) {
             // Add plus and minus icons.
             $qty_parent = $quantityBoxes.parentElement;
             $qty_parent.classList.add( 'buttons_added' );
-            $qty_parent.insertAdjacentHTML( 'afterbegin', '<label class="screen-reader-text" for="minus_qty">' + astraAddon.product_plus_minus_text.minus_qty + '</label><a href="javascript:void(0)" id ="minus_qty" class="minus">-</a>' );
-            $qty_parent.insertAdjacentHTML( 'beforeend', '<label class="screen-reader-text" for="plus_qty"> '+ astraAddon.product_plus_minus_text.plus_qty + '</label><a href="javascript:void(0)" id ="plus_qty" class="plus">+</a>' );
+            switch ( astraAddon.product_plus_minus_text.style_type ) {
+
+				case 'no-internal-border':
+						$quantityBoxes.classList.add( 'ast-no-internal-border' );
+						$qty_parent.insertAdjacentHTML( 'afterbegin', '<label class="screen-reader-text" for="minus_qty">' + astraAddon.product_plus_minus_text.minus_qty + '</label><a href="javascript:void(0)" id ="minus_qty" class="minus no-internal-border">-</a>' );
+						$qty_parent.insertAdjacentHTML( 'beforeend', '<label class="screen-reader-text" for="plus_qty"> '+ astraAddon.product_plus_minus_text.plus_qty + '</label><a href="javascript:void(0)" id ="plus_qty" class="plus no-internal-border">+</a> ' );
+					break;
+
+				case 'vertical-icon':
+						$qty_parent.classList.add( 'ast-vertical-style-applied' );
+						$quantityBoxes.classList.add( 'vertical-icons-applied' );
+						$qty_parent.insertAdjacentHTML( 'beforeend',
+							'<label class="screen-reader-text" for="plus_qty"> '+ astraAddon.product_plus_minus_text.plus_qty + '</label><a href="javascript:void(0)" id ="plus_qty" class="plus ast-vertical-icon">+</a>'+
+							'<label class="screen-reader-text" for="minus_qty">' + astraAddon.product_plus_minus_text.minus_qty + '</label><a  href="javascript:void(0)" id ="minus_qty" class="minus ast-vertical-icon">-</a>'
+						);
+					break;
+
+				default:
+						$qty_parent.insertAdjacentHTML( 'afterbegin', '<label class="screen-reader-text" for="minus_qty">' + astraAddon.product_plus_minus_text.minus_qty + '</label><a href="javascript:void(0)" id ="minus_qty" class="minus">-</a>' );
+						$qty_parent.insertAdjacentHTML( 'beforeend', '<label class="screen-reader-text" for="plus_qty"> '+ astraAddon.product_plus_minus_text.plus_qty + '</label><a href="javascript:void(0)" id ="plus_qty" class="plus">+</a>' );
+					break;
+			}
             $quantityEach = document.querySelectorAll( 'input' + $quantitySelector + ':not(.product-quantity)' );
 
             for ( var j = 0; j < $quantityEach.length; j++ ) {
@@ -62,7 +82,7 @@ function astrawpWooQuantityButtons( $quantitySelector ) {
             var objBody = document.getElementsByTagName( 'BODY' )[0];
             if ( objBody.classList.contains( 'single-product' ) && ! $cart.classList.contains( 'grouped_form' ) ) {
                 // Check for single product page.
-                var $quantityInput = document.querySelector( '.woocommerce form input[type=number].qty' );
+                var $quantityInput = document.querySelector( '.woocommerce input[type=number].qty' );
                 $quantityInput.addEventListener( 'keyup' , function() {
                     var qty_val = $quantityInput.value;
                     $quantityInput.value = qty_val;
@@ -77,6 +97,7 @@ function astrawpWooQuantityButtons( $quantitySelector ) {
 
                 pm_el.addEventListener( "click", function(ev) {
 
+                    
                     // Quantity.
                     var $quantityBox;
 
@@ -86,7 +107,9 @@ function astrawpWooQuantityButtons( $quantitySelector ) {
                     var $currentQuantity = parseFloat( $quantityBox.value ),
                     $maxQuantity = parseFloat( $quantityBox.getAttribute( 'max' ) ),
                     $minQuantity = parseFloat( $quantityBox.getAttribute( 'min' ) ),
-                    $step = $quantityBox.getAttribute( 'step' );
+                    $step = parseFloat( $quantityBox.getAttribute( 'step' ) ),
+                    checkStepInteger = Number.isInteger( $step ),
+                    finalValue;
 
                     // Fallback default values.
                     if ( ! $currentQuantity || '' === $currentQuantity || 'NaN' === $currentQuantity ) {
@@ -99,7 +122,7 @@ function astrawpWooQuantityButtons( $quantitySelector ) {
                     if ( '' === $minQuantity || 'NaN' === $minQuantity ) {
                         $minQuantity = 0;
                     }
-                    if ( 'any' === $step || '' === $step || undefined === $step || 'NaN' === parseFloat( $step ) ) {
+                    if ( 'any' === $step || '' === $step || undefined === $step || 'NaN' === $step ) {
                         $step = 1;
                     }
 
@@ -109,7 +132,8 @@ function astrawpWooQuantityButtons( $quantitySelector ) {
                         if ( $maxQuantity && ( $maxQuantity == $currentQuantity || $currentQuantity > $maxQuantity ) ) {
                             $quantityBox.value = $maxQuantity;
                         } else {
-                            $quantityBox.value = $currentQuantity + parseFloat( $step );
+                            finalValue = $currentQuantity + parseFloat( $step );
+                            $quantityBox.value = checkStepInteger ? finalValue : ( finalValue ).toFixed(1);
                         }
 
                     } else {
@@ -117,7 +141,8 @@ function astrawpWooQuantityButtons( $quantitySelector ) {
                         if ( $minQuantity && ( $minQuantity == $currentQuantity || $currentQuantity < $minQuantity ) ) {
                             $quantityBox.value = $minQuantity;
                         } else if ( $currentQuantity > 0 ) {
-                            $quantityBox.value = $currentQuantity - parseFloat( $step );
+                            finalValue = $currentQuantity - parseFloat( $step );
+                            $quantityBox.value = checkStepInteger ? finalValue : ( finalValue ).toFixed(1);
                         }
 
                     }
@@ -126,6 +151,45 @@ function astrawpWooQuantityButtons( $quantitySelector ) {
                     var event = document.createEvent( 'HTMLEvents' );
                     event.initEvent( 'change', true, false );
                     $quantityBox.dispatchEvent( event );
+
+
+					// Send AJAX request from mini cart.
+
+                    const miniCart = ev.currentTarget.closest( '.woocommerce-mini-cart' );
+
+					if ( miniCart ) {
+						let quantity = $quantityBox.value;
+						let itemHash = $quantityBox.getAttribute('name').replace(/cart\[([\w]+)\]\[qty\]/g, '$1');
+						let qtyNonce = astra.single_product_qty_ajax_nonce;
+
+                        miniCart.classList.add('ajax-mini-cart-qty-loading');
+                        
+						// Creating a XMLHttpRequest object.
+						let xhrRequest = new XMLHttpRequest();
+						xhrRequest.open( 'POST', astra.ajax_url, true );
+
+						// Send the proper header information along with the request
+						xhrRequest.setRequestHeader( "Content-Type", "application/x-www-form-urlencoded" );
+
+						xhrRequest.send( 'action=astra_add_cart_single_product_quantity&hash=' + itemHash + '&quantity=' + quantity + '&qtyNonce=' + qtyNonce );
+
+						xhrRequest.onload = function () {
+							if ( xhrRequest.readyState == XMLHttpRequest.DONE ) {   // XMLHttpRequest.DONE == 4
+								if ( 200 <= xhrRequest.status || 400 <= xhrRequest.status ) {
+									// Trigger event so themes can refresh other areas.
+									var event = document.createEvent( 'HTMLEvents' );
+									event.initEvent( 'wc_fragment_refresh', true, false );
+									document.body.dispatchEvent(event);
+
+                                    miniCart.classList.remove('ajax-mini-cart-qty-loading');
+
+									if ( typeof wc_add_to_cart_params === 'undefined' ) {
+										return;
+									}
+								}
+							}
+						};
+					}
 
                 }, false);
             }

@@ -21,6 +21,15 @@ abstract class LiteConnect implements IntegrationInterface {
 	const SETTINGS_SLUG = 'lite-connect-enabled';
 
 	/**
+	 * The $_GET argument to trigger the auth key endpoint.
+	 *
+	 * @since 1.7.4.1
+	 *
+	 * @var string
+	 */
+	const AUTH_KEY_ARG = 'wpforms-liteconnect-auth-key';
+
+	/**
 	 * Indicate if current integration is allowed to load.
 	 *
 	 * @since 1.7.4
@@ -42,7 +51,7 @@ abstract class LiteConnect implements IntegrationInterface {
 	public static function is_allowed() {
 
 		// Disable Lite Connect integration for local hosts.
-		$allowed = ! self::is_local_not_debug();
+		$allowed = ! self::is_local_not_debug() && self::is_production();
 
 		// phpcs:disable WPForms.PHP.ValidateHooks.InvalidHookName
 
@@ -100,7 +109,7 @@ abstract class LiteConnect implements IntegrationInterface {
 	 */
 	private static function is_local_not_debug() {
 
-		return ( ! defined( 'WPFORMS_DEBUG_LITE_CONNECT' ) ) && self::is_localhost();
+		return ! defined( 'WPFORMS_DEBUG_LITE_CONNECT' ) && self::is_localhost();
 	}
 
 	/**
@@ -142,23 +151,31 @@ abstract class LiteConnect implements IntegrationInterface {
 	}
 
 	/**
+	 * Whether Lite Connect is running on production website.
+	 *
+	 * @since 1.7.6
+	 *
+	 * @return bool
+	 */
+	private static function is_production() {
+
+		return wp_get_environment_type() === 'production';
+	}
+
+	/**
 	 * Provide responses to endpoint requests.
 	 *
 	 * @since 1.7.4
 	 */
 	private function endpoints() {
 
-		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+		// We check nonce in the endpoint_key().
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! isset( $_GET[ self::AUTH_KEY_ARG ] ) ) {
 			return;
 		}
 
-		$uri = filter_var( wp_unslash( $_SERVER['REQUEST_URI'] ), FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-
-		$path = rtrim( wp_parse_url( $uri, PHP_URL_PATH ), '/' );
-
-		if ( preg_match( '#/wpforms/auth/key/nonce$#', $path ) ) {
-			$this->endpoint_key();
-		}
+		$this->endpoint_key();
 	}
 
 	/**
@@ -172,7 +189,7 @@ abstract class LiteConnect implements IntegrationInterface {
 		$response = json_decode( $json, true );
 
 		if ( ! $response ) {
-			$this->endpoint_die();
+			$this->endpoint_die( 'Lite Connect: No response' );
 		}
 
 		if ( isset( $response['error'] ) ) {
@@ -201,6 +218,7 @@ abstract class LiteConnect implements IntegrationInterface {
 		$settings         = get_option( Integration::get_option_name(), [] );
 		$settings['site'] = $response;
 
+		update_option( API::GENERATE_KEY_ATTEMPT_COUNTER_OPTION, 0 );
 		update_option( Integration::get_option_name(), $settings );
 
 		exit();

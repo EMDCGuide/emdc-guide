@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '8a73b9e840eeede4c7dffa0ee313d1214e44db28',
+        'reference' => '9f43f6c54876731d52caa07a49e99a485afb2200',
         'name' => 'course/player',
         'dev' => false,
     ),
@@ -34,7 +34,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '8a73b9e840eeede4c7dffa0ee313d1214e44db28',
+            'reference' => '9f43f6c54876731d52caa07a49e99a485afb2200',
             'dev_requirement' => false,
         ),
         'level-2/dice' => array(

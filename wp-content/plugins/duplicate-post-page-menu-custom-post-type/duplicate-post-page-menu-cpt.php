@@ -8,7 +8,7 @@
 
 *	Author: Inqsys Technology
 
-*	Version: 2.1.0
+*	Version: 2.2.0
 
 *	Text Domain: duplicate-ppmc
 
@@ -21,7 +21,7 @@
 /* Check for wordpress installation */
 
 define( 'PPMC_URL', plugin_dir_url( __FILE__ ) );
-define( 'PPMC_V', '2.1.0' );
+define( 'PPMC_V', '2.2.0' );
 
 if ( ! function_exists( 'add_action' ) ) {
 
