@@ -627,7 +627,7 @@ class RestAudioPresetsController extends \WP_REST_Controller
                 'background_opacity' => (int) $cta['background_opacity'],
                 'button_link' => [
                     'id' => sanitize_text_field(wp_kses_post($cta['button_link']['id'])),
-                    'url' => sanitize_text_field(wp_kses_post($cta['button_link']['url'])),
+                    'url' => esc_url_raw($cta['button_link']['url']),
                     'type' => sanitize_text_field(wp_kses_post($cta['button_link']['type'])),
                     'opensInNewTab' => (bool) $cta['button_link']['opensInNewTab'],
                 ],
@@ -661,7 +661,7 @@ class RestAudioPresetsController extends \WP_REST_Controller
                 'button_text_color' => sanitize_hex_color($action_bar['button_text_color']),
                 'button_link' => [
                     'id' => sanitize_text_field(wp_kses_post($action_bar['button_link']['id'])),
-                    'url' => sanitize_text_field(wp_kses_post($action_bar['button_link']['url'])),
+                    'url' => esc_url_raw($action_bar['button_link']['url']),
                     'type' => sanitize_text_field(wp_kses_post($action_bar['button_link']['type'])),
                     'opensInNewTab' => (bool) $action_bar['button_link']['opensInNewTab'],
                 ],

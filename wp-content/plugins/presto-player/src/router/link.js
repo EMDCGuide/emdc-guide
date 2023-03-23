@@ -25,8 +25,10 @@ export function Link(props) {
     if (onClick) {
       onClick(e);
     }
+    const { search } = history.location;
+
     // Use history API to navigate page
-    history.push(`#${to}`);
+    history.push(`${search}#${to}`);
   };
 
   return (

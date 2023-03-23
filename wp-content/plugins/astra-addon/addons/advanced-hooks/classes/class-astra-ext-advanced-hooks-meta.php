@@ -895,6 +895,16 @@ if ( ! class_exists( 'Astra_Ext_Advanced_Hooks_Meta' ) ) {
 				$hooks['footer']['hooks']  = $mast_footer_after;
 			}
 
+			$hooks['custom'] = array(
+				'title' => __( 'Custom', 'astra-addon' ),
+				'hooks' => array(
+					'custom_hook' => array(
+						'title'       => __( 'Custom Hook', 'astra-addon' ),
+						'description' => __( 'Trigger your content or snippet on your custom action.', 'astra-addon' ),
+					),
+				),
+			);
+
 			self::$layouts = apply_filters( 'astra_custom_layouts_layout', $layouts );
 			self::$hooks   = apply_filters( 'astra_custom_layouts_hooks', $hooks );
 
@@ -979,10 +989,7 @@ if ( ! class_exists( 'Astra_Ext_Advanced_Hooks_Meta' ) ) {
 			add_action( 'edit_form_after_title', array( $this, 'enable_php_markup' ), 1, 1 );
 			add_action( 'admin_footer', array( $this, 'add_navigation_button' ), 1, 1 );
 			add_action( 'edit_form_after_editor', array( $this, 'php_editor_markup' ), 10, 1 );
-
-			if ( isset( $_POST['ast-advanced-hook-layout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-				add_action( 'save_post', array( $this, 'save_meta_box' ) );
-			}
+			add_action( 'save_post', array( $this, 'save_meta_box' ) );
 
 			/**
 			 * Set metabox options
@@ -1010,6 +1017,10 @@ if ( ! class_exists( 'Astra_Ext_Advanced_Hooks_Meta' ) ) {
 						'sanitize' => 'FILTER_DEFAULT',
 					),
 					'ast-advanced-hook-priority'  => array(
+						'default'  => '',
+						'sanitize' => 'FILTER_DEFAULT',
+					),
+					'ast-custom-hook'             => array(
 						'default'  => '',
 						'sanitize' => 'FILTER_DEFAULT',
 					),
@@ -1093,10 +1104,8 @@ if ( ! class_exists( 'Astra_Ext_Advanced_Hooks_Meta' ) ) {
 		 * @since  1.0.0
 		 */
 		public function menu_highlight() {
-			global $parent_file, $submenu_file, $post_type;
+			global $post_type;
 			if ( ASTRA_ADVANCED_HOOKS_POST_TYPE == $post_type ) :
-				$parent_file  = 'themes.php'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-				$submenu_file = 'edit.php?post_type=' . ASTRA_ADVANCED_HOOKS_POST_TYPE; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 				/* Same display rule assign notice */
 				$option = array(
@@ -1145,7 +1154,7 @@ if ( ! class_exists( 'Astra_Ext_Advanced_Hooks_Meta' ) ) {
 
 				if ( 'hooks' === $layout_data ) {
 					continue;
-				};
+				}
 
 				$location_rules = unserialize( $header->meta_value ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize
 
@@ -1238,8 +1247,8 @@ if ( ! class_exists( 'Astra_Ext_Advanced_Hooks_Meta' ) ) {
 						/* translators: %s layout. */
 						$notice = sprintf( __( 'Another %s Layout is selected for the same display rules.', 'astra-addon' ), $layout );
 
-						echo '<div class="error">';
-						echo '<p>' . $notice . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						echo '<div class="notice notice-warning">';
+						echo '<p>' . wp_kses( $notice, array( 'strong' => true ) ) . '</p>';
 						echo '</div>';
 
 					}
@@ -1270,19 +1279,6 @@ if ( ! class_exists( 'Astra_Ext_Advanced_Hooks_Meta' ) ) {
 								'__back_compat_meta_box' => true,
 							)
 						);
-
-						// Show notice metabox only for block based Custom Layout post.
-						$screen = get_current_screen();
-						if ( true === $screen->is_block_editor() ) {
-							add_meta_box(
-								'advanced-hook-notice',                // Id.
-								__( 'Custom Layout Settings', 'astra-addon' ), // Title.
-								array( $this, 'meta_box_notice' ),      // Callback.
-								$type,                                  // Post_type.
-								'normal',                               // Context.
-								'low'                                   // Priority.
-							);
-						}
 					}
 				}
 			}
@@ -1324,7 +1320,15 @@ if ( ! class_exists( 'Astra_Ext_Advanced_Hooks_Meta' ) ) {
 			$label         = __( 'Enable Code Editor', 'astra-addon' );
 			$icon          = 'dashicons-editor-code';
 
-			echo $start_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo wp_kses(
+				$start_wrapper,
+				array(
+					'script' => array(
+						'id'   => array(),
+						'type' => array(),
+					),
+				)
+			);
 			?>
 				<div class="ast-advanced-hook-enable-php-wrapper">
 					<button type="button" class="ast-advanced-hook-enable-php-btn button button-primary button-large" data-editor-type="<?php echo esc_attr( $editor_type ); ?>" data-label="<?php echo esc_attr( $label ); ?>" >
@@ -1333,7 +1337,15 @@ if ( ! class_exists( 'Astra_Ext_Advanced_Hooks_Meta' ) ) {
 					</button>
 				</div>
 			<?php
-			echo $end_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo wp_kses(
+				$end_wrapper,
+				array(
+					'script' => array(
+						'id'   => array(),
+						'type' => array(),
+					),
+				)
+			);
 		}
 
 		/**
@@ -1483,6 +1495,7 @@ if ( ! class_exists( 'Astra_Ext_Advanced_Hooks_Meta' ) ) {
 			$content           = ( isset( $meta['ast-advanced-hook-content']['default'] ) ) ? $meta['ast-advanced-hook-content']['default'] : array();
 			$display_devices   = ( isset( $meta['ast-advanced-display-device']['default'] ) ) ? $meta['ast-advanced-display-device']['default'] : array();
 			$time_duration     = ( isset( $meta['ast-advanced-time-duration']['default'] ) ) ? $meta['ast-advanced-time-duration']['default'] : array();
+			$custom_action     = ( isset( $meta['ast-custom-hook']['default'] ) ) ? $meta['ast-custom-hook']['default'] : '';
 
 			$ast_advanced_hooks = array(
 				'include-locations' => $display_locations,
@@ -1498,22 +1511,11 @@ if ( ! class_exists( 'Astra_Ext_Advanced_Hooks_Meta' ) ) {
 				'content'           => $content,
 				'display-devices'   => $display_devices,
 				'time-duration'     => $time_duration,
+				'custom-action'     => $custom_action,
 			);
 			do_action( 'astra_advanced_hooks_settings_markup_before', $meta );
 			$this->page_header_tab( $ast_advanced_hooks );
 			do_action( 'astra_advanced_hooks_settings_markup_after', $meta );
-		}
-
-		/**
-		 * Display notice for Existing users for Custom layout settings improvements.
-		 *
-		 * @param  object $post Post object.
-		 * @return void
-		 */
-		public function meta_box_notice( $post ) {
-			$link = '<a href="https://wpastra.com/docs/custom-layouts-pro/" target="blank"> Click here </a>';
-			/* translators: %s: blog link */
-			echo sprintf( esc_html__( 'Custom Layout Settings moved to the Sidebar. Access the settings by clicking the Astra icon in the top right corner. %s for more information.', 'astra-addon' ), $link ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		/**
@@ -1523,6 +1525,10 @@ if ( ! class_exists( 'Astra_Ext_Advanced_Hooks_Meta' ) ) {
 		 * @return void
 		 */
 		public function save_meta_box( $post_id ) {
+
+			if ( ! isset( $_POST['ast-advanced-hook-layout'] ) ) {
+				return;
+			}
 
 			// Checks save status.
 			$is_autosave = wp_is_post_autosave( $post_id );
@@ -1851,6 +1857,14 @@ if ( ! class_exists( 'Astra_Ext_Advanced_Hooks_Meta' ) ) {
 							<?php endif; ?>
 						</select>
 						<p class="description ast-advanced-hook-action-desc <?php echo ( '' == $description ) ? 'ast-no-desc' : ''; ?>"><?php echo esc_html( $description ); ?></p>
+					</td>
+				</tr>
+				<tr class="ast-advanced-hook-row ast-layout-hooks-required ast-custom-action-wrap">
+					<td class="ast-advanced-hook-row-heading">
+						<label><?php esc_html_e( 'Custom Hook Name', 'astra-addon' ); ?></label>
+					</td>
+					<td class="ast-advanced-hook-row-content">
+					<input type="text" name="ast-custom-hook" value="<?php echo esc_attr( $options['custom-action'] ); ?>"/>
 					</td>
 				</tr>
 				<tr class="ast-advanced-hook-row ast-layout-hooks-required">

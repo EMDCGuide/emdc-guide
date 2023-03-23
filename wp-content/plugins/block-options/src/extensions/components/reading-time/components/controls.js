@@ -43,8 +43,8 @@ class ReadingTime extends Component {
 	}
 
 	handleButtonClick( event ) {
-		const button = document.querySelector( '.table-of-contents button' ).getAttribute( 'aria-expanded' );
-		if ( document.querySelector( '.table-of-contents' ).contains( event.target ) && button === 'false' ) {
+		const button = document.querySelector( '.table-of-contents button' )?.getAttribute( 'aria-expanded' );
+		if ( document.querySelector( '.table-of-contents' )?.contains( event.target ) && button === 'false' ) {
 			const estimated = this.calculateReadingTime();
 
 			const checkExist = setInterval( function() {

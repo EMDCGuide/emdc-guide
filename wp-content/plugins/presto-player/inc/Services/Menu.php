@@ -9,17 +9,6 @@ class Menu
 {
     protected $enqueue;
 
-    public function __construct()
-    {
-        $this->enqueue = new Enqueue(
-            'prestoPlayer',
-            'dist',
-            Plugin::version(),
-            'plugin',
-            PRESTO_PLAYER_PLUGIN_FILE
-        );
-    }
-
     public function register()
     {
         add_action('admin_menu', [$this, 'addMenu']);
@@ -88,30 +77,25 @@ class Menu
         wp_enqueue_media();
         wp_enqueue_code_editor(['type' => "text/css"]);
 
-        $assets =  $this->enqueue->enqueue('settings', 'admin', [
-            'js_dep' => [
-                'wp-components',
-                'wp-element',
-                'wp-codemirror',
-                'wp-api',
-                'wp-i18n',
-                'wp-editor',
-                'wp-blob',
-                'wp-blocks',
-                'wp-data',
-                'wp-core-data'
-            ]
-        ]);
+        $assets = include trailingslashit(PRESTO_PLAYER_PLUGIN_DIR) . 'dist/settings.asset.php';
+        wp_enqueue_script(
+            'surecart/settings/admin',
+            trailingslashit(PRESTO_PLAYER_PLUGIN_URL) . 'dist/settings.js',
+            array_merge(['wp-codemirror'], $assets['dependencies']),
+            $assets['version'],
+            true
+        );
+        // setting style.
+        wp_enqueue_style('surecart/settings/admin', trailingslashit(PRESTO_PLAYER_PLUGIN_URL) . 'dist/settings.css', [], $assets['version']);
+
         wp_enqueue_style('wp-components');
 
-        $entry_point = array_pop($assets['js']);
-
         if (function_exists('wp_set_script_translations')) {
-            wp_set_script_translations($entry_point['handle'], 'presto-player');
+            wp_set_script_translations('surecart/settings/admin', 'presto-player');
         }
 
         wp_localize_script(
-            $entry_point['handle'],
+            'surecart/settings/admin',
             'prestoPlayer',
             apply_filters('presto-settings-js-options', [
                 'root' => esc_url_raw(get_rest_url()),
@@ -134,31 +118,25 @@ class Menu
      */
     public function analyticsAssets()
     {
-        $assets = $this->enqueue->enqueue('analytics', 'admin', [
-            'js_dep' => [
-                'hls.js',
-                'presto-components',
-                'wp-components',
-                'wp-element',
-                'wp-api',
-                'wp-i18n',
-                'wp-editor',
-                'wp-blob',
-                'media',
-                'wp-blocks',
-                'wp-data',
-                'wp-core-data'
-            ]
-        ]);
+
+        $assets = include trailingslashit(PRESTO_PLAYER_PLUGIN_DIR) . 'dist/analytics.asset.php';
+        wp_enqueue_script(
+            'surecart/analytics/admin',
+            trailingslashit(PRESTO_PLAYER_PLUGIN_URL) . 'dist/analytics.js',
+            array_merge(['hls.js', 'presto-components', 'media'], $assets['dependencies']),
+            $assets['version'],
+            true
+        );
+        wp_enqueue_style('surecart/analytics/admin', trailingslashit(PRESTO_PLAYER_PLUGIN_URL) . 'dist/analytics.css', [], $assets['version']);
+
         wp_enqueue_style('wp-components');
         wp_enqueue_media();
-        $entry_point = array_pop($assets['js']);
 
         if (function_exists('wp_set_script_translations')) {
-            wp_set_script_translations($entry_point['handle'], 'presto-player');
+            wp_set_script_translations('surecart/analytics/admin', 'presto-player');
         }
 
-        wp_localize_script($entry_point['handle'], 'prestoPlayer', [
+        wp_localize_script('surecart/analytics/admin', 'prestoPlayer', [
             'root' => esc_url_raw(get_rest_url()),
             'isPremium' => Plugin::isPro(),
             'plugin_url' => esc_url_raw(trailingslashit(PRESTO_PLAYER_PLUGIN_URL)),

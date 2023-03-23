@@ -38,19 +38,23 @@ class UAGB_Astra_Compatibility {
 	 */
 	public function __construct() {
 
+		// Update Astra's admin top level menu position.
+		add_filter( 'astra_menu_priority', array( $this, 'update_admin_menu_position' ) );
+
 		$uag_load_fonts_locally = UAGB_Admin_Helper::get_admin_settings_option( 'uag_load_gfonts_locally', 'disabled' );
 
 		if ( 'disabled' === $uag_load_fonts_locally ) {
 
 			$astra_settings = ( defined( 'ASTRA_THEME_SETTINGS' ) ) ? get_option( ASTRA_THEME_SETTINGS ) : '';
 
-			if ( is_array( $astra_settings ) && empty( $astra_settings['load-google-fonts-locally'] ) || false === $astra_settings['load-google-fonts-locally'] ) {
+			if ( is_array( $astra_settings ) && empty( $astra_settings['load-google-fonts-locally'] ) || ( isset( $astra_settings['load-google-fonts-locally'] ) && false === $astra_settings['load-google-fonts-locally'] ) ) {
 
 				// Disabled uag fonts.
 				add_filter( 'uagb_enqueue_google_fonts', '__return_false' );
 
 				// Add uag fonts in astra.
 				add_filter( 'astra_google_fonts_selected', array( $this, 'add_google_fonts_in_astra' ) );
+
 			}
 		}
 	}
@@ -67,8 +71,16 @@ class UAGB_Astra_Compatibility {
 		global $post;
 
 		if ( $post ) {
+			$post_id = $post->ID;
+		}
 
-			$google_fonts = uagb_get_post_assets( $post->ID )->get_fonts();
+		if ( is_404() ) {
+			$post_id = get_queried_object_id();
+		}
+
+		if ( isset( $post_id ) ) {
+
+			$google_fonts = uagb_get_post_assets( $post_id )->get_fonts();
 
 			if ( is_array( $google_fonts ) && ! empty( $google_fonts ) ) {
 
@@ -88,6 +100,16 @@ class UAGB_Astra_Compatibility {
 		}
 
 		return $astra_fonts;
+	}
+
+	/**
+	 * Update Astra's menu priority to show after Dashboard menu.
+	 *
+	 * @param int $menu_priority top level menu priority.
+	 * @since 2.3.0
+	 */
+	public function update_admin_menu_position( $menu_priority ) {
+		return 2.1;
 	}
 }
 

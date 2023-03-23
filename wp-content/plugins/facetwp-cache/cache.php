@@ -31,6 +31,7 @@ if ( 0 === strpos( $json, '{' ) ) {
     
         // Return cached version and EXIT
         if ( null !== $value ) {
+            header( 'Content-Type: application/json' );
             echo $value;
             exit;
         }

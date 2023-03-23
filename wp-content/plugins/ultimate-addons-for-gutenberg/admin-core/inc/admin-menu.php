@@ -67,13 +67,16 @@ class Admin_Menu {
 	 * @return void
 	 */
 	public function initialize_hooks() {
+
+		/* Setup the Admin Menu */
 		add_action( 'admin_menu', array( $this, 'setup_menu' ) );
 		add_action( 'admin_init', array( $this, 'settings_admin_scripts' ) );
 
+		/* Add the Action Links */
 		add_filter( 'plugin_action_links_' . UAGB_BASE, array( $this, 'add_action_links' ) );
+
 		/* Render admin content view */
 		add_action( 'uag_render_admin_page_content', array( $this, 'render_content' ), 10, 2 );
-
 	}
 
 	/**
@@ -94,11 +97,12 @@ class Admin_Menu {
 	}
 
 	/**
-	 *  Initialize after Cartflows pro get loaded.
+	 *  Initialize after Spectra gets loaded.
 	 */
 	public function settings_admin_scripts() {
+
 		// Enqueue admin scripts.
-		if ( ! empty( $_GET['page'] ) && ( $this->menu_slug === $_GET['page'] || false !== strpos( $_GET['page'], $this->menu_slug . '_' ) ) ) { //phpcs:ignore
+		if ( ! empty( $_GET['page'] ) && ( $this->menu_slug === $_GET['page'] || false !== strpos( sanitize_text_field( $_GET['page'] ), $this->menu_slug . '_' ) ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 			add_action( 'admin_enqueue_scripts', array( $this, 'styles_scripts' ) );
 
@@ -138,11 +142,11 @@ class Admin_Menu {
 	 */
 	public function render() {
 
-		$menu_page_slug = ( ! empty( $_GET['page'] ) ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : $this->menu_slug; //phpcs:ignore
+		$menu_page_slug = ( ! empty( $_GET['page'] ) ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : $this->menu_slug; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$page_action    = '';
 
-		if ( isset( $_GET['action'] ) ) { //phpcs:ignore
-			$page_action = sanitize_text_field( wp_unslash( $_GET['action'] ) ); //phpcs:ignore
+		if ( isset( $_GET['action'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$page_action = sanitize_text_field( wp_unslash( $_GET['action'] ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$page_action = str_replace( '_', '-', $page_action );
 		}
 
@@ -179,8 +183,7 @@ class Admin_Menu {
 
 		wp_enqueue_style( 'wp-components' );
 
-		$theme = wp_get_theme();
-
+		$theme    = wp_get_theme();
 		$localize = apply_filters(
 			'uag_react_admin_localize',
 			array(
@@ -199,7 +202,11 @@ class Admin_Menu {
 				'reusable_url'             => esc_url( admin_url( 'edit.php?post_type=wp_block' ) ),
 				'global_data'              => Admin_Helper::get_options(),
 				'uag_content_width_set_by' => \UAGB_Admin_Helper::get_admin_settings_option( 'uag_content_width_set_by', __( 'Spectra', 'ultimate-addons-for-gutenberg' ) ),
+				'spectra_pro_installed'    => file_exists( UAGB_DIR . '../spectra-pro/spectra-pro.php' ),
+				'spectra_pro_status'       => is_plugin_active( 'spectra-pro/spectra-pro.php' ),
+				'spectra_pro_ver'          => defined( 'SPECTRA_PRO_VER' ) ? SPECTRA_PRO_VER : null,
 				'spectra_custom_fonts'     => apply_filters( 'spectra_system_fonts', array() ),
+				'is_allow_registration'    => (bool) get_option( 'users_can_register' ),
 			)
 		);
 
@@ -268,6 +275,9 @@ class Admin_Menu {
 					'content-timeline-child',
 					'tabs-child',
 					'how-to-step',
+					'slider-child',
+					'slider-pro',
+					'image-gallery-pro',
 				);
 
 				if ( ( 'cf7-styler' === $addon && 'active' !== $cf7_status ) || ( 'gf-styler' === $addon && 'active' !== $gf_status ) ) {
@@ -381,10 +391,8 @@ class Admin_Menu {
 	 *  Add footer link.
 	 */
 	public function add_footer_link() {
-
-		$logs_page_url = '#';
-
-		echo '<span id="footer-thankyou"> Thank you for using <a href="#" class="focus:text-spectra-hover active:text-spectra-hover hover:text-spectra-hover">Spectra.</a></span>';
+		// translators: HTML entities.
+		return '<span id="footer-thankyou">' . sprintf( __( 'Thank you for using %1$sSpectra.%2$s' ), '<a href="https://wpspectra.com/" class="focus:text-spectra-hover active:text-spectra-hover hover:text-spectra-hover">', '</a>' ) . '</span>';
 	}
 
 }

@@ -21,7 +21,7 @@ const {
 	getColorObjectByAttributeValues,
 } = wp.blockEditor;
 const { applyFormat, removeFormat, getActiveFormat } = wp.richText;
-const { Toolbar, IconButton, Popover, ColorPalette } = wp.components;
+const { ToolbarGroup, Button, Popover, ColorPalette } = wp.components;
 const { compose, ifCondition } = wp.compose;
 
 const name = 'editorskit/background';
@@ -105,8 +105,8 @@ class Edit extends Component {
 		return (
 			<Fragment>
 				<BlockControls>
-					<Toolbar className="editorskit-components-toolbar">
-						<IconButton
+					<ToolbarGroup className="editorskit-components-toolbar">
+						<Button
 							className={classnames(
 								'components-button components-icon-button components-editorskit-toolbar__control components-toolbar__control components-editorskit-background-format',
 								{
@@ -124,32 +124,8 @@ class Edit extends Component {
 								position="bottom center"
 								className="components-editorskit__inline-color-popover"
 								focusOnMount="container"
-								onClickOutside={(onClickOutside) => {
-									if (
-										!onClickOutside.target.classList.contains(
-											'components-editorskit-background-format'
-										) &&
-										!document
-											.querySelector(
-												'.components-editorskit-background-format'
-											)
-											.contains(onClickOutside.target) &&
-										(!document.querySelector(
-											'.components-color-palette__picker'
-										) ||
-											(document.querySelector(
-												'.components-color-palette__picker'
-											) &&
-												!document
-													.querySelector(
-														'.components-color-palette__picker'
-													)
-													.contains(
-														onClickOutside.target
-													)))
-									) {
-										this.setState({ isOpen: !isOpen });
-									}
+								onFocusOutside={() => {
+									this.setState({ isOpen: false });
 								}}
 							>
 								<ColorPalette
@@ -194,7 +170,7 @@ class Edit extends Component {
 								></ColorPalette>
 							</Popover>
 						)}
-					</Toolbar>
+					</ToolbarGroup>
 				</BlockControls>
 			</Fragment>
 		);

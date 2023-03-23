@@ -1,3 +1,3 @@
-import VideoSelector from "./VideoSelector/VideoSelector";
+import VideoSelector from "./VideoSelector/VideoSelector.jsx";
 
 export default [VideoSelector];

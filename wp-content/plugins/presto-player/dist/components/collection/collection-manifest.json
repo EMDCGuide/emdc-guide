@@ -12,6 +12,8 @@
     "./components/core/features/presto-email-overlay/controller/presto-email-overlay-controller.js",
     "./components/core/features/presto-email-overlay/ui/presto-email-overlay-ui.js",
     "./components/core/features/presto-muted-overlay/presto-muted-overlay.js",
+    "./components/core/features/presto-search-bar/component/presto-search-bar.js",
+    "./components/core/features/presto-search-bar/ui/presto-search-bar-ui.js",
     "./components/core/features/presto-timestamp/presto-timestamp.js",
     "./components/core/player/presto-player.js",
     "./components/core/providers/presto-audio/presto-audio.js",
@@ -30,8 +32,8 @@
   ],
   "compiler": {
     "name": "@stencil/core",
-    "version": "2.9.0",
-    "typescriptVersion": "4.2.3"
+    "version": "2.20.0",
+    "typescriptVersion": "4.8.4"
   },
   "collections": [],
   "bundles": []

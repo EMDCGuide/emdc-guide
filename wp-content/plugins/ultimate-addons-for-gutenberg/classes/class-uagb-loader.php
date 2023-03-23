@@ -36,6 +36,15 @@ if ( ! class_exists( 'UAGB_Loader' ) ) {
 		public static function get_instance() {
 			if ( ! isset( self::$instance ) ) {
 				self::$instance = new self();
+
+				/**
+				 * Spectra loaded.
+				 *
+				 * Fires when Spectra was fully loaded and instantiated.
+				 *
+				 * @since 2.1.0
+				 */
+				do_action( 'spectra_core_loaded' );
 			}
 			return self::$instance;
 		}
@@ -75,7 +84,7 @@ if ( ! class_exists( 'UAGB_Loader' ) ) {
 			define( 'UAGB_BASE', plugin_basename( UAGB_FILE ) );
 			define( 'UAGB_DIR', plugin_dir_path( UAGB_FILE ) );
 			define( 'UAGB_URL', plugins_url( '/', UAGB_FILE ) );
-			define( 'UAGB_VER', '2.0.7' );
+			define( 'UAGB_VER', '2.4.0' );
 			define( 'UAGB_MODULES_DIR', UAGB_DIR . 'modules/' );
 			define( 'UAGB_MODULES_URL', UAGB_URL . 'modules/' );
 			define( 'UAGB_SLUG', 'spectra' );
@@ -117,22 +126,11 @@ if ( ! class_exists( 'UAGB_Loader' ) ) {
 		public function loader() {
 
 			require_once UAGB_DIR . 'classes/utils.php';
+			require_once UAGB_DIR . 'classes/class-spectra-block-prioritization.php';
 			require_once UAGB_DIR . 'classes/class-uagb-install.php';
-			require_once UAGB_DIR . 'classes/class-uagb-admin-helper.php';
-			require_once UAGB_DIR . 'classes/class-uagb-block-module.php';
-			require_once UAGB_DIR . 'classes/class-uagb-helper.php';
-			require_once UAGB_DIR . 'classes/class-uagb-scripts-utils.php';
 			require_once UAGB_DIR . 'classes/class-uagb-filesystem.php';
 			require_once UAGB_DIR . 'classes/class-uagb-update.php';
-			require_once UAGB_DIR . 'admin/bsf-analytics/class-bsf-analytics.php';
-
-			$enable_templates_button = UAGB_Admin_Helper::get_admin_settings_option( 'uag_enable_templates_button', 'yes' );
-
-			if ( 'yes' === $enable_templates_button ) {
-				require_once UAGB_DIR . 'lib/class-uagb-ast-block-templates.php';
-			} else {
-				add_filter( 'ast_block_templates_disable', '__return_true' );
-			}
+			require_once UAGB_DIR . 'classes/class-uagb-block.php';
 
 			if ( is_admin() ) {
 				require_once UAGB_DIR . 'classes/class-uagb-beta-updates.php';
@@ -151,6 +149,10 @@ if ( ! class_exists( 'UAGB_Loader' ) ) {
 
 			$this->load_textdomain();
 
+			require_once UAGB_DIR . 'classes/class-uagb-scripts-utils.php';
+			require_once UAGB_DIR . 'classes/class-uagb-block-module.php';
+			require_once UAGB_DIR . 'classes/class-uagb-admin-helper.php';
+			require_once UAGB_DIR . 'classes/class-uagb-helper.php';
 			require_once UAGB_DIR . 'blocks-config/blocks-config.php';
 			require_once UAGB_DIR . 'lib/astra-notices/class-astra-notices.php';
 
@@ -170,7 +172,18 @@ if ( ! class_exists( 'UAGB_Loader' ) ) {
 
 			require_once UAGB_DIR . 'admin-core/admin-loader.php';
 
+			// Register all UAG Lite Blocks.
+			uagb_block()->register_blocks();
+
 			add_filter( 'rest_pre_dispatch', array( $this, 'rest_pre_dispatch' ), 10, 3 );
+
+			$enable_templates_button = UAGB_Admin_Helper::get_admin_settings_option( 'uag_enable_templates_button', 'yes' );
+
+			if ( 'yes' === $enable_templates_button ) {
+				require_once UAGB_DIR . 'lib/class-uagb-ast-block-templates.php';
+			} else {
+				add_filter( 'ast_block_templates_disable', '__return_true' );
+			}
 		}
 
 		/**
@@ -226,8 +239,16 @@ if ( ! class_exists( 'UAGB_Loader' ) ) {
 					unset( $attributes['UAGLoggedOut'] );
 				}
 
+				if ( isset( $attributes['UAGDay'] ) ) {
+					unset( $attributes['UAGDay'] );
+				}
+
 				if ( isset( $attributes['zIndex'] ) ) {
 					unset( $attributes['zIndex'] );
+				}
+
+				if ( isset( $attributes['UAGResponsiveConditions'] ) ) {
+					unset( $attributes['UAGResponsiveConditions'] );
 				}
 
 					$request['attributes'] = $attributes;
@@ -332,6 +353,19 @@ if ( ! class_exists( 'UAGB_Loader' ) ) {
 			if ( 'astra' === $theme_folder ) {
 				require_once UAGB_DIR . 'compatibility/class-uagb-astra-compatibility.php';
 			}
+
+				register_meta(
+					'post',
+					'_uag_custom_page_level_css',
+					array(
+						'show_in_rest'  => true,
+						'type'          => 'string',
+						'single'        => true,
+						'auth_callback' => function() {
+							return current_user_can( 'edit_posts' );
+						},
+					)
+				);
 		}
 	}
 }

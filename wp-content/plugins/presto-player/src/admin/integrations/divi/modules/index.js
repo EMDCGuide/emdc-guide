@@ -1,3 +1,3 @@
-import PrestoPlayer from "./PrestoPlayer/PrestoPlayer";
+import PrestoPlayer from "./PrestoPlayer/PrestoPlayer.jsx";
 
 export default [PrestoPlayer];

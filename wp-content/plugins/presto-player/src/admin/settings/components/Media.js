@@ -1,23 +1,18 @@
-const { __ } = wp.i18n;
-
-const { Button, BaseControl } = wp.components;
-const { MediaUpload } = wp.mediaUtils;
-const { dispatch } = wp.data;
+import { __ } from "@wordpress/i18n";
+import { Button, BaseControl } from "@wordpress/components";
+import { MediaUpload } from "@wordpress/media-utils";
 import classNames from "classnames";
 
-export default ({ option, value, optionName, className, maxWidth }) => {
-  const onSelect = (image) => {
-    dispatch("presto-player/settings").updateSetting(
-      option.id,
-      image.url,
-      optionName
-    );
-  };
-  const onRemoveImage = (e) => {
-    dispatch("presto-player/settings").updateSetting(option.id, "", optionName);
-    e.preventDefault();
-  };
-
+export default ({
+  option,
+  label,
+  help,
+  allowedTypes,
+  value,
+  className,
+  maxWidth,
+  onSelect,
+}) => {
   return (
     <div
       className={classNames(
@@ -26,9 +21,7 @@ export default ({ option, value, optionName, className, maxWidth }) => {
       )}
     >
       <BaseControl className="editor-video-poster-control">
-        <BaseControl.VisualLabel>
-          <p>{option?.name}</p>
-        </BaseControl.VisualLabel>
+        <BaseControl.VisualLabel>{label}</BaseControl.VisualLabel>
         {value && (
           <BaseControl>
             <img
@@ -40,10 +33,11 @@ export default ({ option, value, optionName, className, maxWidth }) => {
             />
           </BaseControl>
         )}
+        <br />
         <MediaUpload
-          title={option?.help}
+          title={help}
           onSelect={onSelect}
-          allowedTypes={option?.allowed_types}
+          allowedTypes={allowedTypes}
           render={({ open }) => (
             <Button
               isSecondary
@@ -55,7 +49,7 @@ export default ({ option, value, optionName, className, maxWidth }) => {
                 : __("Replace", "presto-player")}
             </Button>
           )}
-        />
+        />{" "}
         <p id={`video-block__logo-image-description-${option?.id}`} hidden>
           {value
             ? sprintf(
@@ -66,7 +60,7 @@ export default ({ option, value, optionName, className, maxWidth }) => {
             : __("There is no logo image currently selected", "presto-player")}
         </p>
         {!!value && (
-          <Button onClick={onRemoveImage} isTertiary className="button-remove">
+          <Button onClick={() => onSelect("")} isTertiary>
             {__("Remove", "presto-player")}
           </Button>
         )}

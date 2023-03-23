@@ -101,7 +101,7 @@ class Notifications implements IntegrationInterface {
 					],
 				]
 			),
-			esc_url( wpforms_utm_link( 'https://wpforms.com/docs/how-to-fix-wordpress-contact-form-not-sending-email-with-smtp/', 'Block Settings', 'Fixing Email Delivery Issues' ) )
+			esc_url( wpforms_utm_link( 'https://wpforms.com/docs/how-to-fix-wordpress-contact-form-not-sending-email-with-smtp/', 'Builder Notifications', 'Delivery Issues Documentation' ) )
 		);
 
 		$from_email_after = sprintf(
@@ -142,7 +142,8 @@ class Notifications implements IntegrationInterface {
 		$email_domain = substr( strrchr( $email, '@' ), 1 );
 		$site_domain  = wp_parse_url( get_bloginfo( 'wpurl' ) )['host'];
 
-		return $email_domain === $site_domain;
+		// Check if From email domain ends with site domain.
+		return ! empty( $email_domain ) && preg_match( "/\b{$email_domain}$/", $site_domain ) === 1;
 	}
 
 	/**

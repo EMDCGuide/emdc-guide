@@ -223,6 +223,9 @@ class MonsterInsights_Popular_Posts {
 	 * @return string
 	 */
 	public function render_shortcode( $args ) {
+		if ( empty( $args ) || ! is_array( $args ) ) {
+			$args = array();
+		}
 
 		return apply_filters( 'monsterinsights_popular_posts_shortcode_output', $this->shortcode_output( $args ), $args, $this );
 

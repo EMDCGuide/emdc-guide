@@ -65,13 +65,18 @@ if ( ! class_exists( 'Astra_Addon_Background_Updater' ) ) {
 				'astra_addon_remove_responsive_account_menu_colors_support',
 			),
 			'3.9.0' => array(
-				'astra_addon_responsive_shop_content_alignment',
 				'astra_addon_responsive_shop_button_padding',
 				'astra_addon_shop_box_shadow_migration',
 				'astra_addon_update_product_gallery_layout',
 				'astra_addon_update_woocommerce_cart_icons',
 				'astra_addon_update_toolbar_seperations',
 				'astra_addon_apply_modern_ecommerce_setup',
+			),
+			'3.9.3' => array(
+				'astra_addon_update_variant_active_state',
+			),
+			'4.0.0' => array(
+				'astra_addon_background_updater_4_0_0',
 			),
 		);
 

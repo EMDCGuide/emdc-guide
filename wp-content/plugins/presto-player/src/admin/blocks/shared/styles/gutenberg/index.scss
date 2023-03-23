@@ -52,7 +52,7 @@ progress.presto-progress::-webkit-progress-value {
   &__placeholder-control {
     flex: 1 0 100%;
     margin: 10px 0;
-    padding: 20px;
+    padding: 6px;
     background: #f3f3f3;
 
     > .components-base-control__field {
@@ -66,7 +66,6 @@ progress.presto-progress::-webkit-progress-value {
 
   &__media-modal {
     .components-modal__content {
-      position: relative;
       display: flex;
       flex-direction: column;
     }
@@ -285,13 +284,6 @@ progress.presto-progress::-webkit-progress-value {
     z-index: 999999 !important;
   }
 
-  &__full-modal {
-    width: 100%;
-    height: 100%;
-    max-width: calc(100% - 32px);
-    max-height: calc(100% - 32px);
-  }
-
   &__modal-presets-overlay {
     z-index: 999999 !important;
   }
@@ -482,5 +474,12 @@ svg.presto-block-icon {
 .presto-link-placeholder-input {
   input {
     min-height: 36px;
+  }
+}
+
+.wp-block-video {
+  position: relative;
+  .presto-player__search-bar {
+    position: unset;
   }
 }

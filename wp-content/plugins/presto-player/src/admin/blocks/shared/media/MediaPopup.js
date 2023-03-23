@@ -264,6 +264,7 @@ export default ({
 
   return (
     <Modal
+      isFullScreen
       title={header ? header : __("Add Media", "presto-player")}
       onRequestClose={onClose}
       className="presto-player__media-modal presto-player__full-modal"

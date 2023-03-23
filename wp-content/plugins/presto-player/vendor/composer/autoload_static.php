@@ -4,17 +4,13 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitde26bd8d146258110766b92844afef16
+class ComposerStaticInit14a5cad57c84f1194d03fb26f11c64a3
 {
     public static $files = array (
         'b506a6b9998b6104a0eae10a34d50f61' => __DIR__ . '/../..' . '/inc/support.php',
     );
 
     public static $prefixLengthsPsr4 = array (
-        'W' => 
-        array (
-            'WPackio\\' => 8,
-        ),
         'T' => 
         array (
             'TypistTech\\Imposter\\Plugin\\' => 27,
@@ -35,10 +31,6 @@ class ComposerStaticInitde26bd8d146258110766b92844afef16
     );
 
     public static $prefixDirsPsr4 = array (
-        'WPackio\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/wpackio/enqueue/inc',
-        ),
         'TypistTech\\Imposter\\Plugin\\' => 
         array (
             0 => __DIR__ . '/..' . '/typisttech/imposter-plugin/src',
@@ -237,6 +229,7 @@ class ComposerStaticInitde26bd8d146258110766b92844afef16
         'PrestoPlayer\\Database\\Upgrades\\VisitsUpgrade' => __DIR__ . '/../..' . '/inc/Database/Upgrades/VisitsUpgrade.php',
         'PrestoPlayer\\Database\\Videos' => __DIR__ . '/../..' . '/inc/Database/Videos.php',
         'PrestoPlayer\\Database\\Visits' => __DIR__ . '/../..' . '/inc/Database/Visits.php',
+        'PrestoPlayer\\Database\\Webhooks' => __DIR__ . '/../..' . '/inc/Database/Webhooks.php',
         'PrestoPlayer\\Deactivator' => __DIR__ . '/../..' . '/inc/Deactivator.php',
         'PrestoPlayer\\Dice\\Dice' => __DIR__ . '/..' . '/level-2/dice/Dice.php',
         'PrestoPlayer\\Dice\\Extra\\RuleValidator' => __DIR__ . '/..' . '/level-2/dice/Extra/RuleValidator.php',
@@ -271,6 +264,7 @@ class ComposerStaticInitde26bd8d146258110766b92844afef16
         'PrestoPlayer\\Models\\ReusableVideo' => __DIR__ . '/../..' . '/inc/Models/ReusableVideo.php',
         'PrestoPlayer\\Models\\Setting' => __DIR__ . '/../..' . '/inc/Models/Setting.php',
         'PrestoPlayer\\Models\\Video' => __DIR__ . '/../..' . '/inc/Models/Video.php',
+        'PrestoPlayer\\Models\\Webhook' => __DIR__ . '/../..' . '/inc/Models/Webhook.php',
         'PrestoPlayer\\Mundschenk\\WP_Requirements' => __DIR__ . '/..' . '/mundschenk-at/check-wp-requirements/class-wp-requirements.php',
         'PrestoPlayer\\Plugin' => __DIR__ . '/../..' . '/inc/Plugin.php',
         'PrestoPlayer\\Requirements' => __DIR__ . '/../..' . '/inc/Requirements.php',
@@ -283,6 +277,7 @@ class ComposerStaticInitde26bd8d146258110766b92844afef16
         'PrestoPlayer\\Services\\API\\RestVideosController' => __DIR__ . '/../..' . '/inc/Services/API/RestVideosController.php',
         'PrestoPlayer\\Services\\AdminNotice' => __DIR__ . '/../..' . '/inc/Services/AdminNotice.php',
         'PrestoPlayer\\Services\\AdminNotices' => __DIR__ . '/../..' . '/inc/Services/AdminNotices.php',
+        'PrestoPlayer\\Services\\AjaxActions' => __DIR__ . '/../..' . '/inc/Services/AjaxActions.php',
         'PrestoPlayer\\Services\\Blocks' => __DIR__ . '/../..' . '/inc/Services/Blocks.php',
         'PrestoPlayer\\Services\\Blocks\\VimeoBlockService' => __DIR__ . '/../..' . '/inc/Services/Blocks/VimeoBlockService.php',
         'PrestoPlayer\\Services\\Blocks\\YoutubeBlockService' => __DIR__ . '/../..' . '/inc/Services/Blocks/YoutubeBlockService.php',
@@ -305,7 +300,6 @@ class ComposerStaticInitde26bd8d146258110766b92844afef16
         'PrestoPlayer\\Support\\HasOneRelationship' => __DIR__ . '/../..' . '/inc/Support/HasOneRelationship.php',
         'PrestoPlayer\\Support\\Integration' => __DIR__ . '/../..' . '/inc/Support/Integration.php',
         'PrestoPlayer\\Support\\Utility' => __DIR__ . '/../..' . '/inc/Support/Utility.php',
-        'PrestoPlayer\\WPackio\\Enqueue' => __DIR__ . '/..' . '/wpackio/enqueue/inc/Enqueue.php',
         'RequiresConstructorArgsA' => __DIR__ . '/..' . '/level-2/dice/tests/TestData/Basic.php',
         'RequiresConstructorArgsB' => __DIR__ . '/..' . '/level-2/dice/tests/TestData/ConstructParams.php',
         'RequiresFactoryDependecy' => __DIR__ . '/..' . '/level-2/dice/tests/ChainTest.php',
@@ -355,9 +349,9 @@ class ComposerStaticInitde26bd8d146258110766b92844afef16
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitde26bd8d146258110766b92844afef16::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitde26bd8d146258110766b92844afef16::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitde26bd8d146258110766b92844afef16::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit14a5cad57c84f1194d03fb26f11c64a3::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit14a5cad57c84f1194d03fb26f11c64a3::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit14a5cad57c84f1194d03fb26f11c64a3::$classMap;
 
         }, null, ClassLoader::class);
     }

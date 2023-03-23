@@ -1,22 +1,20 @@
-/** @jsx jsx */
-const { __ } = wp.i18n;
-const { dispatch } = wp.data;
-const { RangeControl, Spinner } = wp.components;
-const { useEffect, useState } = wp.element;
-
-import { getSetting, getSettings } from "@/admin/settings/util";
-import { css, jsx } from "@emotion/core";
-import ColorPicker from "../components/ColorPicker";
+import { __ } from "@wordpress/i18n";
+import { useEntityProp, store as coreStore } from "@wordpress/core-data";
+import { useSelect } from "@wordpress/data";
+import {
+  ColorPicker,
+  ComboboxControl,
+  ToggleControl,
+  RangeControl,
+  Spinner,
+} from "@wordpress/components";
 import Disabled from "../components/Disabled";
 import Group from "../components/Group";
 import Media from "../components/Media";
 import Page from "../components/Page";
-import ComboboxControl from "../components/ComboboxControl";
-import ToggleControl from "../components/ToggleControl";
 import CodeMirror from "../components/CodeMirror";
 
 export default () => {
-  const settings = getSettings();
   const disabled = () => {
     if (prestoPlayer?.isPremium) {
       return false;
@@ -32,41 +30,87 @@ export default () => {
     };
   };
 
-  const [presets, setPresets] = useState([]);
-  const [audioPresets, setAudioPresets] = useState([]);
-
-  useEffect(() => {
-    async function getPresets() {
-      const res = await wp.apiFetch({
-        path: `/presto-player/v1/preset/`,
-      });
-      setPresets(
-        res.map(function (item) {
-          return {
-            label: item.name,
-            value: item.id,
-          };
-        })
-      );
-    }
-
-    // get audio presets
-    async function getAudioPresets() {
-      const res = await wp.apiFetch({
-        path: `/presto-player/v1/audio-preset/`,
-      });
-      setAudioPresets(
-        res.map(function (item) {
-          return {
-            label: item.name,
-            value: item.id,
-          };
-        })
-      );
-    }
-    getPresets();
-    getAudioPresets();
+  const {
+    presets,
+    loadingPresets,
+    audioPresets,
+    loadingAudioPresets,
+  } = useSelect((select) => {
+    const presetArgs = ["presto-player", "preset"];
+    const audioPresetArgs = ["presto-player", "audio-preset"];
+    return {
+      presets: select(coreStore).getEntityRecords(...presetArgs),
+      loadingPresets: select(coreStore).isResolving(
+        "getEntityRecords",
+        presetArgs
+      ),
+      audioPresets: select(coreStore).getEntityRecords(...audioPresetArgs),
+      loadingAudioPresets: select(coreStore).isResolving(
+        "getEntityRecords",
+        audioPresetArgs
+      ),
+    };
   }, []);
+
+  const [presetSettings, setPresetSettings] = useEntityProp(
+    "root",
+    "site",
+    "presto_player_presets"
+  );
+  const updatePresetSettings = (data) => {
+    setPresetSettings({
+      ...(presetSettings || {}),
+      ...data,
+    });
+  };
+
+  const [audioPresetSettings, setAudioPresetSettings] = useEntityProp(
+    "root",
+    "site",
+    "presto_player_audio_presets"
+  );
+  const updateAudioPresetSettings = (data) => {
+    setAudioPresetSettings({
+      ...(audioPresetSettings || {}),
+      ...data,
+    });
+  };
+
+  const [analytics, setAnalytics] = useEntityProp(
+    "root",
+    "site",
+    "presto_player_analytics"
+  );
+  const updateAnalytics = (data) => {
+    setAnalytics({
+      ...(analytics || {}),
+      ...data,
+    });
+  };
+
+  const [branding, setBranding] = useEntityProp(
+    "root",
+    "site",
+    "presto_player_branding"
+  );
+  const updateBranding = (data) => {
+    setBranding({
+      ...(branding || {}),
+      ...data,
+    });
+  };
+
+  const [uninstall, setUninstall] = useEntityProp(
+    "root",
+    "site",
+    "presto_player_uninstall"
+  );
+  const updateUninstall = (data) => {
+    setUninstall({
+      ...(uninstall || {}),
+      ...data,
+    });
+  };
 
   return (
     <Page
@@ -83,37 +127,27 @@ export default () => {
         <Disabled disabled={disabled()}>
           <Media
             className={"presto-player__setting--logo"}
-            option={{
-              name: (
-                <>
-                  {__("Logo", "presto-player")}{" "}
-                  {disabled() && (
-                    <span className="presto-options__pro-badge">
-                      {__("Pro", "presto-player")}
-                    </span>
-                  )}
-                </>
-              ),
-              id: "logo",
-              default: "",
-            }}
-            maxWidth={getSetting("branding", "logo_width") || 150}
-            value={getSetting("branding", "logo")}
-            optionName="branding"
+            label={
+              <>
+                {__("Logo", "presto-player")}{" "}
+                {disabled() && (
+                  <span className="presto-options__pro-badge">
+                    {__("Pro", "presto-player")}
+                  </span>
+                )}
+              </>
+            }
+            onSelect={(image) => updateBranding({ logo: image?.url })}
+            maxWidth={branding?.logo_width || 150}
+            value={branding?.logo}
           />
 
           <div style={{ maxWidth: "500px" }}>
             <RangeControl
               className={"presto-player__setting--logo-width"}
               label={__("Logo Max Width", "presto-player")}
-              value={getSetting("branding", "logo_width") || 150}
-              onChange={(width) => {
-                dispatch("presto-player/settings").updateSetting(
-                  "logo_width",
-                  width,
-                  "branding"
-                );
-              }}
+              value={branding?.logo_width || 150}
+              onChange={(logo_width) => updateBranding({ logo_width })}
               min={1}
               max={400}
             />
@@ -121,16 +155,10 @@ export default () => {
         </Disabled>
         <ColorPicker
           className={"presto-player__setting--brand-color"}
-          option={{
-            name: __("Brand Color", "presto-player"),
-            id: "color",
-            default: "",
-          }}
-          value={getSetting("branding", "color")}
-          optionName="branding"
+          onChangeComplete={(value) => updateBranding({ color: value.hex })}
+          color={branding?.color}
         />
       </Group>
-
       <Group
         title={__("Analytics", "presto-player")}
         disabled={disabled()}
@@ -142,69 +170,75 @@ export default () => {
         <div>
           <ToggleControl
             className={"presto-player__setting--analytics-enable"}
-            option={{
-              id: "enable",
-              name: __("Enable", "presto-player"),
-              help: __("Enable view analytics for your media", "presto-player"),
-            }}
-            value={settings?.presto_player_analytics?.enable}
-            optionName="analytics"
+            label={__("Enable", "presto-player")}
+            help={__("Enable view analytics for your media", "presto-player")}
+            checked={analytics?.enable}
+            onChange={(enable) => updateAnalytics({ enable })}
           />
-          {!!settings?.presto_player_analytics?.enable && (
+
+          {!!analytics?.enable && (
             <ToggleControl
-              className={"presto-player__setting--purge-data"}
-              option={{
-                id: "purge_data",
-                name: __("Auto-Purge Data (recommended)", "presto-player"),
-                help: __(
-                  "Automatically purge data older than 90 days.",
-                  "presto-player"
-                ),
-              }}
-              value={
-                settings?.presto_player_analytics?.purge_data !== undefined
-                  ? settings?.presto_player_analytics?.purge_data
+              label={__("Auto-Purge Data (recommended)")}
+              help={__(
+                "Automatically purge data older than 90 days.",
+                "presto-player"
+              )}
+              className={"presto-player__setting--analytics-enable"}
+              checked={
+                analytics?.purge_data !== undefined
+                  ? analytics?.purge_data
                   : true
               }
-              optionName="analytics"
+              onChange={(purge_data) => updateAnalytics({ purge_data })}
             />
           )}
         </div>
       </Group>
-
       <Group
         title={__("Presets", "presto-player")}
         disabled={disabled()}
         description={__("Media presets settings.", "presto-player")}
       >
-        {!presets.length ? (
+        {!!loadingPresets ? (
           <Spinner />
         ) : (
           <ComboboxControl
-            option={{
-              name: __("Select default preset for video.", "presto-player"),
-              id: "default_player_preset",
-            }}
-            options={presets}
-            value={settings?.presto_player_presets?.default_player_preset}
-            optionName="presets"
+            label={__("Select default preset for video.", "presto-player")}
+            value={presetSettings?.default_player_preset}
+            options={(presets || []).map((preset) => {
+              return {
+                value: preset?.id,
+                label: preset?.name,
+              };
+            })}
+            onChange={(default_player_preset) =>
+              updatePresetSettings({
+                default_player_preset: default_player_preset || 1,
+              })
+            }
           />
         )}
-        {!audioPresets.length ? (
+
+        {!!loadingAudioPresets ? (
           <Spinner />
         ) : (
           <ComboboxControl
-            option={{
-              name: __("Select default preset for audio.", "presto-player"),
-              id: "default_player_preset",
-            }}
-            options={audioPresets}
-            value={settings?.presto_player_audio_presets?.default_player_preset}
-            optionName="audio_presets"
+            label={__("Select default preset for audio.", "presto-player")}
+            value={audioPresetSettings?.default_player_preset}
+            options={(audioPresets || []).map((preset) => {
+              return {
+                value: preset?.id,
+                label: preset?.name,
+              };
+            })}
+            onChange={(default_player_preset) =>
+              updateAudioPresetSettings({
+                default_player_preset: default_player_preset || 1,
+              })
+            }
           />
         )}
       </Group>
-
       <Group
         disabled={disabled()}
         title={__("Custom CSS", "presto-player")}
@@ -216,11 +250,11 @@ export default () => {
         <CodeMirror
           disabled={!prestoPlayer?.isPremium}
           option={{ id: "player_css" }}
-          value={settings?.presto_player_branding?.player_css}
-          optionName="branding"
+          value={branding?.player_css}
+          key={branding?.player_css}
+          onChange={(player_css) => updateBranding({ player_css })}
         />
       </Group>
-
       <Group
         title={__("Uninstall Options", "presto-player")}
         description={__(
@@ -229,22 +263,22 @@ export default () => {
         )}
       >
         <ToggleControl
+          label={__("Remove data on uninstall")}
+          help={__("This removes all data on uninstall.", "presto-player")}
           className="presto-player__setting--uninstall"
-          option={{
-            id: "uninstall_data",
-            name: __("Remove data on uninstall", "presto-player"),
-            help: __("This removes all data on uninstall.", "presto-player"),
-            confirm: {
-              title: __("Caution: Data Loss", "presto-player"),
-              heading: __("Are you sure?", "presto-player"),
-              message: __(
-                "Are you sure you want to remove all the data from this plugin? This is irreversible!",
-                "presto-player"
-              ),
-            },
+          checked={uninstall?.uninstall_data}
+          onChange={(uninstall_data) => {
+            if (uninstall_data) {
+              const r = confirm(
+                __(
+                  "Caution: Data Loss. Are you sure you want to remove all the data from this plugin? This is irreversible!",
+                  "presto-player"
+                )
+              );
+              if (!r) return;
+            }
+            updateUninstall({ uninstall_data });
           }}
-          value={settings?.presto_player_uninstall?.uninstall_data}
-          optionName="uninstall"
         />
       </Group>
     </Page>

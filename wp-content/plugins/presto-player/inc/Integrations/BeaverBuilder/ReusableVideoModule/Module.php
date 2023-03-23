@@ -7,6 +7,7 @@ use PrestoPlayer\Models\ReusableVideo;
 
 class Module extends \FLBuilderModule
 {
+
     public function __construct()
     {
         parent::__construct([
@@ -34,7 +35,15 @@ class Module extends \FLBuilderModule
      */
     public function enqueue_scripts()
     {
-        do_action('presto_player/bb_scripts');
+        $assets = include trailingslashit(PRESTO_PLAYER_PLUGIN_DIR) . 'dist/beaver-builder.asset.php';
+        $this->add_js(
+            'surecart/beaver-builder/admin',
+            trailingslashit(PRESTO_PLAYER_PLUGIN_URL) . 'dist/beaver-builder.js',
+            array_merge(['jquery'], $assets['dependencies']),
+            $assets['version'],
+            true
+        );
+        $this->add_css('surecart/beaver-builder/admin', trailingslashit(PRESTO_PLAYER_PLUGIN_URL) . 'dist/beaver-builder.css', [], $assets['version']);
     }
 
     public static function getSettings()
@@ -74,7 +83,7 @@ class Module extends \FLBuilderModule
         ob_start();
 ?>
         <div class="presto-builder--custom-video-controls">
-            <div class="fl-builder--category-select" x-data="window.prestoBBDropdown({nonce: '<?php echo wp_create_nonce('presto_bb_nonce'); ?>'})" x-init="init">
+            <div class="fl-builder--category-select" x-data="window.prestoBBDropdown({nonce: '<?php echo wp_create_nonce('wp_rest'); ?>'})" x-init="init">
                 <div class="fl-builder--selector-display" x-on:click="open">
                     <button class="fl-builder--selector-display-label">
                         <span class="fl-builder--group-label"><?php esc_html_e('Media', 'presto-player'); ?></span>

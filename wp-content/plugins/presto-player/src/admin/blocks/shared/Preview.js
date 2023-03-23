@@ -1,6 +1,9 @@
 const { __ } = wp.i18n;
 const { Disabled } = wp.components;
-import { PrestoCtaOverlayUi, PrestoEmailOverlayUi } from "@presto-player/react";
+import {
+  PrestoCtaOverlayUi,
+  PrestoEmailOverlayUi,
+} from "@presto-player/components-react";
 import { timeToSeconds } from "../util";
 import Player from "./Player";
 const { useState, useEffect } = wp.element;
@@ -17,7 +20,7 @@ export default ({
   isDisabled = true,
 }) => {
   const [renderKey, setRenderKey] = useState(1);
-  const { email_collection, cta } = state;
+  const { email_collection, cta, search } = state;
 
   useEffect(() => {
     setRenderKey(renderKey + 1);
@@ -112,9 +115,8 @@ export default ({
           src={src || ""}
           className={`
             ${menu === "cta" && !!cta?.enabled && "cta-active"} 
-            ${
-              menu === "email" && !!email_collection?.enabled && "email-active"
-            }`}
+            ${menu === "email" && !!email_collection?.enabled && "email-active"}
+            ${menu === "search" && !!search?.enabled && "search-active"}`}
           preset={state}
           branding={{
             ...branding,

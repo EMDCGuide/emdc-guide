@@ -64,6 +64,9 @@ $overallBorderCSSMobile = UAGB_Block_Helper::uag_generate_border_css( $attr, 'ov
 
 
 $selectors = array(
+	'.wp-block-uagb-table-of-contents'                    => array(
+		'text-align' => $attr['overallAlign'],
+	),
 	' .uagb-toc__list-wrap ul li'                         => array(
 		'font-size' => UAGB_Helper::get_css_value( $attr['fontSize'], $attr['fontSizeType'] ),
 	),
@@ -76,7 +79,7 @@ $selectors = array(
 	' .uagb-toc__list-wrap li a'                          => array(
 		'color' => $attr['linkColor'],
 	),
-	' .uagb-toc__title-wrap'                              => array(
+	' .uagb-toc__wrap .uagb-toc__title-wrap'              => array(
 		'justify-content' => $attr['align'],
 		'margin-bottom'   => UAGB_Helper::get_css_value( $attr['headingBottom'], 'px' ),
 	),
@@ -145,7 +148,7 @@ if ( $attr['customWidth'] ) {
 }
 
 if ( $attr['customWidth'] && $attr['makeCollapsible'] ) {
-	$selectors[' .uagb-toc__title']['justify-content'] = 'space-between';
+	$selectors[' .uagb-toc__wrap .uagb-toc__title']['justify-content'] = 'space-between';
 }
 
 if ( $attr['disableBullets'] ) {

@@ -643,5 +643,96 @@ if ( ! class_exists( 'UAGB_Block_JS' ) ) {
 			UAGB_Helper::blocks_google_font( $heading_load_google_font, $heading_font_family, $heading_font_weight );
 			UAGB_Helper::blocks_google_font( $caption_load_google_font, $caption_font_family, $caption_font_weight );
 		}
+
+		/**
+		 * Adds Google fonts for Counter block.
+		 *
+		 * @since 2.1.0
+		 * @param array $attr the blocks attr.
+		 */
+		public static function blocks_counter_gfont( $attr ) {
+
+			$heading_load_google_font = isset( $attr['headingLoadGoogleFonts'] ) ? $attr['headingLoadGoogleFonts'] : '';
+			$heading_font_family      = isset( $attr['headingFontFamily'] ) ? $attr['headingFontFamily'] : '';
+			$heading_font_weight      = isset( $attr['headingFontWeight'] ) ? $attr['headingFontWeight'] : '';
+
+			$number_load_google_font = isset( $attr['numberLoadGoogleFonts'] ) ? $attr['numberLoadGoogleFonts'] : '';
+			$number_font_family      = isset( $attr['numberFontFamily'] ) ? $attr['numberFontFamily'] : '';
+			$number_font_weight      = isset( $attr['numberFontWeight'] ) ? $attr['numberFontWeight'] : '';
+
+			UAGB_Helper::blocks_google_font( $heading_load_google_font, $heading_font_family, $heading_font_weight );
+			UAGB_Helper::blocks_google_font( $number_load_google_font, $number_font_family, $number_font_weight );
+		}
+
+		/**
+		 * Adds Google fonts for Image Gallery block.
+		 *
+		 * @since 2.0.0
+		 * @param array $attr the blocks attr.
+		 */
+		public static function blocks_image_gallery_gfont( $attr ) {
+
+			$caption_load_google_font = isset( $attr['captionLoadGoogleFonts'] ) ? $attr['captionLoadGoogleFonts'] : '';
+			$caption_font_family      = isset( $attr['captionFontFamily'] ) ? $attr['captionFontFamily'] : '';
+			$caption_font_weight      = isset( $attr['captionFontWeight'] ) ? $attr['captionFontWeight'] : '';
+
+			$load_more_load_google_font = isset( $attr['loadMoreLoadGoogleFonts'] ) ? $attr['loadMoreLoadGoogleFonts'] : '';
+			$load_more_font_family      = isset( $attr['loadMoreFontFamily'] ) ? $attr['loadMoreFontFamily'] : '';
+			$load_more_font_weight      = isset( $attr['loadMoreFontWeight'] ) ? $attr['loadMoreFontWeight'] : '';
+
+			$lightbox_load_google_font = isset( $attr['lightboxLoadGoogleFonts'] ) ? $attr['lightboxLoadGoogleFonts'] : '';
+			$lightbox_font_family      = isset( $attr['lightboxFontFamily'] ) ? $attr['lightboxFontFamily'] : '';
+			$lightbox_font_weight      = isset( $attr['lightboxFontWeight'] ) ? $attr['lightboxFontWeight'] : '';
+
+			UAGB_Helper::blocks_google_font( $caption_load_google_font, $caption_font_family, $caption_font_weight );
+			UAGB_Helper::blocks_google_font( $load_more_load_google_font, $load_more_font_family, $load_more_font_weight );
+			UAGB_Helper::blocks_google_font( $lightbox_load_google_font, $lightbox_font_family, $lightbox_font_weight );
+		}
+
+		/**
+		 * Adds Google fonts for Countdown block.
+		 *
+		 * @since 2.4.0
+		 * @param array $attr the blocks attr.
+		 * @return void
+		 */
+		public static function blocks_countdown_gfont( $attr ) {
+
+			$digit_load_google_font = isset( $attr['digitLoadGoogleFonts'] ) ? $attr['digitLoadGoogleFonts'] : '';
+			$digit_font_family      = isset( $attr['digitFontFamily'] ) ? $attr['digitFontFamily'] : '';
+			$digit_font_weight      = isset( $attr['digitFontWeight'] ) ? $attr['digitFontWeight'] : '';
+
+			$label_load_google_font = isset( $attr['labelLoadGoogleFonts'] ) ? $attr['labelLoadGoogleFonts'] : '';
+			$label_font_family      = isset( $attr['labelFontFamily'] ) ? $attr['labelFontFamily'] : '';
+			$label_font_weight      = isset( $attr['labelFontWeight'] ) ? $attr['labelFontWeight'] : '';
+
+			$separator_load_google_font = isset( $attr['separatorLoadGoogleFonts'] ) ? $attr['separatorLoadGoogleFonts'] : '';
+			$separator_font_family      = isset( $attr['separatorFontFamily'] ) ? $attr['separatorFontFamily'] : '';
+			$separator_font_weight      = isset( $attr['separatorFontWeight'] ) ? $attr['separatorFontWeight'] : '';
+
+			UAGB_Helper::blocks_google_font( $digit_load_google_font, $digit_font_family, $digit_font_weight );
+			UAGB_Helper::blocks_google_font( $label_load_google_font, $label_font_family, $label_font_weight );
+			UAGB_Helper::blocks_google_font( $separator_load_google_font, $separator_font_family, $separator_font_weight );
+		}
+
+		/**
+		 * Adds Google fonts for Modal block.
+		 *
+		 * @since 2.2.0
+		 * @param array $attr the blocks attr.
+		 */
+		public static function blocks_modal_gfont( $attr ) {
+
+			$text_load_google_font = isset( $attr['textLoadGoogleFonts'] ) ? $attr['textLoadGoogleFonts'] : '';
+			$text_font_family      = isset( $attr['textFontFamily'] ) ? $attr['textFontFamily'] : '';
+			$text_font_weight      = isset( $attr['textFontWeight'] ) ? $attr['textFontWeight'] : '';
+
+			$btn_load_google_font = isset( $attr['btnLoadGoogleFonts'] ) ? $attr['btnLoadGoogleFonts'] : '';
+			$btn_font_family      = isset( $attr['btnFontFamily'] ) ? $attr['btnFontFamily'] : '';
+			$btn_font_weight      = isset( $attr['btnFontWeight'] ) ? $attr['btnFontWeight'] : '';
+
+			UAGB_Helper::blocks_google_font( $text_load_google_font, $text_font_family, $text_font_weight );
+			UAGB_Helper::blocks_google_font( $btn_load_google_font, $btn_font_family, $btn_font_weight );
+		}
 	}
 }

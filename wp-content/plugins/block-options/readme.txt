@@ -1,12 +1,12 @@
 === Gutenberg Block Editor Toolkit – EditorsKit ===
 Author URI: https://editorskit.com
 Plugin URI: https://editorskit.com
-Contributors: phpbits, munirkamal
+Contributors: munirkamal
 Tags: Gutenberg blocks, WordPress blocks, gutenberg, blocks, Gutenberg editor
 Requires at least: 5.0
-Tested up to: 6.0
+Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 1.33.7
+Stable tag: 1.34.6
 License: GPL-3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -74,6 +74,10 @@ Powered by shortcode you can display the Estimated Reading Time on your content 
 ## Copy and Paste Selected Blocks
 
 **Note:** This feature is no longer available in the latest versions of EditorsKit because this has been added to Gutenberg.
+
+## Editorskit Typography
+
+**Note:** This feature is deprecated and no longer available in the latest version. If you want to continue using Editorskit typography, You can download and install the [editorskit deprecated typography addon](https://github.com/CakeWP/deprecated-editorskit-typography-addon/releases) manually from github.
 
 ## Image and Cover Block Styles
 Comes with selection of styles on Cover and Image Block for custom shapes and layouts such as diagonal, circular and rounder corners; and even add drop shadows.
@@ -155,27 +159,6 @@ Add help, tips and tricks button on the bottom right side of the editor to help 
 ## ShareABlock block
 Insert your downloads from [shareablock.com](https://shareablock.com/) easily using this block. Browse through your block patterns and templates then add them to your content in just a click.
 
-## Template and Pattern Library
-
-EditorsKit now includes access to the Extendify template and pattern library that can be accessed by clicking the "Library" button in the menu bar of the editor. We provide a variety of templates and patterns to serve different use cases and are adding more templates every week.
-
-Note: Templates and patterns rely on blocks and styling applied by the Editor Plus plugin. The Editor Plus plugin is required when importing a template or pattern. If you uninstall Editor Plus, the templates and patterns will still display on your site, but the styling may be affected. Additionally, stock images included in the templates are hosted by Extendify. We recommend replacing the images or adding them to your media library directly.
-
-## Privacy
-
-EditorsKit uses a custom API to fetch templates and patterns from the Extendify template and pattern library. To improve the service and stability we store logs which may contain the following:
-
-* browser type
-* referring site
-* date and time of request
-* category selection or search term
-* anonymized IP address
-
-API requests are only made when a user clicks on the Library button.
-
-For more details on their privacy policy: https://extendify.com/privacy-policy
-For more details on their terms of service: https://extendify.com/terms-of-service/
-
 ## Helping you with the new Gutenberg Editor
 EditorsKit is created to help you navigate through the new editor. Each new features will make your page building more convenient and easier. You can help achieving this goal through the community:
 
@@ -207,6 +190,39 @@ e.g.
 10. Link rel attributes nofollow and sponsored option
 
 == Changelog ==
+
+= 1.34.6 =
+* Fix: Show Support link on other plugins.
+* Fix: PHP Errors on older WP versions.
+
+= 1.34.5 =
+* Fix: Settings page breaking issue.
+
+= 1.34.4 =
+* Fix: Hide title extension conflict with themes.
+
+= 1.34.3 =
+* Fix: Highlighting jump issue.
+* Fix: Warnings in console.
+* Fix: Conflict with other plugins.
+* Fix: Hide title metadata not updating.
+* Fix: Bugs.
+
+= 1.34.2 =
+* Fix: Bugs and Warnings
+* Remove: Editorskit Deprecated typography addon warning. 
+
+= 1.34.1 =
+* Deprecate: Remove Extendify Templates Library
+
+= 1.34.0 =
+* Fix: Image block breaking issue when inserted.
+
+= 1.33.9 =
+* Fix: Trailing comma fatal error on earlier PHP versions.
+
+= 1.33.8 =
+* Deprecate: Editorskit Typography Addon.
 
 = 1.33.7 =
 * Fix: Dynamic blocks breaking in gutenberg editor.

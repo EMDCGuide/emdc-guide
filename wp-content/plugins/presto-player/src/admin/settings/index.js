@@ -1,8 +1,9 @@
-const { render } = wp.element;
-const { registerStore } = wp.data;
+import { render } from "@wordpress/element";
 
-import store from "./store";
-registerStore("presto-player/settings", store);
+/**
+ * Redux entities.
+ */
+import "./entities";
 
 /**
  * App

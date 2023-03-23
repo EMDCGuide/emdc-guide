@@ -1,33 +1,33 @@
-const { __ } = wp.i18n;
-const { BaseControl, ExternalLink, PanelRow, Notice } = wp.components;
-const { useState } = wp.element;
-const { dispatch } = wp.data;
-const { apiFetch } = wp;
-const { compose } = wp.compose;
-
-import { getSetting } from "@/admin/settings/util";
+import {
+  BaseControl,
+  ExternalLink,
+  Notice,
+  PanelRow,
+} from "@wordpress/components";
+import { compose } from "@wordpress/compose";
+import { __ } from "@wordpress/i18n";
 
 import Integration from "../../../components/Integration";
 import TextControl from "../../../components/TextControl";
-
 import withIntegration from "./withIntegration";
 
-export default compose([withIntegration()])(
-  ({ settings, success, setSuccess, error, setError, isBusy, makeRequest }) => {
-    const api_key = getSetting("mailerlite", "api_key");
-    const connected = getSetting("mailerlite", "connected");
+export default compose([withIntegration({ name: "presto_player_mailerlite" })])(
+  ({
+    success,
+    setSuccess,
+    error,
+    setError,
+    isBusy,
+    makeRequest,
+    setting,
+    updateSetting,
+  }) => {
+    const { api_key, connected } = setting || {};
 
-    const setData = (data) => {
-      dispatch("presto-player/settings").updateSetting(
-        "api_key",
-        data?.api_key || "",
-        "mailerlite"
-      );
-      dispatch("presto-player/settings").updateSetting(
-        "connected",
-        data?.connected || false,
-        "mailerlite"
-      );
+    const setData = (props) => {
+      updateSetting({
+        ...props,
+      });
     };
 
     const onConnect = () => {
@@ -83,25 +83,20 @@ export default compose([withIntegration()])(
           <BaseControl>
             <TextControl
               className="presto-player__setting--mailerlite-api_key"
-              option={{
-                id: "api_key",
-                name: __("Your Mailerlite API key", "presto-player"),
-                help: (
-                  <p>
-                    {__(
-                      "You can create a new key on your MailerLite account page.",
-                      "presto-player"
-                    )}{" "}
-                    <ExternalLink href="https://app.mailerlite.com/integrations/api/">
-                      {__("Get My API Key", "presto-player")}
-                    </ExternalLink>
-                  </p>
-                ),
-                type: "password",
-              }}
-              value={settings?.api_key}
-              optionName="mailerlite"
-              required
+              label={__("Your MailerLite API key", "presto-player")}
+              help={
+                <p>
+                  {__(
+                    "You can create a new key on your MailerLite account page.",
+                    "presto-player"
+                  )}{" "}
+                  <ExternalLink href="https://app.mailerlite.com/integrations/api/">
+                    {__("Get My API Key", "presto-player")}
+                  </ExternalLink>
+                </p>
+              }
+              value={api_key}
+              onChange={(api_key) => updateSetting({ api_key })}
             />
           </BaseControl>
         </PanelRow>

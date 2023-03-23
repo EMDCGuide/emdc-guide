@@ -1,5 +1,5 @@
 import { EventEmitter } from '../../../stencil-public-runtime';
-import { ActionBarConfig, blockAttributes, BunnyConfig, DynamicOverlay, i18nConfig, presetAttributes, prestoBranding, prestoChapters, PrestoConfig, YoutubeConfig } from '../../../interfaces';
+import { ActionBarConfig, blockAttributes, BunnyConfig, DynamicOverlay, i18nConfig, presetAttributes, prestoBranding, prestoChapters, PrestoConfig, SearchBarConfig, YoutubeConfig } from '../../../interfaces';
 export declare class PrestoPlayer {
   private originalConfig?;
   private i18n?;
@@ -37,6 +37,8 @@ export declare class PrestoPlayer {
   classes: string;
   videoAttributes: object;
   audioAttributes: object;
+  search: SearchBarConfig;
+  markers: any;
   /**
    * This element
    */
@@ -127,6 +129,10 @@ export declare class PrestoPlayer {
    */
   getConfig(): {
     iconUrl?: string;
+    markers: {
+      enabled: boolean;
+      points: any[];
+    };
     invertTime: boolean;
     storage: {
       enabled?: boolean;
@@ -154,7 +160,10 @@ export declare class PrestoPlayer {
       modestbranding: number;
       customControls: boolean;
       noCookie: boolean;
-      playsinline: boolean;
+      playsinline: boolean; /**
+       * Go to and play
+       * @param time number
+       */
     };
     tooltips: {
       controls: boolean;
@@ -169,7 +178,9 @@ export declare class PrestoPlayer {
     blockAttributes: {
       type: string;
       color?: string;
-      id?: number;
+      id?: number; /**
+       * Component loaded
+       */
       title?: string;
       src?: string;
       poster?: string;
@@ -177,7 +188,9 @@ export declare class PrestoPlayer {
       autoplay?: boolean;
       mutedPreview?: {
         enabled?: boolean;
-        captions?: boolean;
+        captions?: boolean; /**
+         * State() variables
+         */
       };
       mutedOverlay?: import("../../../interfaces").MutedOverlay;
       constructor: Function;
@@ -215,9 +228,7 @@ export declare class PrestoPlayer {
     save_player_position: boolean;
     sticky_scroll: boolean;
     play_video_viewport: boolean;
-    autoplay: boolean; /**
-     * This element
-     */
+    autoplay: boolean;
   };
   /**
    * Get player data
@@ -230,6 +241,10 @@ export declare class PrestoPlayer {
     provider: string;
     config: {
       iconUrl?: string;
+      markers: {
+        enabled: boolean;
+        points: any[];
+      };
       invertTime: boolean;
       storage: {
         enabled?: boolean;
@@ -257,7 +272,10 @@ export declare class PrestoPlayer {
         modestbranding: number;
         customControls: boolean;
         noCookie: boolean;
-        playsinline: boolean;
+        playsinline: boolean; /**
+         * Go to and play
+         * @param time number
+         */
       };
       tooltips: {
         controls: boolean;
@@ -272,7 +290,9 @@ export declare class PrestoPlayer {
       blockAttributes: {
         type: string;
         color?: string;
-        id?: number;
+        id?: number; /**
+         * Component loaded
+         */
         title?: string;
         src?: string;
         poster?: string;
@@ -280,7 +300,9 @@ export declare class PrestoPlayer {
         autoplay?: boolean;
         mutedPreview?: {
           enabled?: boolean;
-          captions?: boolean;
+          captions?: boolean; /**
+           * State() variables
+           */
         };
         mutedOverlay?: import("../../../interfaces").MutedOverlay;
         constructor: Function;
@@ -318,9 +340,7 @@ export declare class PrestoPlayer {
       save_player_position: boolean;
       sticky_scroll: boolean;
       play_video_viewport: boolean;
-      autoplay: boolean; /**
-       * This element
-       */
+      autoplay: boolean;
     };
     isAdmin: boolean;
   };
@@ -425,6 +445,11 @@ export declare class PrestoPlayer {
    * @returns JSX
    */
   renderActionBar(): any;
+  /**
+   * Render search overlay
+   * @returns JSX
+   */
+  renderSearchBar(): void;
   stickyPositionClass(): string;
   /** We append this instead of using JSX because we want it to work in fullscreen. */
   renderDynamicOverlays(): void;

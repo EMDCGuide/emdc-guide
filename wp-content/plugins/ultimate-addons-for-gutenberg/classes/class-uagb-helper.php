@@ -136,12 +136,10 @@ if ( ! class_exists( 'UAGB_Helper' ) ) {
 		 * Constructor
 		 */
 		public function __construct() {
-
-			require UAGB_DIR . 'classes/class-uagb-config.php';
 			require UAGB_DIR . 'classes/class-uagb-block-helper.php';
 			require UAGB_DIR . 'classes/class-uagb-block-js.php';
 
-			self::$block_list      = UAGB_Config::get_block_attributes();
+			self::$block_list      = UAGB_Block_Module::get_blocks_info();
 			self::$file_generation = self::allow_file_generation();
 		}
 
@@ -169,7 +167,7 @@ if ( ! class_exists( 'UAGB_Helper' ) ) {
 						continue;
 					}
 
-					if ( ! empty( $val ) || 0 === $val ) {
+					if ( ! empty( $val ) || ( empty( $val ) && 'content' === $j ) || 0 === $val ) {
 						if ( 'font-family' === $j ) {
 							$css .= $j . ': "' . $val . '";';
 						} else {
@@ -204,18 +202,11 @@ if ( ! class_exists( 'UAGB_Helper' ) ) {
 		 * @since 1.13.4
 		 */
 		public static function get_css_value( $value = '', $unit = '' ) {
-
-			if ( '' == $value ) { // phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
-				return $value;
+			if ( ! is_numeric( $value ) ) {
+				return '';
 			}
 
-			$css_val = '';
-
-			if ( isset( $value ) ) {
-				$css_val = esc_attr( $value ) . $unit;
-			}
-
-			return $css_val;
+			return esc_attr( $value ) . $unit;
 		}
 
 
@@ -303,7 +294,7 @@ if ( ! class_exists( 'UAGB_Helper' ) ) {
 			}
 			if ( '' !== $path && null !== $view ) {
 				?>
-				<svg xmlns="https://www.w3.org/2000/svg" viewBox= "<?php echo esc_html( $view ); ?>"><path d="<?php echo esc_html( $path ); ?>"></path></svg>
+				<svg xmlns="https://www.w3.org/2000/svg" viewBox= "<?php echo esc_attr( $view ); ?>"><path d="<?php echo esc_attr( $path ); ?>"></path></svg>
 				<?php
 			}
 		}
@@ -454,9 +445,6 @@ if ( ! class_exists( 'UAGB_Helper' ) ) {
 			$options = array();
 
 			foreach ( $post_types as $post_type ) {
-				if ( 'product' === $post_type->name ) {
-					continue;
-				}
 
 				if ( 'attachment' === $post_type->name ) {
 					continue;
@@ -469,54 +457,6 @@ if ( ! class_exists( 'UAGB_Helper' ) ) {
 			}
 
 			return apply_filters( 'uagb_loop_post_types', $options );
-		}
-
-		/**
-		 * Get all taxonomies.
-		 *
-		 * @since 1.11.0
-		 * @access public
-		 */
-		public static function get_related_taxonomy() {
-
-			$post_types = self::get_post_types();
-
-			$return_array = array();
-
-			foreach ( $post_types as $key => $value ) {
-				$post_type = $value['value'];
-
-				$taxonomies = get_object_taxonomies( $post_type, 'objects' );
-				$data       = array();
-
-				foreach ( $taxonomies as $tax_slug => $tax ) {
-					if ( ! $tax->public || ! $tax->show_ui || ! $tax->show_in_rest ) {
-						continue;
-					}
-
-					$data[ $tax_slug ] = $tax;
-
-					$terms = get_terms( $tax_slug );
-
-					$related_tax = array();
-
-					if ( ! empty( $terms ) ) {
-						foreach ( $terms as $t_index => $t_obj ) {
-							$related_tax[] = array(
-								'id'    => $t_obj->term_id,
-								'name'  => $t_obj->name,
-								'child' => get_term_children( $t_obj->term_id, $tax_slug ),
-							);
-						}
-						$return_array[ $post_type ]['terms'][ $tax_slug ] = $related_tax;
-					}
-				}
-
-				$return_array[ $post_type ]['taxonomy'] = $data;
-
-			}
-
-			return apply_filters( 'uagb_post_loop_taxonomies', $return_array );
 		}
 
 		/**
@@ -1344,6 +1284,54 @@ if ( ! class_exists( 'UAGB_Helper' ) ) {
 			}
 
 			return empty( $excerpt ) ? '' : $excerpt;
+		}
+
+		/**
+		 * Get User Browser name
+		 *
+		 * @param string $user_agent Browser names.
+		 * @return string
+		 * @since 2.0.8
+		 */
+		public static function get_browser_name( $user_agent ) {
+
+			if ( strpos( $user_agent, 'Opera' ) || strpos( $user_agent, 'OPR/' ) ) {
+				return 'opera';
+			} elseif ( strpos( $user_agent, 'Edg' ) || strpos( $user_agent, 'Edge' ) ) {
+				return 'edge';
+			} elseif ( strpos( $user_agent, 'Chrome' ) ) {
+				return 'chrome';
+			} elseif ( strpos( $user_agent, 'Safari' ) ) {
+				return 'safari';
+			} elseif ( strpos( $user_agent, 'Firefox' ) ) {
+				return 'firefox';
+			} elseif ( strpos( $user_agent, 'MSIE' ) || strpos( $user_agent, 'Trident/7' ) ) {
+				return 'ie';
+			}
+		}
+
+		/**
+		 * Get block dynamic CSS selector with filters applied for extending it.
+		 *
+		 * @param string $block_name Block name to filter.
+		 * @param array  $selectors Array of selectors to filter.
+		 * @param array  $attr Attributes.
+		 * @return array Combined selectors array.
+		 * @since 2.4.0
+		 */
+		public static function get_combined_selectors( $block_name, $selectors, $attr ) {
+			if ( ! is_array( $selectors ) ) { 
+				return $selectors;
+			}
+
+			$combined_selectors = array();
+
+			foreach ( $selectors as $key => $selector ) {
+				$hook_prefix                = ( 'desktop' === $key ) ? '' : '_' . $key;
+				$combined_selectors[ $key ] = apply_filters( 'spectra_' . $block_name . $hook_prefix . '_styling', $selector, $attr );
+			}
+
+			return $combined_selectors;
 		}
 	}
 

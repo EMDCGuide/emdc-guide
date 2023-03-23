@@ -84,7 +84,6 @@ class Notifications {
 
 		$access = wpforms_current_user_can( 'view_forms' ) && ! wpforms_setting( 'hide-announcements' );
 
-		// phpcs:disable WPForms.PHP.ValidateHooks.InvalidHookName
 		/**
 		 * Allow modifying state if a user has access.
 		 *
@@ -93,7 +92,6 @@ class Notifications {
 		 * @param bool $access True if user has access.
 		 */
 		return (bool) apply_filters( 'wpforms_admin_notifications_has_access', $access );
-		// phpcs:enable WPForms.PHP.ValidateHooks.InvalidHookName
 	}
 
 	/**
@@ -394,6 +392,7 @@ class Notifications {
 	 * Update notification data from feed.
 	 *
 	 * @since 1.7.5
+	 * @since 1.7.8 Added `wp_cache_flush()` call when the option has been updated.
 	 */
 	public function update() {
 
@@ -416,7 +415,11 @@ class Notifications {
 		$data = (array) apply_filters( 'wpforms_admin_notifications_update_data', $data );
 		// phpcs:enable WPForms.PHP.ValidateHooks.InvalidHookName
 
-		update_option( 'wpforms_notifications', $data );
+		// Flush the cache after the option has been updated
+		// for the case when it earlier returns an old value without the new data from DB.
+		if ( update_option( 'wpforms_notifications', $data ) ) {
+			wp_cache_flush();
+		}
 	}
 
 	/**
@@ -503,10 +506,15 @@ class Notifications {
 		$notifications_html   = '';
 		$current_class        = ' current';
 		$content_allowed_tags = [
+			'br'     => [],
 			'em'     => [],
 			'strong' => [],
 			'span'   => [
 				'style' => [],
+			],
+			'p'      => [
+				'id'    => [],
+				'class' => [],
 			],
 			'a'      => [
 				'href'   => [],
@@ -539,11 +547,11 @@ class Notifications {
 			$notifications_html .= sprintf(
 				'<div class="wpforms-notifications-message%5$s" data-message-id="%4$s">
 					<h3 class="wpforms-notifications-title">%1$s%6$s</h3>
-					<p class="wpforms-notifications-content">%2$s</p>
+					<div class="wpforms-notifications-content">%2$s</div>
 					%3$s
 				</div>',
 				esc_html( $title ),
-				wp_kses( $content, $content_allowed_tags ),
+				wp_kses( wpautop( $content ), $content_allowed_tags ),
 				$this->get_notification_buttons_html( $notification ),
 				esc_attr( $notification['id'] ),
 				esc_attr( $current_class ),
@@ -709,7 +717,8 @@ class Notifications {
 		}
 
 		$replace_tags = [
-			'{admin_url}' => admin_url(),
+			'{admin_url}'   => admin_url(),
+			'{license_key}' => wpforms_get_license_key(),
 		];
 
 		return str_replace( array_keys( $replace_tags ), array_values( $replace_tags ), $btn['url'] );

@@ -11,6 +11,8 @@ $cta_border_attribute = UAGB_Block_Helper::uag_generate_border_attribute(
 	'btn'
 );
 
+$image_width_default = ( 'yes' === get_option( 'uagb-old-user-less-than-2' ) ) ? 120 : '';
+
 return array_merge(
 	array(
 		'classMigrate'               => false,
@@ -65,6 +67,8 @@ return array_merge(
 		'icon'                       => 'circle-check',
 		'iconColor'                  => '#333',
 		'iconSize'                   => '30',
+		'iconSizeTablet'             => '',
+		'iconSizeMobile'             => '',
 		'iconSizeType'               => 'px',
 		'iconimgPosition'            => 'above-title',
 		'block_id'                   => '',
@@ -78,6 +82,8 @@ return array_merge(
 		'seperatorThickness'         => '2',
 		'thicknessUnit'              => 'px',
 		'ctaType'                    => 'none',
+		'ctaBgType'                  => 'color',
+		'ctaBgHoverType'             => 'color',
 		'ctaLinkColor'               => '',
 		'ctaFontSize'                => '',
 		'ctaFontSizeType'            => 'px',
@@ -127,9 +133,11 @@ return array_merge(
 		'iconTabletMarginUnit'       => 'px',
 		'iconMobileMarginUnit'       => 'px',
 		'imageSize'                  => 'thumbnail',
-		'imageWidth'                 => '',
+		'imageWidth'                 => $image_width_default,
 		'ctaLinkHoverColor'          => '',
 		'ctaBgHoverColor'            => '',
+		'showCtaIcon'                => true,
+		'ctaIcon'                    => 'right-long',
 		'ctaIconSpace'               => '5',
 		'ctaIconSpaceTablet'         => '',
 		'ctaIconSpaceMobile'         => '',

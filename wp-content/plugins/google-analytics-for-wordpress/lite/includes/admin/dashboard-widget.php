@@ -83,7 +83,7 @@ class MonsterInsights_Dashboard_Widget {
 		add_action( 'wp_ajax_monsterinsights_save_widget_state', array( $this, 'save_widget_state' ) );
 
 		// Reminder notice.
-		add_action( 'admin_footer', array( $this, 'load_notice' ) );
+//		add_action( 'admin_footer', array( $this, 'load_notice' ) );
 
 		add_action( 'wp_ajax_monsterinsights_mark_notice_closed', array( $this, 'mark_notice_closed' ) );
 	}
@@ -143,7 +143,7 @@ class MonsterInsights_Dashboard_Widget {
 				'</a>'
 			);
 			?>
-			<h2><?php echo $message; ?></h2>
+			<h2><?php echo $message; // phpcs:ignore ?></h2>
 			<?php if ( current_user_can( 'monsterinsights_save_settings' ) ) { ?>
 				<p><?php esc_html_e( 'To see your website stats, please connect MonsterInsights to Google Analytics.', 'google-analytics-for-wordpress' ); ?></p>
 				<a href="<?php echo esc_url( $url ); ?>"

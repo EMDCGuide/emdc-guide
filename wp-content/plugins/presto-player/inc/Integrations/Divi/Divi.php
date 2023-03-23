@@ -11,24 +11,6 @@ use PrestoPlayer\Models\ReusableVideo;
  */
 class Divi
 {
-  /**
-   * Holds script enqueuer.
-   *
-   * @var \PrestoPlayer\WPackio\Enqueue
-   */
-  public $enqueue;
-
-  public function __construct()
-  {
-    $this->enqueue = new Enqueue(
-      'prestoPlayer',
-      'dist',
-      Plugin::version(),
-      'plugin',
-      PRESTO_PLAYER_PLUGIN_FILE
-    );
-  }
-
   public function register()
   {
     add_action('divi_extensions_init', [$this, 'init']);
@@ -93,11 +75,18 @@ class Divi
       return;
     }
 
-    $assets = $this->enqueue->enqueue('divi', 'admin', ['js_dep' => ['react-dom', 'jquery', 'hls.js']]);
-    $entry_point = array_pop($assets['js']);
+    $assets = include trailingslashit(PRESTO_PLAYER_PLUGIN_DIR) . 'dist/divi.asset.php';
+    wp_enqueue_script(
+      'surecart/divi/admin',
+      trailingslashit(PRESTO_PLAYER_PLUGIN_URL) . 'dist/divi.js',
+      array_merge(['react-dom', 'jquery', 'hls.js'], $assets['dependencies']),
+      $assets['version'],
+      true
+    );
+    wp_enqueue_style('surecart/divi/admin', trailingslashit(PRESTO_PLAYER_PLUGIN_URL) . 'dist/divi.css', [], $assets['version']);
 
     if (function_exists('wp_set_script_translations')) {
-      wp_set_script_translations($entry_point['handle'], 'presto-player');
+      wp_set_script_translations('surecart/divi/admin', 'presto-player');
     }
   }
 }

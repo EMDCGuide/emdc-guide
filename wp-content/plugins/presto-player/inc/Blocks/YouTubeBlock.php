@@ -67,7 +67,7 @@ class YouTubeBlock extends Block
             'video_id' => !empty($attributes['id']) ? $attributes['id'] : 0,
             'provider_video_id' => $id,
             'src'   => $this->makeUrl($attributes),
-            'poster' => isset($attributes['poster']) ? esc_url($attributes['poster']) : "//img.youtube.com/vi/" . esc_attr($id) . "/maxresdefault.jpg",
+            'poster' => isset($attributes['poster']) ? esc_url($attributes['poster']) : false,
             'hide_youtube' => !empty((bool)$preset->hide_youtube),
         ];
     }

@@ -29,9 +29,12 @@ class Migrations
 
         $videos = new Videos(new Table());
         $videos->install();
-         
+
         $videos = new EmailCollection(new Table());
         $videos->install();
+
+        $audio_presets = new Webhooks(new Table());
+        $audio_presets->install();
 
         $upgrades = new Upgrades();
         $upgrades->migrate();

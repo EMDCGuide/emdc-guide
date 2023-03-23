@@ -1,24 +1,19 @@
-const { __ } = wp.i18n;
-const { PanelRow, Notice } = wp.components;
-const { dispatch } = wp.data;
-const { compose } = wp.compose;
-
-import { getSetting } from "@/admin/settings/util";
+import { Notice, PanelRow } from "@wordpress/components";
+import { compose } from "@wordpress/compose";
+import { __ } from "@wordpress/i18n";
 
 import Integration from "../../../components/Integration";
 import withIntegration from "./withIntegration";
 
-export default compose([withIntegration()])(
-  ({ settings, success, setSuccess, error, setError, isBusy, makeRequest }) => {
-    const connected = getSetting("fluentcrm", "connected");
-
-    const setData = (data) => {
-      dispatch("presto-player/settings").updateSetting(
-        "connected",
-        data?.connected || false,
-        "fluentcrm"
-      );
+export default compose([withIntegration({ name: "presto_player_fluentcrm" })])(
+  ({ error, setError, isBusy, makeRequest, setting, updateSetting }) => {
+    const setData = (props) => {
+      updateSetting({
+        ...props,
+      });
     };
+
+    const { connected } = setting || {};
 
     const onConnect = () => {
       makeRequest({

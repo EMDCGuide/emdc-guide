@@ -84,6 +84,13 @@
 .skin-modern.presto-player__wrapper .plyr__volume input[type=range] {
   cursor: pointer;
 }
+.skin-modern.presto-player__wrapper .presto-player__muted-overlay .plyr__control.plyr__control--overlaid {
+  border-radius: 2px;
+}
+.skin-modern.presto-player__wrapper .presto-player__muted-overlay .plyr__control.plyr__control--overlaid svg {
+  height: 40px;
+  width: 50px;
+}
 .skin-modern.presto-player__wrapper .plyr__controls .plyr__controls__item[data-plyr=rewind] svg,
 .skin-modern.presto-player__wrapper .plyr__controls .plyr__controls__item[data-plyr=fast-forward] svg,
 .skin-modern.presto-player__wrapper .plyr__controls .plyr__controls__item[data-plyr=fullscreen] svg {

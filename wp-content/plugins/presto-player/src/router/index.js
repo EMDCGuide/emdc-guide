@@ -1,4 +1,4 @@
-const { Component } = wp.element;
+import { Component } from "@wordpress/element";
 import { locationToRoute } from "./utils";
 import { history, RouterContext } from "./context";
 import { Route } from "./route";
@@ -18,11 +18,14 @@ class Router extends Component {
     this.unlisten = history.listen(this.handleRouteChange);
 
     const route = locationToRoute(history.location);
+    const { search } = history.location;
 
     // Define the initial RouterContext value
     this.state = {
       route,
-      defaultRoute: props?.defaultRoute ? `#${props?.defaultRoute}` : "#/",
+      defaultRoute: props?.defaultRoute
+        ? `${search}#${props?.defaultRoute}`
+        : `${search}#/`,
     };
   }
 

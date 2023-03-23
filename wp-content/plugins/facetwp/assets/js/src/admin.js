@@ -69,6 +69,10 @@
                             title: FWP.__('Spacing between results'),
                             defaultValue: 10
                         },
+                        no_results_text: {
+                            type: 'textarea',
+                            title: FWP.__('No results text')
+                        },
                         text_style: {
                             type: 'text-style',
                             title: FWP.__('Text style'),
@@ -289,7 +293,8 @@
                         },
                         name: {
                             type: 'text',
-                            title: FWP.__('Name')
+                            title: FWP.__('Unique name'),
+                            notes: '(Required) unique element name, without spaces'
                         },
                         css_class: {
                             type: 'text',
@@ -315,7 +320,7 @@
                     let fields = [];
 
                     if ('layout' == type) {
-                        fields.push('num_columns', 'grid_gap');
+                        fields.push('num_columns', 'grid_gap', 'no_results_text');
                     }
 
                     if ('row' == type) {
@@ -628,8 +633,12 @@
             props: ['settings', 'name', 'source', 'tab'],
             template: `
             <div class="builder-setting" v-show="isVisible">
-                <div class="setting-title" v-html="title"></div>
-                <component :is="getSettingComponent" v-bind="$props" :meta="meta"></component>
+                <div v-if="meta.notes" class="setting-title facetwp-tooltip">
+                    {{ title }}
+                    <div class="facetwp-tooltip-content" v-html="meta.notes"></div>
+                </div>
+                <div v-else class="setting-title" v-html="title"></div>
+                <div><component :is="getSettingComponent" v-bind="$props" :meta="meta"></component></div>
             </div>
             `,
             computed: {
@@ -1880,9 +1889,7 @@
                     return this.editing.label;
                 },
                 deleteItem(type, index) {
-                    if (confirm(FWP.__('Delete item?'))) {
-                        this.app[type + 's'].splice(index, 1);
-                    }
+                    this.app[type + 's'].splice(index, 1);
                 },
                 saveChanges() {
                     window.setStatus('load', FWP.__('Saving') + '...');

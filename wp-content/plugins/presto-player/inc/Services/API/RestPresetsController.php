@@ -229,6 +229,23 @@ class RestPresetsController extends \WP_REST_Controller
                         ]
                     ]
                 ],
+                'search' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'enabled' => [
+                            'type' => 'boolean'
+                        ],
+                        'minMatchCharLength' => [
+                            'type' => 'integer'
+                        ],
+                        'threshold' => [
+                            'type' => 'number'
+                        ],
+                        'placeholder' => [
+                            'type' => 'string'
+                        ]
+                    ]
+                ],
                 'cta' => [
                     'type' => 'object',
                     'properties' => [
@@ -455,6 +472,7 @@ class RestPresetsController extends \WP_REST_Controller
         $item = $this->prepare_item_for_database($request);
 
         $preset = new Preset($request['id']);
+
         $preset->update($item);
 
         $data = $this->prepare_item_for_response($preset, $request);
@@ -585,6 +603,16 @@ class RestPresetsController extends \WP_REST_Controller
             ]
         );
 
+        $search = wp_parse_args(
+            $request['search'],
+            [
+                'enabled' => false,
+                'minMatchCharLength' => 1,
+                'threshold' => 0.3,
+                'placeholder' => 'Search'
+            ]
+        );
+
         $cta = wp_parse_args(
             $request['cta'],
             [
@@ -670,6 +698,12 @@ class RestPresetsController extends \WP_REST_Controller
                 'opacity' => (int) $watermark['opacity'],
                 'position' => sanitize_text_field($watermark['position'])
             ],
+            'search' => [
+                'enabled' => (bool)$search['enabled'],
+                'minMatchCharLength' => (int) $search['minMatchCharLength'],
+                'threshold' => (float) $search['threshold'],
+                'placeholder' => sanitize_text_field($search['placeholder']),
+            ],
             'cta' => [
                 'enabled' => (bool) $cta['enabled'],
                 'percentage' => (int) $cta['percentage'],
@@ -684,7 +718,7 @@ class RestPresetsController extends \WP_REST_Controller
                 'background_opacity' => (int) $cta['background_opacity'],
                 'button_link' => [
                     'id' => sanitize_text_field(wp_kses_post($cta['button_link']['id'])),
-                    'url' => sanitize_text_field(wp_kses_post($cta['button_link']['url'])),
+                    'url' => esc_url_raw($cta['button_link']['url']),
                     'type' => sanitize_text_field(wp_kses_post($cta['button_link']['type'])),
                     'opensInNewTab' => (bool) $cta['button_link']['opensInNewTab'],
                 ],
@@ -718,7 +752,7 @@ class RestPresetsController extends \WP_REST_Controller
                 'button_text_color' => sanitize_hex_color($action_bar['button_text_color']),
                 'button_link' => [
                     'id' => sanitize_text_field(wp_kses_post($action_bar['button_link']['id'])),
-                    'url' => sanitize_text_field(wp_kses_post($action_bar['button_link']['url'])),
+                    'url' => esc_url_raw($action_bar['button_link']['url']),
                     'type' => sanitize_text_field(wp_kses_post($action_bar['button_link']['type'])),
                     'opensInNewTab' => (bool) $action_bar['button_link']['opensInNewTab'],
                 ],

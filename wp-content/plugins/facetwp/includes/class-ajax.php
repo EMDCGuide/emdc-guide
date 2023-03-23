@@ -3,6 +3,11 @@
 class FacetWP_Ajax
 {
 
+    public $url_vars;
+    public $query_vars;
+    public $is_preload;
+
+
     function __construct() {
         add_action( 'init', [ $this, 'switchboard' ], 1000 );
     }
@@ -286,7 +291,6 @@ class FacetWP_Ajax
      * The AJAX facet refresh handler
      */
     function refresh() {
-
         global $wpdb;
 
         $params = FWP()->request->process_post_data();

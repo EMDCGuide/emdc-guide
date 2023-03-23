@@ -64,13 +64,13 @@ class MonsterInsights_Connect {
 			// Deactivate plugin.
 			deactivate_plugins( plugin_basename( MONSTERINSIGHTS_PLUGIN_FILE ), false, false );
 			wp_send_json_error( array(
-				'message' => esc_html__( 'You already have MonsterInsights Pro installed. .', 'google-analytics-for-wordpress' ),
+				'message' => esc_html__( 'You already have MonsterInsights Pro installed.', 'google-analytics-for-wordpress' ),
 				'reload'  => true,
 			) );
 		}
 
 		// Network?
-		$network = ! empty( $_POST['network'] ) && $_POST['network'];
+		$network = ! empty( $_POST['network'] ) && $_POST['network']; // phpcs:ignore
 
 		// Redirect.
 		$oth = hash( 'sha512', wp_rand() );
@@ -114,7 +114,7 @@ class MonsterInsights_Connect {
 
 		// verify params present (oth & download link).
 		$post_oth = ! empty( $_REQUEST['oth'] ) ? sanitize_text_field( $_REQUEST['oth'] ) : '';
-		$post_url = ! empty( $_REQUEST['file'] ) ? $_REQUEST['file'] : '';
+		$post_url = ! empty( $_REQUEST['file'] ) ? sanitize_text_field($_REQUEST['file']) : '';
 		$license  = get_option( 'monsterinsights_connect', false );
 		$network  = ! empty( $license['network'] ) ? (bool) $license['network'] : false;
 		if ( empty( $post_oth ) || empty( $post_url ) ) {

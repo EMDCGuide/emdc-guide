@@ -10,6 +10,7 @@ import MailchimpConfig from "./MailchimpConfig";
 import MailerLiteConfig from "./MailerLiteConfig";
 import ActiveCampaignConfig from "./ActiveCampaignConfig";
 import FluentCRMConfig from "./FluentCRMConfig";
+import WebhooksConfig from "./WebhooksConfig";
 
 export default ({ options, updateEmailState }) => {
   const [fetching, setFetching] = useState(false);
@@ -50,7 +51,10 @@ export default ({ options, updateEmailState }) => {
           settingsToSet = [...settingsToSet, ...[optionsMap[key]]];
         }
       });
-      setSettings(settingsToSet);
+      setSettings([
+        ...settingsToSet,
+        ...[{ label: __("Webhooks", "presto-player"), value: "webhooks" }],
+      ]);
     } catch (e) {
       if (e?.message) {
         setError(e.message);
@@ -97,6 +101,13 @@ export default ({ options, updateEmailState }) => {
     }
 
     switch (options?.provider) {
+      case "webhooks":
+        return (
+          <WebhooksConfig
+            options={options}
+            updateEmailState={updateEmailState}
+          />
+        );
       case "mailchimp":
         return (
           <MailchimpConfig

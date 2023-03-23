@@ -116,6 +116,21 @@ class Shortcodes
     // custom field as a src
     if ($atts['custom_field']) {
       $atts['src'] = get_post_meta(get_the_ID(), $atts['custom_field'], true);
+
+      // Compatibility for file input field type from Advanced custom field plugin. 
+      if (function_exists('get_field') && $custom_field = get_field($atts['custom_field'])) {
+        switch (gettype($custom_field ?? null)) {
+          case 'array':
+            $atts['src'] = $custom_field['url'] ?? '';
+            break;
+          case 'integer':
+            $atts['src'] = wp_get_attachment_url($custom_field) ?? '';
+            break;
+          case 'string':
+            $atts['src'] = $custom_field;
+            break;
+        }
+      }
     }
 
     // get provider based on src, if not provided
@@ -148,7 +163,7 @@ class Shortcodes
    */
   public function renderBlock($atts)
   {
-    switch ($atts['provider']) {
+    switch ($atts['provider'] ?? '') {
       case 'self-hosted':
         return (new SelfHostedBlock())->html($atts, '');
 

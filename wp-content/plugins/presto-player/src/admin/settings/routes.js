@@ -1,6 +1,6 @@
 export const routes = {
   general: {
-    path: "/general",
+    path: "general",
   },
   integrations: {
     path: "/integrations",

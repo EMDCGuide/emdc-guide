@@ -1,23 +1,31 @@
 /**
  * WordPress dependencies
  */
-const { __ } = wp.i18n;
-const { useState } = wp.element;
-const { dispatch } = wp.data;
-const { apiFetch } = wp;
-const { createHigherOrderComponent } = wp.compose;
+import { __ } from "@wordpress/i18n";
+import { useState } from "@wordpress/element";
+import apiFetch from "@wordpress/api-fetch";
+import { createHigherOrderComponent } from "@wordpress/compose";
+import { useEntityProp } from "@wordpress/core-data";
 
 /**
  * Higher order component factory
  *
  * @return {Function} The higher order component.
  */
-export default () =>
+export default ({ name }) =>
   createHigherOrderComponent(
     (WrappedComponent) => (props) => {
       const [error, setError] = useState("");
       const [success, setSuccess] = useState("");
       const [isBusy, setIsBusy] = useState(false);
+
+      const [setting, setSetting] = useEntityProp("root", "site", name);
+      const updateSetting = (data) => {
+        setSetting({
+          ...(setting || {}),
+          ...data,
+        });
+      };
 
       const makeRequest = async ({
         path,
@@ -29,7 +37,6 @@ export default () =>
         setError("");
         setSuccess("");
         setIsBusy(true);
-        dispatch("presto-player/settings").setSaving(true);
 
         try {
           let response = await apiFetch({
@@ -46,7 +53,6 @@ export default () =>
           }
         } finally {
           setIsBusy(false);
-          dispatch("presto-player/settings").setSaving(false);
         }
       };
 
@@ -57,6 +63,8 @@ export default () =>
           setError={setError}
           error={error}
           isBusy={isBusy}
+          setting={setting}
+          updateSetting={updateSetting}
           makeRequest={makeRequest}
           {...props}
         />

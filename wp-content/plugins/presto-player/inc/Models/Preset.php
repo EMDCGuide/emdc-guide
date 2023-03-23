@@ -148,6 +148,9 @@ class Preset extends Model
             'watermark' => [
                 'type' => 'array'
             ],
+            'search' => [
+                'type' => 'array'
+            ],
             'email_collection' => [
                 'type' => 'array',
             ],

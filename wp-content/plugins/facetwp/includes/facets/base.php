@@ -3,6 +3,10 @@
 class FacetWP_Facet
 {
 
+    public $label;
+    public $fields = [];
+
+
     /**
      * Grab the orderby, as needed by several facet types
      * @since 3.0.4

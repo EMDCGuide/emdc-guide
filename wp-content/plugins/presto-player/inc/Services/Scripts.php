@@ -2,6 +2,7 @@
 
 namespace PrestoPlayer\Services;
 
+use Error;
 use PrestoPlayer\Plugin;
 use PrestoPlayer\Models\Block;
 use PrestoPlayer\Models\Setting;
@@ -10,19 +11,6 @@ use PrestoPlayer\WPackio\Enqueue;
 
 class Scripts
 {
-    public $enqueue;
-
-    public function __construct()
-    {
-        $this->enqueue = new Enqueue(
-            'prestoPlayer',
-            'dist',
-            Plugin::version(),
-            'plugin',
-            PRESTO_PLAYER_PLUGIN_FILE
-        );
-    }
-
     /**
      * Register scripts used throughout the plugin
      *
@@ -65,7 +53,14 @@ class Scripts
             return;
         }
 
-        $this->enqueue->enqueue('integrations', 'learndash', ['js_dep' => ['jquery']]);
+        $assets = include trailingslashit(PRESTO_PLAYER_PLUGIN_DIR) . 'dist/learndash.asset.php';
+        wp_enqueue_script(
+            'surecart/learndash/admin',
+            trailingslashit(PRESTO_PLAYER_PLUGIN_URL) . 'dist/learndash.js',
+            array_merge(['jquery'], $assets['dependencies']),
+            $assets['version'],
+            true
+        );
     }
 
     /**
@@ -161,10 +156,18 @@ class Scripts
             return;
         }
 
-        $assets = $this->enqueue->enqueue('elementor', 'editor', ['js_dep' => ['jquery', 'hls.js']]);
-        $entry_point = array_pop($assets['js']);
+
+        $assets = include trailingslashit(PRESTO_PLAYER_PLUGIN_DIR) . 'dist/elementor.asset.php';
+        wp_enqueue_script(
+            'surecart/elementor',
+            trailingslashit(PRESTO_PLAYER_PLUGIN_URL) . 'dist/elementor.js',
+            array_merge(['jquery', 'hls.js'], $assets['dependencies']),
+            $assets['version'],
+            true
+        );
+
         wp_localize_script(
-            $entry_point['handle'],
+            'surecart/elementor',
             'prestoEditorData',
             [
                 'proVersion' => Plugin::proVersion(),
@@ -175,11 +178,6 @@ class Scripts
                 'siteURL' => esc_url_raw(untrailingslashit(get_site_url(get_current_blog_id()))),
             ]
         );
-    }
-
-    public function getAssets()
-    {
-        return $this->enqueue->getAssets(func_get_args());
     }
 
     /**
@@ -193,14 +191,18 @@ class Scripts
             return;
         }
 
-        $assets = $this->enqueue->enqueue('blocks', 'admin', [
-            'js_dep' => ['wp-element', 'wp-components', 'wp-block-editor', 'wp-blocks', 'wp-element', 'wp-i18n', 'wp-polyfill', 'wp-api', 'wp-hooks', 'presto-components', 'hls.js'],
-        ]);
-
-        $entry_point = array_pop($assets['js']);
+        $assets = include trailingslashit(PRESTO_PLAYER_PLUGIN_DIR) . 'dist/blocks.asset.php';
+        wp_enqueue_script(
+            'surecart/blocks/admin',
+            trailingslashit(PRESTO_PLAYER_PLUGIN_URL) . 'dist/blocks.js',
+            array_merge(['presto-components', 'hls.js'], $assets['dependencies']),
+            $assets['version'],
+            true
+        );
+        wp_enqueue_style('surecart/blocks/admin', trailingslashit(PRESTO_PLAYER_PLUGIN_URL) . 'dist/blocks.css', [], $assets['version']);
 
         wp_localize_script(
-            $entry_point['handle'],
+            'surecart/blocks/admin',
             'prestoPlayer',
             apply_filters(
                 'presto_player_admin_script_options',
@@ -226,11 +228,11 @@ class Scripts
         );
 
         if (function_exists('wp_set_script_translations')) {
-            wp_set_script_translations($entry_point['handle'], 'presto-player');
+            wp_set_script_translations('surecart/blocks/admin', 'presto-player');
         }
 
         wp_localize_script(
-            $entry_point['handle'],
+            'surecart/blocks/admin',
             'prestoPlayerAdmin',
             apply_filters(
                 'presto_player_admin_block_script_options',
@@ -273,12 +275,22 @@ class Scripts
         }
 
         $id = get_the_ID();
+        $widget_blocks = get_option('widget_block');
 
         // change to see if we have one of our blocks
         $types = Block::getBlockTypes();
         foreach ($types as $type) {
             if (has_block($type, $id)) {
                 return true;
+            }
+
+            if (!empty($widget_blocks)) {
+                foreach ($widget_blocks as $block) {
+                    $content = isset($block['content']) ? $block['content'] : '';
+                    if (!empty($content) && has_block($type, $content)) {
+                        return true;
+                    }
+                }
             }
         }
 
@@ -418,7 +430,15 @@ class Scripts
     public function licenseScripts($hook)
     {
         add_action("admin_print_scripts-{$hook}", function () {
-            $this->enqueue->enqueue('license', 'admin', []);
+            $assets = include trailingslashit(PRESTO_PLAYER_PLUGIN_DIR) . 'dist/license.asset.php';
+            wp_enqueue_script(
+                'surecart/license/admin',
+                trailingslashit(PRESTO_PLAYER_PLUGIN_URL) . 'dist/license.js',
+                array_merge($assets['dependencies']),
+                $assets['version'],
+                true
+            );
+            wp_enqueue_style('surecart/license/admin', trailingslashit(PRESTO_PLAYER_PLUGIN_URL) . 'dist/license.css', [], $assets['version']);
         });
     }
 

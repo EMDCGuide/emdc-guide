@@ -3,8 +3,8 @@ Contributors: Inqsys, sindhwal
 Tags: duplicate page, copy menu, clone, duplicate custom-post, copy
 Donate link: http://www.inqsys.com/donate/
 Requires at least: 3.5
-Tested up to: 6.0
-Stable tag: 2.2.0
+Tested up to: 6.1
+Stable tag: 2.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,6 +12,9 @@ The best plugin to duplicate post, page, menu and custom post type multiple time
 
 == Description ==
 This plugin is very useful in creating multiple duplicate entries of a single post, page, menu and  custom posts like products, tickets, coupons, events etc. Now you don’t need to create multiple mock post on your website to check the website layout. Create one post and a single click will create a multiple entries for the same post. 
+<p>
+We make professional websites, <a href="https://inqsys.com/contact-us" target="_new">get in touch</a> to get a free quote.
+</p>
 <p>
 If you find this useful, <a href='https://www.inqsys.com/donate/' target='_new'>please consider donating</a> and this would help us in the development of the plugin and improve support.
 </p>

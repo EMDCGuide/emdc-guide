@@ -28,6 +28,13 @@ class UAGB_Init_Blocks {
 	private static $instance;
 
 	/**
+	 * Member Variable
+	 *
+	 * @var block activation
+	 */
+	private $active_blocks;
+
+	/**
 	 *  Initiator
 	 */
 	public static function get_instance() {
@@ -64,7 +71,12 @@ class UAGB_Init_Blocks {
 		if ( ! is_admin() ) {
 			add_action( 'render_block', array( $this, 'render_block' ), 5, 2 );
 		}
+
+		if ( current_user_can( 'edit_posts' ) ) {
+			add_action( 'wp_ajax_uagb_svg_confirmation', array( $this, 'confirm_svg_upload' ) );
+		}
 	}
+
 	/**
 	 * Render block.
 	 *
@@ -75,28 +87,26 @@ class UAGB_Init_Blocks {
 	 */
 	public function render_block( $block_content, $block ) {
 
-		$block_attributes = $block['attrs'];
-
-		if ( isset( $block_attributes['UAGDisplayConditions'] ) && array_key_exists( 'UAGDisplayConditions', $block_attributes ) ) {
-
-			switch ( $block_attributes['UAGDisplayConditions'] ) {
-
+		if ( ! empty( $block['attrs']['UAGDisplayConditions'] ) ) {
+			switch ( $block['attrs']['UAGDisplayConditions'] ) {
 				case 'userstate':
-					$block_content = $this->user_state_visibility( $block_attributes, $block_content );
+					$block_content = $this->user_state_visibility( $block['attrs'], $block_content );
 					break;
 
 				case 'userRole':
-					$block_content = $this->user_role_visibility( $block_attributes, $block_content );
+					$block_content = $this->user_role_visibility( $block['attrs'], $block_content );
 					break;
 
 				case 'browser':
-					$block_content = $this->browser_visibility( $block_attributes, $block_content );
+					$block_content = $this->browser_visibility( $block['attrs'], $block_content );
 					break;
 
 				case 'os':
-					$block_content = $this->os_visibility( $block_attributes, $block_content );
+					$block_content = $this->os_visibility( $block['attrs'], $block_content );
 					break;
-
+				case 'day':
+					$block_content = $this->day_visibility( $block['attrs'], $block_content );
+					break;
 				default:
 					// code...
 					break;
@@ -104,6 +114,7 @@ class UAGB_Init_Blocks {
 		}
 		return $block_content;
 	}
+
 	/**
 	 * User State Visibility.
 	 *
@@ -114,19 +125,14 @@ class UAGB_Init_Blocks {
 	 * @return mixed Returns the new block content.
 	 */
 	public function user_role_visibility( $block_attributes, $block_content ) {
+		if ( empty( $block_attributes['UAGUserRole'] ) ) {
+			return $block_content;
+		}
 
 		$user = wp_get_current_user();
-
-		if ( isset( $block_attributes['UAGUserRole'] ) && array_key_exists( 'UAGUserRole', $block_attributes ) ) {
-
-			$value = $block_attributes['UAGUserRole'];
-
-			if ( is_user_logged_in() && in_array( $value, $user->roles, true ) ) {
-				return '';
-			}
-		}
-		return $block_content;
+		return is_user_logged_in() && ! empty( $user->roles ) && in_array( $block_attributes['UAGUserRole'], $user->roles, true ) ? '' : $block_content;
 	}
+
 	/**
 	 * User State Visibility.
 	 *
@@ -137,11 +143,9 @@ class UAGB_Init_Blocks {
 	 */
 	public function os_visibility( $block_attributes, $block_content ) {
 
-		if ( ! array_key_exists( 'UAGSystem', $block_attributes ) ) {
+		if ( empty( $block_attributes['UAGSystem'] ) ) {
 			return $block_content;
 		}
-
-		$value = $block_attributes['UAGSystem'];
 
 		$os = array(
 			'iphone'   => '(iPhone)',
@@ -153,12 +157,11 @@ class UAGB_Init_Blocks {
 			'mac_os'   => '(Mac_PowerPC)|(Macintosh)',
 		);
 
-		if ( preg_match( '@' . $os[ $value ] . '@', $_SERVER['HTTP_USER_AGENT'] ) ) {
-			return '';
-		}
+		$user_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ) : '';
 
-		return $block_content;
+		return isset( $os[ $block_attributes['UAGSystem'] ] ) && preg_match( '@' . $os[ $block_attributes['UAGSystem'] ] . '@', $user_agent ) ? '' : $block_content;
 	}
+
 	/**
 	 * User State Visibility.
 	 *
@@ -170,45 +173,15 @@ class UAGB_Init_Blocks {
 	 */
 	public function browser_visibility( $block_attributes, $block_content ) {
 
-		if ( ! array_key_exists( 'UAGBrowser', $block_attributes ) ) {
+		if ( empty( $block_attributes['UAGBrowser'] ) ) {
 			return $block_content;
 		}
 
-		$browsers = array(
-			'ie'         => array(
-				'MSIE',
-				'Trident',
-			),
-			'firefox'    => 'Firefox',
-			'chrome'     => 'Chrome',
-			'opera_mini' => 'Opera Mini',
-			'opera'      => 'Opera',
-			'safari'     => 'Safari',
-		);
+		$user_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? UAGB_Helper::get_browser_name( sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ) ) : '';
 
-		$value = $block_attributes['UAGBrowser'];
-
-		$show = false;
-
-		if ( 'ie' === $value ) {
-			if ( false !== strpos( $_SERVER['HTTP_USER_AGENT'], $browsers[ $value ][0] ) || false !== strpos( $_SERVER['HTTP_USER_AGENT'], $browsers[ $value ][1] ) ) {
-				$show = true;
-			}
-		} else {
-			if ( false !== strpos( $_SERVER['HTTP_USER_AGENT'], $browsers[ $value ] ) ) {
-				$show = true;
-
-				// Additional check for Chrome that returns Safari.
-				if ( 'safari' === $value || 'firefox' === $value ) {
-					if ( false !== strpos( $_SERVER['HTTP_USER_AGENT'], 'Chrome' ) ) {
-						$show = false;
-					}
-				}
-			}
-		}
-
-		return ( $show ) ? '' : $block_content;
+		return $block_attributes['UAGBrowser'] === $user_agent ? '' : $block_content;
 	}
+
 	/**
 	 * User State Visibility.
 	 *
@@ -220,15 +193,37 @@ class UAGB_Init_Blocks {
 	 */
 	public function user_state_visibility( $block_attributes, $block_content ) {
 
-		if ( isset( $block_attributes['UAGLoggedIn'] ) && $block_attributes['UAGLoggedIn'] && is_user_logged_in() ) {
+		if ( ! empty( $block_attributes['UAGLoggedIn'] ) && is_user_logged_in() ) {
 			return '';
 		}
 
-		if ( isset( $block_attributes['UAGLoggedOut'] ) && $block_attributes['UAGLoggedOut'] && ! is_user_logged_in() ) {
+		if ( ! empty( $block_attributes['UAGLoggedOut'] ) && ! is_user_logged_in() ) {
 			return '';
 		}
 
 		return $block_content;
+
+	}
+
+	/**
+	 * Day Visibility.
+	 *
+	 * @param array $block_attributes The block data.
+	 * @param mixed $block_content The block content.
+	 *
+	 * @since 2.1.3
+	 * @return mixed Returns the new block content.
+	 */
+	public function day_visibility( $block_attributes, $block_content ) {
+
+		// If not set restriction. 
+		if ( empty( $block_attributes['UAGDay'] ) ) {
+			return $block_content;
+		}
+	
+		$current_day = strtolower( current_datetime()->format( 'l' ) );
+		// Check in restricted day.
+		return ! in_array( $current_day, $block_attributes['UAGDay'] ) ? $block_content : '';
 
 	}
 
@@ -239,11 +234,19 @@ class UAGB_Init_Blocks {
 	 */
 	public function get_taxonomy() {
 
+		$response_data = array(
+			'messsage' => __( 'User is not authenticated!', 'ultimate-addons-for-gutenberg' ),
+		);
+
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			wp_send_json_error( $response_data );
+		}
+
 		check_ajax_referer( 'uagb_ajax_nonce', 'nonce' );
 
-			$post_types = UAGB_Helper::get_post_types();
+		$post_types = UAGB_Helper::get_post_types();
 
-			$return_array = array();
+		$return_array = array();
 
 		foreach ( $post_types as $key => $value ) {
 			$post_type = $value['value'];
@@ -358,7 +361,7 @@ class UAGB_Init_Blocks {
 
 		check_ajax_referer( 'uagb_ajax_nonce', 'nonce' );
 
-		$id = intval( $_POST['formId'] );
+		$id = isset( $_POST['formId'] ) ? intval( $_POST['formId'] ) : 0;
 
 		if ( $id && 0 !== $id && -1 !== $id ) {
 			$data['html'] = do_shortcode( '[gravityforms id="' . $id . '" ajax="true"]' );
@@ -375,9 +378,17 @@ class UAGB_Init_Blocks {
 	 */
 	public function forms_recaptcha() {
 
+		$response_data = array(
+			'messsage' => __( 'User is not authenticated!', 'ultimate-addons-for-gutenberg' ),
+		);
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( $response_data );
+		}
+
 		check_ajax_referer( 'uagb_ajax_nonce', 'nonce' );
 
-		$value = isset( $_POST['value'] ) ? json_decode( stripslashes( $_POST['value'] ), true ) : array(); // phpcs:ignore
+		$value = isset( $_POST['value'] ) ? json_decode( stripslashes( $_POST['value'] ), true ) : array(); //phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		\UAGB_Admin_Helper::update_admin_settings_option( 'uag_recaptcha_secret_key_v2', sanitize_text_field( $value['reCaptchaSecretKeyV2'] ) );
 		\UAGB_Admin_Helper::update_admin_settings_option( 'uag_recaptcha_secret_key_v3', sanitize_text_field( $value['reCaptchaSecretKeyV3'] ) );
@@ -400,7 +411,7 @@ class UAGB_Init_Blocks {
 
 		check_ajax_referer( 'uagb_ajax_nonce', 'nonce' );
 
-		$id = intval( $_POST['formId'] );
+		$id = isset( $_POST['formId'] ) ? intval( $_POST['formId'] ) : 0;
 
 		if ( $id && 0 !== $id && -1 !== $id ) {
 			$data['html'] = do_shortcode( '[contact-form-7 id="' . $id . '" ajax="true"]' );
@@ -455,6 +466,10 @@ class UAGB_Init_Blocks {
 
 		$js_ext = ( SCRIPT_DEBUG ) ? '.js' : '.min.js';
 
+		wp_enqueue_code_editor( array( 'type' => 'text/css' ) );
+		wp_enqueue_script( 'wp-theme-plugin-editor' );
+		wp_enqueue_style( 'wp-codemirror' );
+
 		// Scripts.
 		wp_enqueue_script(
 			'uagb-block-editor-js', // Handle.
@@ -482,13 +497,14 @@ class UAGB_Init_Blocks {
 		if ( is_array( $saved_blocks ) ) {
 			foreach ( $saved_blocks as $slug => $data ) {
 
-				$_slug = 'uagb/' . $slug;
+				$_slug       = 'uagb/' . $slug;
+				$blocks_info = UAGB_Block_Module::get_blocks_info();
 
-				if ( ! isset( UAGB_Config::$block_attributes[ $_slug ] ) ) {
+				if ( ! isset( $blocks_info[ $_slug ] ) ) {
 					continue;
 				}
 
-				$current_block = UAGB_Config::$block_attributes[ $_slug ];
+				$current_block = $blocks_info[ $_slug ];
 
 				if ( isset( $current_block['is_child'] ) && $current_block['is_child'] ) {
 					continue;
@@ -513,7 +529,7 @@ class UAGB_Init_Blocks {
 				'deactivated_blocks' => $blocks,
 			)
 		);
-		$display_condition            = UAGB_Admin_Helper::get_admin_settings_option( 'uag_enable_block_condition', 'disabled' );
+		$display_condition            = UAGB_Admin_Helper::get_admin_settings_option( 'uag_enable_block_condition', 'enabled' );
 		$display_responsive_condition = UAGB_Admin_Helper::get_admin_settings_option( 'uag_enable_block_responsive', 'enabled' );
 
 		$enable_selected_fonts = UAGB_Admin_Helper::get_admin_settings_option( 'uag_load_select_font_globally', 'disabled' );
@@ -567,7 +583,8 @@ class UAGB_Init_Blocks {
 			'uagb-block-editor-js',
 			'uagb_blocks_info',
 			array(
-				'blocks'                             => UAGB_Config::get_block_attributes(),
+				'cf7_is_active'                      => class_exists( 'WPCF7_ContactForm' ),
+				'gf_is_active'                       => class_exists( 'GFForms' ),
 				'category'                           => 'uagb',
 				'ajax_url'                           => admin_url( 'admin-ajax.php' ),
 				'cf7_forms'                          => $this->get_cf7_forms(),
@@ -576,14 +593,16 @@ class UAGB_Init_Blocks {
 				'mobile_breakpoint'                  => UAGB_MOBILE_BREAKPOINT,
 				'image_sizes'                        => UAGB_Helper::get_image_sizes(),
 				'post_types'                         => UAGB_Helper::get_post_types(),
-				'all_taxonomy'                       => UAGB_Helper::get_related_taxonomy(),
 				'uagb_ajax_nonce'                    => $uagb_ajax_nonce,
+				'uagb_svg_confirmation_nonce'        => current_user_can( 'edit_posts' ) ? wp_create_nonce( 'uagb_confirm_svg_nonce' ) : '',
+				'svg_confirmation'                   => current_user_can( 'edit_posts' ) ? get_option( 'spectra_svg_confirmation' ) : '',
 				'uagb_home_url'                      => home_url(),
 				'user_role'                          => $this->get_user_role(),
 				'uagb_url'                           => UAGB_URL,
 				'uagb_mime_type'                     => UAGB_Helper::get_mime_type(),
 				'uagb_site_url'                      => UAGB_URI,
 				'enableConditions'                   => apply_filters_deprecated( 'enable_block_condition', array( $display_condition ), '1.23.4', 'uag_enable_block_condition' ),
+				'enableConditionsForCoreBlocks'      => apply_filters( 'enable_block_condition_for_core', true ),
 				'enableMasonryGallery'               => apply_filters( 'uag_enable_masonry_gallery', UAGB_Admin_Helper::get_admin_settings_option( 'uag_enable_masonry_gallery', 'enabled' ) ),
 				'enableResponsiveConditions'         => apply_filters( 'enable_block_responsive', UAGB_Admin_Helper::get_admin_settings_option( 'uag_enable_block_responsive', 'enabled' ) ),
 				'uagb_svg_icons'                     => UAGB_Helper::backend_load_font_awesome_icons(),
@@ -595,6 +614,7 @@ class UAGB_Init_Blocks {
 				'collapse_panels'                    => UAGB_Admin_Helper::get_admin_settings_option( 'uag_collapse_panels', 'enabled' ),
 				'enable_legacy_blocks'               => UAGB_Admin_Helper::get_admin_settings_option( 'uag_enable_legacy_blocks', ( 'yes' === get_option( 'uagb-old-user-less-than-2' ) ) ? 'yes' : 'no' ),
 				'copy_paste'                         => UAGB_Admin_Helper::get_admin_settings_option( 'uag_copy_paste', 'enabled' ),
+				'enable_on_page_css_button'          => UAGB_Admin_Helper::get_admin_settings_option( 'uag_enable_on_page_css_button', 'yes' ),
 				'content_width'                      => $content_width,
 				'container_global_padding'           => $container_padding,
 				'container_elements_gap'             => $container_elements_gap,
@@ -605,8 +625,14 @@ class UAGB_Init_Blocks {
 				'blocks_editor_spacing'              => UAGB_Admin_Helper::get_admin_settings_option( 'uag_blocks_editor_spacing', 0 ),
 				'load_font_awesome_5'                => UAGB_Admin_Helper::get_admin_settings_option( 'uag_load_font_awesome_5', ( 'yes' === get_option( 'uagb-old-user-less-than-2' ) ) ? 'enabled' : 'disabled' ),
 				'auto_block_recovery'                => UAGB_Admin_Helper::get_admin_settings_option( 'uag_auto_block_recovery', ( 'yes' === get_option( 'uagb-old-user-less-than-2' ) ) ? 'enabled' : 'disabled' ),
-				'font_awesome_5_polyfill'            => get_spectra_font_awesome_polyfiller(),
+				'font_awesome_5_polyfill'            => array(),
 				'spectra_custom_fonts'               => apply_filters( 'spectra_system_fonts', array() ),
+				'spectra_pro_status'                 => is_plugin_active( 'spectra-pro/spectra-pro.php' ),
+				'spectra_custom_css_example'         => __(
+					'Use custom class added in block\'s advanced settings to target your desired block. Examples:
+				.my-class {text-align: center;} // my-class is a custom selector'
+				),
+				'is_rtl'                             => is_rtl(),
 			)
 		);
 		// To match the editor with frontend.
@@ -714,6 +740,22 @@ class UAGB_Init_Blocks {
 		}
 
 		return $field_options;
+	}
+
+	/**
+	 * Ajax call to confirm add users confirmation option in database
+	 *
+	 * @return void
+	 * @since 2.4.0
+	 */
+	public function confirm_svg_upload() {
+		check_ajax_referer( 'uagb_confirm_svg_nonce', 'svg_nonce' );
+		if ( empty( $_POST['confirmation'] ) || 'yes' !== sanitize_text_field( $_POST['confirmation'] ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid request', 'ultimate-addons-for-gutenberg' ) ) );
+		}
+
+		update_option( 'spectra_svg_confirmation', 'yes' );
+		wp_send_json_success();
 	}
 }
 

@@ -1,6 +1,6 @@
 import { __ } from "@wordpress/i18n";
 import { Disabled } from "@wordpress/components";
-import { PrestoCtaOverlayUi, PrestoEmailOverlayUi } from "@presto-player/react";
+import { PrestoCtaOverlayUi, PrestoEmailOverlayUi } from "@presto-player/components-react";
 import { timeToSeconds } from "../../util";
 import Player from "../Player";
 import { useEffect, useState } from "@wordpress/element";

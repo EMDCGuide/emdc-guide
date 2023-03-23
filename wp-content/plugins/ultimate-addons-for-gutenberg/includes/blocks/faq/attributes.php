@@ -7,7 +7,8 @@
  * @package uagb
  */
 
-$border_attribute = UAGB_Block_Helper::uag_generate_border_attribute( 'overall' );
+$border_attribute      = UAGB_Block_Helper::uag_generate_border_attribute( 'overall' );
+$icon_border_attribute = UAGB_Block_Helper::uag_generate_border_attribute( 'icon' );
 
 return array_merge(
 	array(
@@ -22,6 +23,8 @@ return array_merge(
 		'rowsGapTablet'                => '',
 		'rowsGapMobile'                => '',
 		'rowsGapUnit'                  => 'px',
+		'boxBgType'                    => 'color',
+		'boxBgHoverType'               => 'color',
 		'boxBgColor'                   => '',
 		'boxBgHoverColor'              => '',
 		'boxPaddingTypeMobile'         => 'px',
@@ -138,6 +141,12 @@ return array_merge(
 		'borderRadius'                 => 2,
 		'borderColor'                  => '#1e1e1e',
 		'borderHoverColor'             => '',
+		'iconBgSize'                   => '',
+		'iconBgSizeTablet'             => '',
+		'iconBgSizeMobile'             => '',
+		'iconBgSizeType'               => 'px',
+		'iconBgColor'                  => '',
 	),
-	$border_attribute
+	$border_attribute,
+	$icon_border_attribute
 );

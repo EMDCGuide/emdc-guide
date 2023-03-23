@@ -125,7 +125,8 @@ if ( ! class_exists( 'UAGB_Taxonomy_List' ) ) {
 								'default' => __( 'Taxonomy Not Available.', 'ultimate-addons-for-gutenberg' ),
 							),
 							'boxShadowColor'             => array(
-								'type' => 'string',
+								'type'    => 'string',
+								'default' => '#00000070',
 							),
 							'boxShadowHOffset'           => array(
 								'type'    => 'number',
@@ -557,13 +558,13 @@ if ( ! class_exists( 'UAGB_Taxonomy_List' ) ) {
 
 				if ( is_array( $new_categories_list ) ) {
 					foreach ( $new_categories_list as $value ) {
-						// If $value is of type WP_Error, warnings would be displayed on frontend.
-						if ( ! is_wp_error( get_term_link( $value, $attributes['taxonomyType'] ) ) ) {
+						$link = get_term_link( $value->slug, $attributes['taxonomyType'] );
+						if ( ! is_wp_error( $link ) ) {
 							?>
 
 						<div class="uagb-taxomony-box">
-							<a class="uagb-tax-link" href= "<?php echo esc_url( get_term_link( $value->slug, $attributes['taxonomyType'] ) ); ?>">
-								<<?php echo esc_html( $titleTag ); ?> class="uagb-tax-title"><?php echo esc_attr( $value->name ); ?>
+							<a class="uagb-tax-link" href= "<?php echo esc_url( $link ); ?>">
+								<<?php echo esc_html( $titleTag ); ?> class="uagb-tax-title"><?php echo esc_html( $value->name ); ?>
 								</<?php echo esc_html( $titleTag ); ?>>
 								<?php if ( $showCount ) { ?>
 										<?php echo esc_attr( $value->count ); ?>
@@ -630,10 +631,14 @@ if ( ! class_exists( 'UAGB_Taxonomy_List' ) ) {
 						<?php
 						if ( is_array( $new_categories_list ) ) {
 							foreach ( $new_categories_list as $key => $value ) {
+								$link = get_term_link( $value->slug, $attributes['taxonomyType'] );
+								if ( is_wp_error( $link ) ) {
+									$link = '#';
+								}
 								?>
 							<li class="uagb-tax-list">
 								<<?php echo esc_html( $titleTag ); ?> class="uagb-tax-link-wrap">
-									<a class="uagb-tax-link" href="<?php echo esc_url( get_term_link( $value->slug, $attributes['taxonomyType'] ) ); ?>"><?php echo esc_attr( $value->name ); ?></a>
+									<a class="uagb-tax-link" href="<?php echo esc_url( $link ); ?>"><?php echo esc_html( $value->name ); ?></a>
 										<?php if ( $showCount ) { ?>
 											<?php echo ' (' . esc_attr( $value->count ) . ')'; ?>
 										<?php } ?>
@@ -641,7 +646,7 @@ if ( ! class_exists( 'UAGB_Taxonomy_List' ) ) {
 											<ul class="uagb-taxonomy-list-children">
 												<?php foreach ( $new_categories_list[ $key ]->children as $value ) { ?>
 													<li class="uagb-tax-list">
-													<a class="uagb-tax-link" href="<?php echo esc_url( get_term_link( $value->slug, $attributes['taxonomyType'] ) ); ?>"><?php echo esc_attr( $value->name ); ?></a>
+													<a class="uagb-tax-link" href="<?php echo esc_url( $link ); ?>"><?php echo esc_html( $value->name ); ?></a>
 													<?php if ( $showCount ) { ?>
 														<?php echo ' (' . esc_attr( $value->count ) . ')'; ?>
 													<?php } ?>
@@ -665,8 +670,12 @@ if ( ! class_exists( 'UAGB_Taxonomy_List' ) ) {
 						<?php
 						if ( is_array( $new_categories_list ) ) {
 							foreach ( $new_categories_list as $key => $value ) {
+								$link = get_term_link( $value->slug, $attributes['taxonomyType'] );
+								if ( is_wp_error( $link ) ) {
+									$link = '#';
+								}
 								?>
-							<option value="<?php echo esc_url( get_term_link( $value->slug, $attributes['taxonomyType'] ) ); ?>" >
+							<option value="<?php echo esc_url( $link ); ?>" >
 								<?php echo esc_attr( $value->name ); ?>
 								<?php if ( $showCount ) { ?>
 									<?php echo ' (' . esc_attr( $value->count ) . ')'; ?>
@@ -720,6 +729,30 @@ if ( ! class_exists( 'UAGB_Taxonomy_List' ) ) {
 				$mob_class = ( isset( $attributes['UAGHideMob'] ) ) ? 'uag-hide-mob' : '';
 			}
 
+			$zindex_desktop           = '';
+			$zindex_tablet            = '';
+			$zindex_mobile            = '';
+			$zindex_wrap              = array();
+			$zindex_extention_enabled = ( isset( $attributes['zIndex'] ) || isset( $attributes['zIndexTablet'] ) || isset( $attributes['zIndexMobile'] ) );
+
+			if ( $zindex_extention_enabled ) {
+				$zindex_desktop = ( isset( $attributes['zIndex'] ) ) ? '--z-index-desktop:' . $attributes['zIndex'] . ';' : false;
+				$zindex_tablet  = ( isset( $attributes['zIndexTablet'] ) ) ? '--z-index-tablet:' . $attributes['zIndexTablet'] . ';' : false;
+				$zindex_mobile  = ( isset( $attributes['zIndexMobile'] ) ) ? '--z-index-mobile:' . $attributes['zIndexMobile'] . ';' : false;
+
+				if ( $zindex_desktop ) {
+					array_push( $zindex_wrap, $zindex_desktop );
+				}
+
+				if ( $zindex_tablet ) {
+					array_push( $zindex_wrap, $zindex_tablet );
+				}
+
+				if ( $zindex_mobile ) {
+					array_push( $zindex_wrap, $zindex_mobile );
+				}
+			}
+
 			$main_classes = array(
 				'wp-block-uagb-taxonomy-list',
 				'uagb-taxonomy__outer-wrap',
@@ -728,6 +761,7 @@ if ( ! class_exists( 'UAGB_Taxonomy_List' ) ) {
 				$desktop_class,
 				$tab_class,
 				$mob_class,
+				$zindex_extention_enabled ? 'uag-blocks-common-selector' : '',
 			);
 
 			$args = array(
@@ -741,12 +775,12 @@ if ( ! class_exists( 'UAGB_Taxonomy_List' ) ) {
 			ob_start();
 
 			?>
-				<div class = "<?php echo esc_attr( implode( ' ', $main_classes ) ); ?>">
+				<div class = "<?php echo esc_attr( implode( ' ', $main_classes ) ); ?>" style="<?php echo esc_attr( implode( '', $zindex_wrap ) ); ?>">
 					<?php if ( ! empty( $new_categories_list ) ) { ?>
 							<?php $this->grid_html( $attributes ); ?>
 							<?php $this->list_html( $attributes ); ?>
 					<?php } else { ?>
-							<div class="uagb-tax-not-available"><?php echo esc_attr( $noTaxDisplaytext ); ?></div>
+							<div class="uagb-tax-not-available"><?php echo esc_html( $noTaxDisplaytext ); ?></div>
 					<?php } ?>
 				</div>
 

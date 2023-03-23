@@ -1,5 +1,1 @@
-export default function (player) {
-  if (player?.config?.poster) {
-    player.poster = player.config.poster;
-  }
-}
+export default function(o){o?.config?.poster&&(o.poster=o.config.poster)}

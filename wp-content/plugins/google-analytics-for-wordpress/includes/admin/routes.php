@@ -198,7 +198,7 @@ class MonsterInsights_Rest_Routes {
 		if ( isset( $_POST['setting'] ) ) {
 			$setting = sanitize_text_field( wp_unslash( $_POST['setting'] ) );
 			if ( isset( $_POST['value'] ) ) {
-				$value = $this->handle_sanitization( $setting, $_POST['value'] );
+				$value = $this->handle_sanitization( $setting, $_POST['value'] ); // phpcs:ignore
 				monsterinsights_update_option( $setting, $value );
 				do_action( 'monsterinsights_after_update_settings', $setting, $value );
 			} else {
@@ -363,7 +363,7 @@ class MonsterInsights_Rest_Routes {
 		);
 		// Cookiebot.
 		$parsed_addons['cookiebot'] = array(
-			'active' => function_exists( 'cookiebot_active' ) && cookiebot_active(),
+			'active' => function_exists( 'monsterinsights_is_cookiebot_active' ) && monsterinsights_is_cookiebot_active(),
 		);
 		// Cookie Notice.
 		$parsed_addons['cookie_notice'] = array(
@@ -396,24 +396,26 @@ class MonsterInsights_Rest_Routes {
 		$parsed_addons['affiliate_wp']   = array(
 			'active' => function_exists( 'affiliate_wp' ) && defined( 'AFFILIATEWP_VERSION' ),
 		);
+
 		// WPForms.
 		$parsed_addons['wpforms-lite'] = array(
 			'active'    => function_exists( 'wpforms' ),
 			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-wpforms.png',
 			'title'     => 'WPForms',
 			'excerpt'   => __( 'The best drag & drop WordPress form builder. Easily create beautiful contact forms, surveys, payment forms, and more with our 150+ form templates. Trusted by over 5 million websites as the best forms plugin. We also have 400+ form templates and over 100 million downloads for WPForms Lite.', 'google-analytics-for-wordpress' ),
-			'installed' => array_key_exists( 'wpforms-lite/wpforms.php', $installed_plugins ),
+			'installed' => array_key_exists( 'wpforms-lite/wpforms.php', $installed_plugins ) || array_key_exists( 'wpforms/wpforms.php', $installed_plugins ),
 			'basename'  => 'wpforms-lite/wpforms.php',
 			'slug'      => 'wpforms-lite',
 			'settings'  => admin_url( 'admin.php?page=wpforms-overview' ),
 		);
+
 		// AIOSEO.
 		$parsed_addons['aioseo'] = array(
 			'active'    => function_exists( 'aioseo' ),
 			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-all-in-one-seo.png',
 			'title'     => 'AIOSEO',
 			'excerpt'   => __( 'The original WordPress SEO plugin and toolkit that improves your website’s search rankings. Comes with all the SEO features like Local SEO, WooCommerce SEO, sitemaps, SEO optimizer, schema, and more.', 'google-analytics-for-wordpress' ),
-			'installed' => array_key_exists( 'all-in-one-seo-pack/all_in_one_seo_pack.php', $installed_plugins ),
+			'installed' => array_key_exists( 'all-in-one-seo-pack/all_in_one_seo_pack.php', $installed_plugins ) || array_key_exists( 'all-in-one-seo-pack-pro/all_in_one_seo_pack.php', $installed_plugins ),
 			'basename'  => ( monsterinsights_is_installed_aioseo_pro() ) ? 'all-in-one-seo-pack-pro/all_in_one_seo_pack.php' : 'all-in-one-seo-pack/all_in_one_seo_pack.php',
 			'slug'      => 'all-in-one-seo-pack',
 			'settings'  => admin_url( 'admin.php?page=aioseo' ),
@@ -549,6 +551,21 @@ class MonsterInsights_Rest_Routes {
 				'settings'  => admin_url( 'edit.php?post_type=shop_coupon&acfw' ),
 			);
 		}
+
+		// UserFeedback.
+		$parsed_addons['userfeedback-lite'] = array(
+			'active'    => function_exists( 'userfeedback' ),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-userfeedback.png',
+			'title'     => 'UserFeedback',
+			'excerpt'   => __( 'See what your analytics software isn’t telling you with powerful UserFeedback surveys.', 'google-analytics-for-wordpress' ),
+			'installed' => array_key_exists( 'userfeedback-lite/userfeedback.php', $installed_plugins ) || array_key_exists( 'userfeedback/userfeedback.php', $installed_plugins ),
+			'basename'  => 'userfeedback-lite/userfeedback.php',
+			'slug'      => 'userfeedback-lite',
+			'settings'  => admin_url( 'admin.php?page=userfeedback_onboarding' ),
+			'surveys'  => admin_url( 'admin.php?page=userfeedback_surveys' ),
+			'setup_complete'  => (get_option('userfeedback_onboarding_complete', 0) == 1),
+		);
+
 		// Gravity Forms.
 		$parsed_addons['gravity_forms'] = array(
 			'active' => class_exists( 'GFCommon' ),
@@ -834,7 +851,7 @@ class MonsterInsights_Rest_Routes {
 			return;
 		}
 
-		$extension = explode( '.', sanitize_text_field( wp_unslash( $_FILES['import_file']['name'] ) ) );
+		$extension = explode( '.', sanitize_text_field( wp_unslash( $_FILES['import_file']['name'] ) ) ); // phpcs:ignore
 		$extension = end( $extension );
 
 		if ( 'json' !== $extension ) {
@@ -843,7 +860,7 @@ class MonsterInsights_Rest_Routes {
 			) );
 		}
 
-		$import_file = sanitize_text_field( wp_unslash( $_FILES['import_file']['tmp_name'] ) );
+		$import_file = sanitize_text_field( wp_unslash( $_FILES['import_file']['tmp_name'] ) ); // phpcs:ignore
 
 		$file = file_get_contents( $import_file );
 		if ( empty( $file ) ) {
@@ -1013,6 +1030,7 @@ class MonsterInsights_Rest_Routes {
 				array(
 					'message' => $data['error'],
 					'footer'  => isset( $data['data']['footer'] ) ? $data['data']['footer'] : '',
+					'type'    => isset( $data['data']['type'] ) ? $data['data']['type'] : '',
 				)
 			);
 		}

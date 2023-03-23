@@ -406,7 +406,7 @@ function astra_addon_is_breadcrumb_trail( $echo = true ) {
 		astra_breadcrumb();
 		return ob_get_clean();
 	}
-	echo astra_breadcrumb(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo wp_kses_post( astra_breadcrumb() );
 }
 
 /**
@@ -481,54 +481,6 @@ function astra_addon_get_mobile_breakpoint( $min = '', $max = '' ) {
  */
 function astra_addon_existing_header_footer_configs() {
 	return apply_filters( 'astra_addon_existing_header_footer_configs', true );
-}
-
-/*
- * BSF Analytics.
- */
-if ( ! class_exists( 'BSF_Analytics_Loader' ) ) {
-	require_once ASTRA_EXT_DIR . 'admin/bsf-analytics/class-bsf-analytics-loader.php';
-}
-
-$astra_addon_bsf_analytics = BSF_Analytics_Loader::get_instance();
-
-$astra_addon_bsf_analytics->set_entity(
-	array(
-		'bsf' => array(
-			'product_name'    => 'Astra Pro',
-			'path'            => ASTRA_EXT_DIR . 'admin/bsf-analytics',
-			'author'          => 'Brainstorm Force',
-			'time_to_display' => '+24 hours',
-		),
-	)
-);
-
-/**
- * Pass addon specific stats to BSF analytics.
- *
- * @since 2.6.4
- * @param array $default_stats Default stats array.
- * @return array $default_stats Default stats with addon specific stats array.
- */
-function astra_addon_get_specific_stats( $default_stats ) {
-	$default_stats['astra_settings'] = array(
-		'astra-addon-version' => ASTRA_EXT_VER,
-		'astra-theme-version' => ASTRA_THEME_VERSION,
-		'breadcrumb-position' => astra_get_option( 'breadcrumb-position', false ),
-	);
-	return $default_stats;
-}
-
-add_filter( 'bsf_core_stats', 'astra_addon_get_specific_stats' );
-
-/**
- * Check compatibility for content background and typography options.
- *
- * @since 3.6.0
- * @return bool if astra theme version is less than 3.7.0, true else false.
- */
-function astra_addon_has_gcp_typo_preset_compatibility() {
-	return version_compare( ASTRA_THEME_VERSION, '3.7.0', '<' );
 }
 
 /**

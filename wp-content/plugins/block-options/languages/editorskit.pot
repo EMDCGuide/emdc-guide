@@ -1,22 +1,22 @@
-# Copyright (C) 2022 Munir Kamal
+# Copyright (C) 2023 Munir Kamal
 # This file is distributed under the same license as the EditorsKit plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: EditorsKit 1.33.7\n"
+"Project-Id-Version: EditorsKit 1.34.6\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/block-options\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-05-28T09:26:53+00:00\n"
+"POT-Creation-Date: 2023-03-07T10:47:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.5.0\n"
+"X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: block-options\n"
 
 #. Plugin Name of the plugin
-#: includes/class-editorskit-user-feedback.php:315
-#: includes/class-editorskit-welcome.php:152
+#: includes/class-editorskit-user-feedback.php:338
+#: includes/class-editorskit-welcome.php:151
 msgid "EditorsKit"
 msgstr ""
 
@@ -126,7 +126,7 @@ msgid "Uppercase"
 msgstr ""
 
 #: includes/class-editorskit-features-manager.php:189
-#: src/admin/docs/index.js:200
+#: src/admin/docs/index.js:192
 msgid "Writing"
 msgstr ""
 
@@ -148,7 +148,7 @@ msgid "Transform 3 Empty Paragraphs to Spacer Block"
 msgstr ""
 
 #: includes/class-editorskit-features-manager.php:215
-#: src/admin/docs/index.js:217
+#: src/admin/docs/index.js:209
 msgid "Block Options"
 msgstr ""
 
@@ -191,7 +191,7 @@ msgid "Set Image Block as Featured"
 msgstr ""
 
 #: includes/class-editorskit-features-manager.php:266
-#: src/admin/docs/index.js:234
+#: src/admin/docs/index.js:226
 msgid "Tools"
 msgstr ""
 
@@ -209,7 +209,7 @@ msgid "Custom Class Names"
 msgstr ""
 
 #: includes/class-editorskit-features-manager.php:285
-#: src/admin/docs/index.js:119
+#: src/admin/docs/index.js:111
 msgid "Drag and Drop Featured Image"
 msgstr ""
 
@@ -242,114 +242,132 @@ msgstr ""
 msgid "Select Parent Block"
 msgstr ""
 
-#: includes/class-editorskit-post-meta.php:135
+#: includes/class-editorskit-plugin-shortcuts.php:35
+msgid "Settings"
+msgstr ""
+
+#: includes/class-editorskit-plugin-shortcuts.php:41
+msgid "Show Support"
+msgstr ""
+
+#: includes/class-editorskit-post-meta.php:109
 msgid "API key and token from shareablock.com"
 msgstr ""
 
 #. translators: Number of years
-#: includes/class-editorskit-user-feedback.php:95
+#: includes/class-editorskit-user-feedback.php:99
 msgid "%s years"
 msgstr ""
 
-#: includes/class-editorskit-user-feedback.php:97
+#: includes/class-editorskit-user-feedback.php:101
 msgid "a year"
 msgstr ""
 
 #. translators: Number of weeks
-#: includes/class-editorskit-user-feedback.php:104
+#: includes/class-editorskit-user-feedback.php:108
 msgid "%s weeks"
 msgstr ""
 
-#: includes/class-editorskit-user-feedback.php:106
+#: includes/class-editorskit-user-feedback.php:110
 msgid "a week"
 msgstr ""
 
 #. translators: Number of days
-#: includes/class-editorskit-user-feedback.php:113
+#: includes/class-editorskit-user-feedback.php:117
 msgid "%s days"
 msgstr ""
 
-#: includes/class-editorskit-user-feedback.php:115
+#: includes/class-editorskit-user-feedback.php:119
 msgid "a day"
 msgstr ""
 
 #. translators: Number of hours
-#: includes/class-editorskit-user-feedback.php:122
+#: includes/class-editorskit-user-feedback.php:126
 msgid "%s hours"
 msgstr ""
 
-#: includes/class-editorskit-user-feedback.php:124
+#: includes/class-editorskit-user-feedback.php:128
 msgid "an hour"
 msgstr ""
 
 #. translators: Number of minutes
-#: includes/class-editorskit-user-feedback.php:131
+#: includes/class-editorskit-user-feedback.php:135
 msgid "%s minutes"
 msgstr ""
 
-#: includes/class-editorskit-user-feedback.php:133
+#: includes/class-editorskit-user-feedback.php:137
 msgid "a minute"
 msgstr ""
 
 #. translators: Number of seconds
-#: includes/class-editorskit-user-feedback.php:140
+#: includes/class-editorskit-user-feedback.php:144
 msgid "%s seconds"
 msgstr ""
 
-#: includes/class-editorskit-user-feedback.php:142
+#: includes/class-editorskit-user-feedback.php:146
 msgid "a second"
 msgstr ""
 
 #. translators: 1. Name
-#: includes/class-editorskit-user-feedback.php:274
+#: includes/class-editorskit-user-feedback.php:296
 msgid "%s WordPress Plugin"
 msgstr ""
 
 #. translators: 1. Name
-#: includes/class-editorskit-user-feedback.php:278
+#: includes/class-editorskit-user-feedback.php:300
 msgid "Are you enjoying %s Plugin?"
 msgstr ""
 
 #. translators: 1. Name, 2. Time
-#: includes/class-editorskit-user-feedback.php:281
+#: includes/class-editorskit-user-feedback.php:303
 msgid "You have been using %1$s for %2$s now. Mind leaving a review to let us know know what you think? We'd really appreciate it!"
 msgstr ""
 
-#: includes/class-editorskit-user-feedback.php:285
+#: includes/class-editorskit-user-feedback.php:307
+#: includes/notices/class-editorskit-support-notice.php:53
+#: src/admin/index.js:129
 msgid "Leave a Review"
 msgstr ""
 
-#: includes/class-editorskit-user-feedback.php:286
+#: includes/class-editorskit-user-feedback.php:308
 msgid "No thanks / I already have"
 msgstr ""
 
-#: includes/class-editorskit-welcome.php:151
+#: includes/class-editorskit-welcome.php:150
 msgid "Getting started with EditorsKit"
 msgstr ""
 
 #. translators: %s: EditorsKit settings page link
-#: includes/class-editorskit-welcome.php:188
+#: includes/class-editorskit-welcome.php:187
 msgid "Thank you for installing and activating EditorsKit Plugin. Please go to %1$sSettings > EditorsKit%2$s to get started."
 msgstr ""
 
-#: plugin.php:73
-#: plugin.php:85
+#: includes/notices/class-editorskit-support-notice.php:49
+msgid "Loving Editorskit?"
+msgstr ""
+
+#: includes/notices/class-editorskit-support-notice.php:50
+msgid "Show your support by leaving a review and small donation."
+msgstr ""
+
+#: includes/notices/class-editorskit-support-notice.php:55
+msgid "Buy me a Coffee :)"
+msgstr ""
+
+#: plugin.php:74
+#: plugin.php:86
 msgid "Cheating huh?"
 msgstr ""
 
-#: src/admin/addon-settings.js:11
-msgid "This area provide settings for all activated EditorsKit add ons."
-msgstr ""
-
-#: src/admin/block-manager/index.js:42
+#: src/admin/block-manager/index.js:39
 msgid "Search for a block"
 msgstr ""
 
-#: src/admin/block-manager/index.js:66
+#: src/admin/block-manager/index.js:63
 msgid "Available block types"
 msgstr ""
 
-#: src/admin/block-manager/index.js:71
+#: src/admin/block-manager/index.js:68
 msgid "No blocks found."
 msgstr ""
 
@@ -398,151 +416,131 @@ msgid "Export and Import Blocks"
 msgstr ""
 
 #: src/admin/docs/index.js:96
-msgid "Copy Selected Block(s)"
-msgstr ""
-
-#: src/admin/docs/index.js:100
 msgid "Media & Text Block Card Layout"
 msgstr ""
 
-#: src/admin/docs/index.js:104
-msgid "Media & Text Block Links"
-msgstr ""
-
-#: src/admin/docs/index.js:108
+#: src/admin/docs/index.js:100
 msgid "Changing List Block Font Size & Text Color"
 msgstr ""
 
-#: src/admin/docs/index.js:115
+#: src/admin/docs/index.js:107
 msgid "Easily Hide Title"
 msgstr ""
 
-#: src/admin/docs/index.js:123
+#: src/admin/docs/index.js:115
 msgid "Code Editor Syntax Highlighter"
 msgstr ""
 
-#: src/admin/docs/index.js:127
+#: src/admin/docs/index.js:119
 msgid "Enable Block Guide Lines"
 msgstr ""
 
-#: src/admin/docs/index.js:131
+#: src/admin/docs/index.js:123
 msgid "Additional CSS Class(es) Auto Suggestions"
 msgstr ""
 
-#: src/admin/docs/index.js:135
+#: src/admin/docs/index.js:127
 msgid "Accessible Help, Tips & Tricks"
 msgstr ""
 
-#: src/admin/docs/index.js:139
+#: src/admin/docs/index.js:131
 msgid "Enable Developer Tools"
 msgstr ""
 
-#: src/admin/docs/index.js:146
+#: src/admin/docs/index.js:138
 msgid "Block Visibility on Desktop, Mobile or Tablet"
 msgstr ""
 
-#: src/admin/docs/index.js:150
+#: src/admin/docs/index.js:142
 msgid "Hide Block on Logged-in/out Users"
 msgstr ""
 
-#: src/admin/docs/index.js:154
+#: src/admin/docs/index.js:146
 msgid "Using Custom Display Logic"
 msgstr ""
 
-#: src/admin/docs/index.js:161
+#: src/admin/docs/index.js:153
 msgid "Display Cover and Image Blocks in Fullscreen"
 msgstr ""
 
-#: src/admin/docs/index.js:165
+#: src/admin/docs/index.js:157
 msgid "More Image & Cover Block Styles"
 msgstr ""
 
-#: src/admin/docs/index.js:169
+#: src/admin/docs/index.js:161
 msgid "Additional List Block Styles"
 msgstr ""
 
-#: src/admin/docs/index.js:180
+#: src/admin/docs/index.js:172
 msgid "Learn more about each EditorsKit features with the tutorials below. Click on the link to open a modal pop-up with detailed explanation and animated GIF previewing how the features work."
 msgstr ""
 
-#: src/admin/docs/index.js:183
+#: src/admin/docs/index.js:175
 msgid "Rich Text Formatting"
 msgstr ""
 
-#: src/admin/docs/index.js:251
+#: src/admin/docs/index.js:243
 msgid "Block Visibility"
 msgstr ""
 
-#: src/admin/docs/index.js:268
+#: src/admin/docs/index.js:260
 msgid "Block Styling"
 msgstr ""
 
-#: src/admin/docs/index.js:287
+#: src/admin/docs/index.js:280
 msgid "Documentation"
 msgstr ""
 
-#: src/admin/index.js:24
+#: src/admin/index.js:23
 msgid "Getting Started"
 msgstr ""
 
-#: src/admin/index.js:29
+#: src/admin/index.js:28
 msgid "Tutorial and Docs"
 msgstr ""
 
-#: src/admin/index.js:34
+#: src/admin/index.js:33
 msgid "Features Manager"
 msgstr ""
 
-#: src/admin/index.js:39
+#: src/admin/index.js:38
 msgid "Blocks Manager"
 msgstr ""
 
-#: src/admin/index.js:46
-msgid "Extensions"
-msgstr ""
-
-#: src/admin/index.js:62
+#: src/admin/index.js:55
 msgid "EditorsKit provides set of tools to extend the way you are building content on WordPress Gutenberg block editor. Designed and integrated to help users easily navigate; and control each block the way it should be."
 msgstr ""
 
-#: src/admin/index.js:65
+#: src/admin/index.js:58
 msgid "EditorsKit video preview"
 msgstr ""
 
-#: src/admin/index.js:70
+#: src/admin/index.js:63
 msgid "If you have any questions or suggestion, let us know through %1$sTwitter%4$s or our %2$sFacebook community %4$s. Also, %3$ssubscribe to our newsletter%4$s if you want to stay up to date with what's new and upcoming at EditorsKit."
 msgstr ""
 
-#: src/admin/index.js:90
+#: src/admin/index.js:83
 msgid "All features are active by default but you have complete control over each one of them. Disable any features do not want to use and re-enable them anytime on this page or under the \"EditorsKit Settings\" on Gutenberg editor. Just uncheck the box and it will automatically be saved."
 msgstr ""
 
-#: src/admin/index.js:100
+#: src/admin/index.js:93
 msgid "Manage each individual blocks! You can enable or disable any blocks you want and it will be reflected on Gutenberg block manager settings. Just uncheck the box and it will automatically be saved."
 msgstr ""
 
-#: src/admin/index.js:111
-msgid "Typography and Google Fonts"
-msgstr ""
-
-#: src/admin/index.js:112
-msgid "Easily define typography on your WordPress posts and pages directly on the Gutenberg editor. With sets of predefined Google Fonts combination you can choose from or create your own to best match your website's branding."
-msgstr ""
-
-#: src/admin/index.js:119
-msgid "Get this Extension"
-msgstr ""
-
-#: src/admin/index.js:141
+#: src/admin/index.js:109
 msgid "Settings → EditorsKit"
 msgstr ""
 
-#: src/admin/index.js:142
+#: src/admin/index.js:110
 msgid "Getting Started with"
 msgstr ""
 
-#: src/admin/index.js:143
+#: src/admin/index.js:111
 msgid "Congratulations! You've just unlocked more Gutenberg block editor tools for easier editing and better workflow. Check more information about the plugin below and please make sure to navigate through \"Tutorials and Docs\" tab to learn more on how to use each available features."
+msgstr ""
+
+#: src/admin/index.js:121
+msgid "Buy me a Coffee"
 msgstr ""
 
 #: src/admin/licenses-settings.js:14
@@ -720,7 +718,7 @@ msgstr ""
 msgid "shareablock"
 msgstr ""
 
-#: src/extensions/advanced-controls/custom-class-name/index.js:67
+#: src/extensions/advanced-controls/custom-class-name/index.js:71
 msgid "Additional CSS Class(es)"
 msgstr ""
 
@@ -978,7 +976,7 @@ msgstr ""
 #: src/extensions/block-settings/visibility-settings/components/modal.js:101
 #: src/extensions/block-toolbar/block-navigator/components/controls.js:44
 #: src/extensions/components/help-tips/components/about.js:15
-#: src/extensions/components/help-tips/components/controls.js:160
+#: src/extensions/components/help-tips/components/controls.js:159
 #: src/extensions/components/manager/components/index.js:47
 #: src/extensions/components/markdown/components/menu.js:101
 #: src/extensions/transform/empty-paragraphs/components/controls.js:72
@@ -1079,7 +1077,7 @@ msgstr ""
 
 #: src/extensions/block-toolbar/media-text-link/components/controls.js:266
 #: src/extensions/components/url-popover/url-input-ui.js:108
-#: src/extensions/formats/link/components/inline.js:296
+#: src/extensions/formats/link/components/inline.js:276
 msgid "Open in New Tab"
 msgstr ""
 
@@ -1089,7 +1087,7 @@ msgstr ""
 
 #: src/extensions/block-toolbar/media-text-link/components/controls.js:278
 #: src/extensions/components/url-popover/url-input-ui.js:118
-#: src/extensions/formats/link/components/inline.js:306
+#: src/extensions/formats/link/components/inline.js:286
 msgid "Sponsored"
 msgstr ""
 
@@ -1200,19 +1198,19 @@ msgstr ""
 msgid "EditorsKit %s"
 msgstr ""
 
-#: src/extensions/components/help-tips/components/controls.js:157
+#: src/extensions/components/help-tips/components/controls.js:156
 msgid "Tips and Tricks"
 msgstr ""
 
-#: src/extensions/components/help-tips/components/controls.js:185
+#: src/extensions/components/help-tips/components/controls.js:184
 msgid "View All Tips and Tricks"
 msgstr ""
 
-#: src/extensions/components/help-tips/components/controls.js:193
+#: src/extensions/components/help-tips/components/controls.js:192
 msgid "Next"
 msgstr ""
 
-#: src/extensions/components/help-tips/components/controls.js:196
+#: src/extensions/components/help-tips/components/controls.js:195
 msgid "Fetching..."
 msgstr ""
 
@@ -1278,7 +1276,7 @@ msgid "Reading Time"
 msgstr ""
 
 #: src/extensions/components/url-popover/url-input-ui.js:113
-#: src/extensions/formats/link/components/inline.js:301
+#: src/extensions/formats/link/components/inline.js:281
 msgid "No Follow"
 msgstr ""
 
@@ -1412,19 +1410,19 @@ msgstr ""
 msgid "Link removed."
 msgstr ""
 
-#: src/extensions/formats/link/components/edit.js:139
+#: src/extensions/formats/link/components/edit.js:138
 msgid "Unlink"
 msgstr ""
 
-#: src/extensions/formats/link/components/inline.js:224
+#: src/extensions/formats/link/components/inline.js:206
 msgid "Warning: the link has been inserted but may have errors. Please test it."
 msgstr ""
 
-#: src/extensions/formats/link/components/inline.js:226
+#: src/extensions/formats/link/components/inline.js:208
 msgid "Link edited."
 msgstr ""
 
-#: src/extensions/formats/link/components/inline.js:228
+#: src/extensions/formats/link/components/inline.js:210
 msgid "Link inserted."
 msgstr ""
 

@@ -2,7 +2,7 @@
 /*
 Plugin Name: FacetWP - Cache
 Description: Caching support for FacetWP
-Version: 1.6.1
+Version: 1.6.2
 Author: FacetWP, LLC
 Author URI: https://facetwp.com/
 GitHub URI: facetwp/facetwp-cache
@@ -19,7 +19,7 @@ class FacetWP_Cache
     function __construct() {
 
         // setup variables
-        define( 'FACETWP_CACHE_VERSION', '1.6.1' );
+        define( 'FACETWP_CACHE_VERSION', '1.6.2' );
         define( 'FACETWP_CACHE_DIR', dirname( __FILE__ ) );
 
         add_action( 'init' , array( $this, 'init' ) );

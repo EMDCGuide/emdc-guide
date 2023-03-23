@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "./stencil-public-runtime";
-import { ActionBarConfig, blockAttributes, BunnyConfig, ButtonLinkObject, CTA, DynamicOverlay, EmailCollection, i18nConfig, MutedOverlay, presetAttributes, prestoBranding, prestoChapters, PrestoConfig, YoutubeConfig } from "./interfaces";
+import { ActionBarConfig, blockAttributes, BunnyConfig, ButtonLinkObject, CTA, DynamicOverlay, EmailCollection, i18nConfig, MutedOverlay, presetAttributes, prestoBranding, prestoChapters, PrestoConfig, SearchBarConfig, YoutubeConfig } from "./interfaces";
 export namespace Components {
     interface PrestoActionBar {
         "config": ActionBarConfig;
@@ -173,6 +173,7 @@ export namespace Components {
         "goToAndPlay": (time: number) => Promise<void>;
         "iconUrl": string;
         "isAdmin": boolean;
+        "markers": any;
         "mediaTitle": string;
         /**
           * Remove an event listener for the specified event.
@@ -217,6 +218,7 @@ export namespace Components {
           * @returns Plyr
          */
         "restart": () => Promise<any>;
+        "search": SearchBarConfig;
         "src": string;
         /**
           * Pause video
@@ -276,6 +278,27 @@ export namespace Components {
     }
     interface PrestoPlayerSpinner {
     }
+    interface PrestoSearchBar {
+        "player": any;
+        /**
+          * Props
+         */
+        "value": string;
+    }
+    interface PrestoSearchBarUi {
+        /**
+          * Has results
+         */
+        "hasNavigation": boolean;
+        /**
+          * The placeholder.
+         */
+        "placeholder": string;
+        /**
+          * The value for the search.
+         */
+        "value": string;
+    }
     interface PrestoStackedSkin {
     }
     interface PrestoTimestamp {
@@ -317,6 +340,54 @@ export namespace Components {
         "layout": string;
         "showCount": boolean;
     }
+}
+export interface PrestoActionBarControllerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPrestoActionBarControllerElement;
+}
+export interface PrestoAudioCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPrestoAudioElement;
+}
+export interface PrestoCtaOverlayControllerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPrestoCtaOverlayControllerElement;
+}
+export interface PrestoCtaOverlayUiCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPrestoCtaOverlayUiElement;
+}
+export interface PrestoDynamicOverlaysCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPrestoDynamicOverlaysElement;
+}
+export interface PrestoEmailOverlayControllerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPrestoEmailOverlayControllerElement;
+}
+export interface PrestoEmailOverlayUiCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPrestoEmailOverlayUiElement;
+}
+export interface PrestoMutedOverlayCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPrestoMutedOverlayElement;
+}
+export interface PrestoPlayerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPrestoPlayerElement;
+}
+export interface PrestoPlayerButtonCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPrestoPlayerButtonElement;
+}
+export interface PrestoSearchBarUiCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPrestoSearchBarUiElement;
+}
+export interface PrestoYoutubeCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPrestoYoutubeElement;
 }
 declare global {
     interface HTMLPrestoActionBarElement extends Components.PrestoActionBar, HTMLStencilElement {
@@ -439,6 +510,18 @@ declare global {
         prototype: HTMLPrestoPlayerSpinnerElement;
         new (): HTMLPrestoPlayerSpinnerElement;
     };
+    interface HTMLPrestoSearchBarElement extends Components.PrestoSearchBar, HTMLStencilElement {
+    }
+    var HTMLPrestoSearchBarElement: {
+        prototype: HTMLPrestoSearchBarElement;
+        new (): HTMLPrestoSearchBarElement;
+    };
+    interface HTMLPrestoSearchBarUiElement extends Components.PrestoSearchBarUi, HTMLStencilElement {
+    }
+    var HTMLPrestoSearchBarUiElement: {
+        prototype: HTMLPrestoSearchBarUiElement;
+        new (): HTMLPrestoSearchBarUiElement;
+    };
     interface HTMLPrestoStackedSkinElement extends Components.PrestoStackedSkin, HTMLStencilElement {
     }
     var HTMLPrestoStackedSkinElement: {
@@ -502,6 +585,8 @@ declare global {
         "presto-player-button": HTMLPrestoPlayerButtonElement;
         "presto-player-skeleton": HTMLPrestoPlayerSkeletonElement;
         "presto-player-spinner": HTMLPrestoPlayerSpinnerElement;
+        "presto-search-bar": HTMLPrestoSearchBarElement;
+        "presto-search-bar-ui": HTMLPrestoSearchBarUiElement;
         "presto-stacked-skin": HTMLPrestoStackedSkinElement;
         "presto-timestamp": HTMLPrestoTimestampElement;
         "presto-video": HTMLPrestoVideoElement;
@@ -524,7 +609,7 @@ declare namespace LocalJSX {
         "direction"?: 'rtl';
         "duration"?: number;
         "ended"?: boolean;
-        "onActionBarStateChange"?: (event: CustomEvent<boolean>) => void;
+        "onActionBarStateChange"?: (event: PrestoActionBarControllerCustomEvent<boolean>) => void;
         "youtube"?: YoutubeConfig;
     }
     interface PrestoActionBarUi {
@@ -535,8 +620,8 @@ declare namespace LocalJSX {
         "autoplay"?: boolean;
         "getRef"?: (elm?: HTMLAudioElement) => void;
         "mediaTitle"?: string;
-        "onPauseVideo"?: (event: CustomEvent<true>) => void;
-        "onPlayVideo"?: (event: CustomEvent<void>) => void;
+        "onPauseVideo"?: (event: PrestoAudioCustomEvent<true>) => void;
+        "onPlayVideo"?: (event: PrestoAudioCustomEvent<void>) => void;
         "player"?: any;
         "poster"?: string;
         "preload"?: string;
@@ -575,10 +660,10 @@ declare namespace LocalJSX {
         "duration"?: number;
         "ended"?: boolean;
         "i18n"?: i18nConfig;
-        "onCtaStateChange"?: (event: CustomEvent<boolean>) => void;
-        "onPauseVideo"?: (event: CustomEvent<boolean>) => void;
-        "onPlayVideo"?: (event: CustomEvent<void>) => void;
-        "onRestartVideo"?: (event: CustomEvent<void>) => void;
+        "onCtaStateChange"?: (event: PrestoCtaOverlayControllerCustomEvent<boolean>) => void;
+        "onPauseVideo"?: (event: PrestoCtaOverlayControllerCustomEvent<boolean>) => void;
+        "onPlayVideo"?: (event: PrestoCtaOverlayControllerCustomEvent<void>) => void;
+        "onRestartVideo"?: (event: PrestoCtaOverlayControllerCustomEvent<void>) => void;
         "provider"?: string;
     }
     interface PrestoCtaOverlayUi {
@@ -595,11 +680,11 @@ declare namespace LocalJSX {
          */
         "headline"?: string;
         "i18n"?: i18nConfig;
-        "onRewatch"?: (event: CustomEvent<void>) => void;
+        "onRewatch"?: (event: PrestoCtaOverlayUiCustomEvent<void>) => void;
         /**
           * Events
          */
-        "onSkip"?: (event: CustomEvent<void>) => void;
+        "onSkip"?: (event: PrestoCtaOverlayUiCustomEvent<void>) => void;
         "provider"?: string;
         "showButton"?: boolean;
         "type"?: string;
@@ -617,7 +702,7 @@ declare namespace LocalJSX {
     }
     interface PrestoDynamicOverlays {
         "enabled"?: boolean;
-        "onReloadComponent"?: (event: CustomEvent<void>) => void;
+        "onReloadComponent"?: (event: PrestoDynamicOverlaysCustomEvent<void>) => void;
         "overlays"?: Array<DynamicOverlay>;
         "player"?: any;
         "preset"?: presetAttributes;
@@ -637,10 +722,10 @@ declare namespace LocalJSX {
         "emailCollection"?: EmailCollection;
         "ended"?: boolean;
         "i18n"?: i18nConfig;
-        "onEmailStateChange"?: (event: CustomEvent<boolean>) => void;
-        "onPauseVideo"?: (event: CustomEvent<true>) => void;
-        "onPlayVideo"?: (event: CustomEvent<void>) => void;
-        "onRestartVideo"?: (event: CustomEvent<void>) => void;
+        "onEmailStateChange"?: (event: PrestoEmailOverlayControllerCustomEvent<boolean>) => void;
+        "onPauseVideo"?: (event: PrestoEmailOverlayControllerCustomEvent<true>) => void;
+        "onPlayVideo"?: (event: PrestoEmailOverlayControllerCustomEvent<void>) => void;
+        "onRestartVideo"?: (event: PrestoEmailOverlayControllerCustomEvent<void>) => void;
         "presetId"?: number;
         "provider"?: string;
         "videoId"?: number;
@@ -658,11 +743,11 @@ declare namespace LocalJSX {
         "headline"?: string;
         "i18n"?: i18nConfig;
         "isLoading"?: boolean;
-        "onSkip"?: (event: CustomEvent<object>) => void;
+        "onSkip"?: (event: PrestoEmailOverlayUiCustomEvent<object>) => void;
         /**
           * Events
          */
-        "onSubmitForm"?: (event: CustomEvent<object>) => void;
+        "onSubmitForm"?: (event: PrestoEmailOverlayUiCustomEvent<object>) => void;
         "provider"?: string;
         "type"?: string;
     }
@@ -671,7 +756,7 @@ declare namespace LocalJSX {
     interface PrestoMutedOverlay {
         "mutedOverlay"?: MutedOverlay;
         "mutedPreview"?: boolean;
-        "onPlayVideo"?: (event: CustomEvent<void>) => void;
+        "onPlayVideo"?: (event: PrestoMutedOverlayCustomEvent<void>) => void;
         "preset"?: presetAttributes;
     }
     interface PrestoPlayer {
@@ -691,12 +776,13 @@ declare namespace LocalJSX {
         "direction"?: 'rtl';
         "iconUrl"?: string;
         "isAdmin"?: boolean;
+        "markers"?: any;
         "mediaTitle"?: string;
-        "onCurrentMediaPlayer"?: (event: CustomEvent<object>) => void;
+        "onCurrentMediaPlayer"?: (event: PrestoPlayerCustomEvent<object>) => void;
         /**
           * Component loaded
          */
-        "onLoaded"?: (event: CustomEvent<boolean>) => void;
+        "onLoaded"?: (event: PrestoPlayerCustomEvent<boolean>) => void;
         "overlays"?: Array<DynamicOverlay>;
         "playsinline"?: boolean;
         "poster"?: string;
@@ -704,6 +790,7 @@ declare namespace LocalJSX {
         "preset"?: presetAttributes;
         "provider"?: string;
         "provider_video_id"?: string;
+        "search"?: SearchBarConfig;
         "src"?: string;
         "tracks"?: { label: string; src: string; srcLang: string }[];
         "type"?: string;
@@ -735,11 +822,11 @@ declare namespace LocalJSX {
         /**
           * Emitted when the button loses focus.
          */
-        "onPrestoBlur"?: (event: CustomEvent<void>) => void;
+        "onPrestoBlur"?: (event: PrestoPlayerButtonCustomEvent<void>) => void;
         /**
           * Emitted when the button gains focus.
          */
-        "onPrestoFocus"?: (event: CustomEvent<void>) => void;
+        "onPrestoFocus"?: (event: PrestoPlayerButtonCustomEvent<void>) => void;
         /**
           * The button's size.
          */
@@ -765,6 +852,43 @@ declare namespace LocalJSX {
         "effect"?: 'pulse' | 'sheen' | 'none';
     }
     interface PrestoPlayerSpinner {
+    }
+    interface PrestoSearchBar {
+        "player"?: any;
+        /**
+          * Props
+         */
+        "value"?: string;
+    }
+    interface PrestoSearchBarUi {
+        /**
+          * Has results
+         */
+        "hasNavigation"?: boolean;
+        /**
+          * Search is performed
+         */
+        "onFocusChange"?: (event: PrestoSearchBarUiCustomEvent<boolean>) => void;
+        /**
+          * Next is navigated
+         */
+        "onNextNav"?: (event: PrestoSearchBarUiCustomEvent<void>) => void;
+        /**
+          * Previous is navigated.
+         */
+        "onPreviousNav"?: (event: PrestoSearchBarUiCustomEvent<void>) => void;
+        /**
+          * Search is performed
+         */
+        "onSearch"?: (event: PrestoSearchBarUiCustomEvent<string>) => void;
+        /**
+          * The placeholder.
+         */
+        "placeholder"?: string;
+        /**
+          * The value for the search.
+         */
+        "value"?: string;
     }
     interface PrestoStackedSkin {
     }
@@ -801,7 +925,7 @@ declare namespace LocalJSX {
         /**
           * Events
          */
-        "onReload"?: (event: CustomEvent<string>) => void;
+        "onReload"?: (event: PrestoYoutubeCustomEvent<string>) => void;
         "player"?: any;
         "poster"?: string;
         "src"?: string;
@@ -832,6 +956,8 @@ declare namespace LocalJSX {
         "presto-player-button": PrestoPlayerButton;
         "presto-player-skeleton": PrestoPlayerSkeleton;
         "presto-player-spinner": PrestoPlayerSpinner;
+        "presto-search-bar": PrestoSearchBar;
+        "presto-search-bar-ui": PrestoSearchBarUi;
         "presto-stacked-skin": PrestoStackedSkin;
         "presto-timestamp": PrestoTimestamp;
         "presto-video": PrestoVideo;
@@ -865,6 +991,8 @@ declare module "@stencil/core" {
             "presto-player-button": LocalJSX.PrestoPlayerButton & JSXBase.HTMLAttributes<HTMLPrestoPlayerButtonElement>;
             "presto-player-skeleton": LocalJSX.PrestoPlayerSkeleton & JSXBase.HTMLAttributes<HTMLPrestoPlayerSkeletonElement>;
             "presto-player-spinner": LocalJSX.PrestoPlayerSpinner & JSXBase.HTMLAttributes<HTMLPrestoPlayerSpinnerElement>;
+            "presto-search-bar": LocalJSX.PrestoSearchBar & JSXBase.HTMLAttributes<HTMLPrestoSearchBarElement>;
+            "presto-search-bar-ui": LocalJSX.PrestoSearchBarUi & JSXBase.HTMLAttributes<HTMLPrestoSearchBarUiElement>;
             "presto-stacked-skin": LocalJSX.PrestoStackedSkin & JSXBase.HTMLAttributes<HTMLPrestoStackedSkinElement>;
             "presto-timestamp": LocalJSX.PrestoTimestamp & JSXBase.HTMLAttributes<HTMLPrestoTimestampElement>;
             "presto-video": LocalJSX.PrestoVideo & JSXBase.HTMLAttributes<HTMLPrestoVideoElement>;

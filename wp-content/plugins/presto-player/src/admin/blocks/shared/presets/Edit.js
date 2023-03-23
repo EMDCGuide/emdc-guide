@@ -26,6 +26,7 @@ import ActionBar from "./ActionBar";
 import Behavior from "./Behavior";
 import Controls from "./Controls";
 import Watermark from "./Watermark";
+import Search from "./Search";
 import CTA from "./CTA";
 import Email from "./Email";
 import Style from "./Style";
@@ -69,6 +70,12 @@ function EditPlayerPreset({
     cta: {},
     email_collection: {},
     action_bar: {},
+
+    // search
+    enabled: false,
+    minMatchCharLength: 1,
+    threshold: 0.3,
+    placeholder: "search",
   },
 }) {
   const [loading, setLoading] = useState(false);
@@ -246,6 +253,12 @@ function EditPlayerPreset({
       title: __("Dynamic Watermark", "presto-player"),
       icon: <Icon icon="lock" />,
       component: <Watermark updateState={updateState} state={state} />,
+    },
+    {
+      name: "search",
+      title: __("Searchable Captions", "presto-player"),
+      icon: <Icon icon="search" />,
+      component: <Search updateState={updateState} state={state} />,
     },
     // {
     //   name: "cta",
