@@ -16,7 +16,7 @@ const { withSelect, withDispatch, select } = wp.data;
 const { compose, ifCondition } = wp.compose;
 const { Fragment, Component } = wp.element;
 const { DOWN } = wp.keycodes;
-const { withSpokenMessages, Modal, Button, IconButton, Dropdown, NavigableMenu } = wp.components;
+const { withSpokenMessages, Modal, Button, Dropdown, NavigableMenu } = wp.components;
 
 const tweets = [
 	'1178226931277287425',
@@ -95,7 +95,7 @@ class HelpControl extends Component {
 							}
 						};
 						return (
-							<IconButton
+							<Button
 								className="components-dropdown-menu__toggle"
 								icon="editor-help"
 								onClick={ onToggle }
@@ -104,9 +104,7 @@ class HelpControl extends Component {
 								aria-expanded={ isOpen }
 								label={ __( 'Help, tips and tricks' ) }
 								tooltip={ __( 'Help, tips and tricks' ) }
-							>
-
-							</IconButton>
+							/>
 						);
 					} }
 					renderContent={ ( { onClose } ) => {
@@ -114,8 +112,9 @@ class HelpControl extends Component {
 							<NavigableMenu
 								className="editorskit-menu-help-tips"
 								role="menu"
+								style={{ width:"200px" }}
 							>
-								<IconButton
+								<Button
 									icon="info"
 									onClick={ () => {
 										onClose();
@@ -123,8 +122,8 @@ class HelpControl extends Component {
 									} }
 								>
 									{ __( 'About' ) }
-								</IconButton>
-								<IconButton
+								</Button>
+								<Button
 									icon="sos"
 									onClick={ () => {
 										onClose();
@@ -132,22 +131,22 @@ class HelpControl extends Component {
 									} }
 								>
 									{ __( 'Tips and Tricks' ) }
-								</IconButton>
-								<IconButton
+								</Button>
+								<Button
 									icon="admin-site-alt3"
 									onClick={ () => {
 										this.routeChange( `https://www.facebook.com/groups/editorskit/` );
 									} }
 								>
 									{ __( 'EditorsKit Community Help' ) }
-								</IconButton>
+								</Button>
 								<div className="editor-block-settings-menu__separator block-editor-block-settings-menu__separator"></div>
-								<IconButton
+								<Button
 									icon="dismiss"
 									onClick={ onDisable }
 								>
 									{ __( 'Remove/Disable Help Button' ) }
-								</IconButton>
+								</Button>
 							</NavigableMenu>
 						);
 					} }
@@ -175,7 +174,7 @@ class HelpControl extends Component {
 						/>
 						{ this.state.isLoaded ?
 							<div className="components-modal--editorskit-help-tips-buttons">
-								<IconButton
+								<Button
 									isPrimary
 									isLarge
 									icon="twitter"
@@ -183,7 +182,7 @@ class HelpControl extends Component {
 										this.routeChange( `https://twitter.com/i/moments/1177466596219949057` );
 									} }>
 									{ __( 'View All Tips and Tricks', 'block-options' ) }
-								</IconButton>
+								</Button>
 								<Button
 									isDefault
 									isLarge

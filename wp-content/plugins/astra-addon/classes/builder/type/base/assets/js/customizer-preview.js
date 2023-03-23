@@ -13,7 +13,7 @@ function astra_builder_divider_css( builder_type = 'header', divider_count ) {
 
     for ( var index = 1; index <= divider_count; index++ ) {
 
-		let selector = ( 'header' === builder_type ) ? '.ast-header-divider-' + index : '.footer-widget-area[data-section="section-fb-divider-' + index + '"]';
+		let selector = ( 'header' === builder_type ) ? '.ast-header-divider-' + index : '.ast-builder-grid-row-container-inner .footer-widget-area[data-section="section-fb-divider-' + index + '"]';
 
 		let section = ( 'header' === builder_type ) ? 'section-hb-divider-' + index : 'section-fb-divider-' + index;
 
@@ -118,7 +118,6 @@ function astra_builder_divider_css( builder_type = 'header', divider_count ) {
 							dynamicStyle += selector + '.ast-fb-divider-layout-horizontal .ast-divider-layout-horizontal {';
 							dynamicStyle += 'width: ' + size.desktop + '%' + ';';
 							dynamicStyle += '} ';
-
 							dynamicStyle +=  '@media (max-width: ' + tablet_break_point + 'px) {';
 							dynamicStyle += selector + '.ast-fb-divider-layout-horizontal .ast-divider-layout-horizontal {';
 							dynamicStyle += 'width: ' + size.tablet + '%' + ';';
@@ -542,14 +541,13 @@ function astra_addon_box_shadow_css( prefix, selector ) {
 function astra_addon_button_css( builder_type = 'header', button_count ) {
 
 	for ( var index = 1; index <= button_count; index++ ) {
-
 		(function (index) {
 			var selector = '.ast-' + builder_type + '-button-' + index + ' .ast-builder-button-wrap .ast-custom-button';
 
 			// Box Shadow CSS Generation.
 			astra_addon_box_shadow_css( builder_type + '-button' + index, selector );
+			astra_font_extras_css( builder_type + '-button' + index + '-font-extras', selector );
 		})(index);
-
 	}
 }
 

@@ -29,16 +29,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<div class="ast-orders-table__row shop_table shop_table_responsive order_details">
 		<?php foreach ( $args['downloads'] as $download ) : ?>
-
-			<?php echo '<div class="ast-woo-order-image-wrap">' . get_the_post_thumbnail( $download['product_id'], apply_filters( 'astra_downloaded_product_image_size', array( 60, 60 ) ) ) . '</div>'; ?>
-
+			<div class="ast-dl-single">
+			<?php
+				$product_filter_image_size = apply_filters( 'astra_downloaded_product_image_size', array( 60, 60 ) );
+				$placeholder_image         = sprintf( '<img src="%s" alt="%s" class="wp-post-image" />', esc_url( wc_placeholder_img_src( $product_filter_image_size ) ), esc_html__( 'Awaiting product image', 'astra-addon' ) );
+				$product_image             = get_the_post_thumbnail( $download['product_id'], $product_filter_image_size );
+				$featured_image            = $product_image ? $product_image : $placeholder_image;
+			?>
+			<?php echo '<div class="ast-woo-order-image-wrap">' . wp_kses_post( $featured_image ) . '</div>'; ?>
 			<?php foreach ( wc_get_account_downloads_columns() as $column_id => $column_name ) : ?>
 				<div class="<?php echo esc_attr( $column_id ); ?>" data-title="<?php echo esc_attr( $column_name ); ?>">
 					<?php
 					if ( has_action( 'woocommerce_account_downloads_column_' . $column_id ) ) {
 						do_action( 'woocommerce_account_downloads_column_' . $column_id, $download );
 					} else {
-
 						switch ( $column_id ) {
 							case 'download-product':
 								if ( $download['product_url'] ) {
@@ -67,6 +71,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					?>
 				</div>
 			<?php endforeach; ?>
+			</div>
 		<?php endforeach; ?>
 	</div>
 </section>

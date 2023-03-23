@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Welcome Page Class
  *
@@ -53,7 +54,7 @@ if ( ! class_exists( 'EditorsKit_Welcome' ) ) {
 			add_action( 'admin_menu', array( $this, 'screen_page' ) );
 
 			// phpcs:ignore
-			if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			if (defined('WP_CLI') && WP_CLI) {
 				// Do nothing if WP CLI.
 			} else {
 
@@ -70,16 +71,16 @@ if ( ! class_exists( 'EditorsKit_Welcome' ) ) {
 		 */
 		public function enqueue() {
 			// phpcs:ignore
-			if ( ! isset( $_GET['page'] ) || 'editorskit-getting-started' !== $_GET['page'] ) {
+			if (!isset($_GET['page']) || 'editorskit-getting-started' !== $_GET['page']) {
 				return;
 			}
 
 			// Make sure all blocks plugin were registered.
 			$block_categories = array();
 			if ( function_exists( 'gutenberg_get_block_categories' ) ) {
-					$block_categories = gutenberg_get_block_categories( get_post() );
+				$block_categories = gutenberg_get_block_categories( get_post() );
 			} elseif ( function_exists( 'get_block_categories' ) ) {
-					$block_categories = get_block_categories( get_post() );
+				$block_categories = get_block_categories( get_post() );
 			}
 			wp_add_inline_script(
 				'wp-blocks',
@@ -122,7 +123,8 @@ if ( ! class_exists( 'EditorsKit_Welcome' ) ) {
 				$block_editor_settings = 'block_editor_settings';
 			}
 
-			$default_editor_settings = function_exists( 'gutenberg_get_default_block_editor_settings' ) ? gutenberg_get_default_block_editor_settings() : array();
+			$context = new WP_Block_Editor_Context();
+			$settings = get_block_editor_settings(array(), $context);
 
 			$global = array(
 				'url'             => EDITORSKIT_PLUGIN_URL,
@@ -131,11 +133,8 @@ if ( ! class_exists( 'EditorsKit_Welcome' ) ) {
 					'url' => EDITORSKIT_PLUGIN_URL,
 					'dir' => EDITORSKIT_PLUGIN_DIR,
 				),
-				'licenses'        => array(
-					'typography' => get_option( 'editorskit_typography_addon_license_active' ),
-				),
 				'version'         => $this->version,
-				'editor_settings' => apply_filters( $block_editor_settings, $default_editor_settings, '' ),
+				'editor_settings' => $settings,
 			);
 
 			wp_add_inline_script( $this->slug . '-admin', 'window.editorskitSettings = ' . wp_json_encode( $global ) . ';', 'before' );
@@ -159,7 +158,7 @@ if ( ! class_exists( 'EditorsKit_Welcome' ) ) {
 		/**
 		 * Render page content.
 		 */
-		public function welcome_content(){ ?>
+		public function welcome_content() { ?>
 			<div class="editorskit-settings-wrap"></div>
 			<?php
 		}
@@ -182,18 +181,18 @@ if ( ! class_exists( 'EditorsKit_Welcome' ) ) {
 
 				<div class="notice notice-success is-dismissible">
 					<p>
-					<?php
+						<?php
 						echo sprintf(
 							/* translators: %s: EditorsKit settings page link */
 							esc_html__( 'Thank you for installing and activating EditorsKit Plugin. Please go to %1$sSettings > EditorsKit%2$s to get started.', 'block-options' ),
 							'<a href="' . esc_url( admin_url( 'options-general.php?page=editorskit-getting-started' ) ) . '" style="font-weight:700; text-decoration:none;">',
 							'</a>'
 						);
-					?>
+						?>
 					</p>
 				</div>
 
-		<?php }
+<?php }
 		}
 
 		/**
@@ -203,7 +202,7 @@ if ( ! class_exists( 'EditorsKit_Welcome' ) ) {
 		 */
 		public function redirect( $plugin ) {
 			// phpcs:ignore
-			if ( ( $plugin === 'block-options/plugin.php' || $plugin === 'editorskit/plugin.php' ) && ! isset( $_GET['activate-multi'] ) ) {
+			if (($plugin === 'block-options/plugin.php' || $plugin === 'editorskit/plugin.php') && !isset($_GET['activate-multi'])) {
 				wp_safe_redirect( admin_url( 'options-general.php?page=editorskit-getting-started' ) );
 				die();
 			}

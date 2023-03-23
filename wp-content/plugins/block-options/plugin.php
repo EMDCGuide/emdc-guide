@@ -3,7 +3,7 @@
  * Plugin Name: EditorsKit
  * Plugin URI: https://editorskit.com/
  * Description: EditorsKit is a suite of <strong>page building block options</strong> for the Gutenberg block editor.
- * Version: 1.33.7
+ * Version: 1.34.6
  * Author: Munir Kamal
  * Author URI: https://www.munirkamal.com/
  * Text Domain: block-options
@@ -27,6 +27,7 @@ if ( ! class_exists( 'EditorsKit' ) ) :
 	 * @since  1.0
 	 */
 	final class EditorsKit {
+
 
 		/**
 		 * The plugin's instance
@@ -94,7 +95,7 @@ if ( ! class_exists( 'EditorsKit' ) ) :
 		 */
 		private function setup_constants() {
 			$this->define( 'EDITORSKIT_DEBUG', true );
-			$this->define( 'EDITORSKIT_VERSION', '1.33.7' );
+			$this->define( 'EDITORSKIT_VERSION', '1.34.6' );
 			$this->define( 'EDITORSKIT_HAS_PRO', false );
 			$this->define( 'EDITORSKIT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 			$this->define( 'EDITORSKIT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -133,10 +134,9 @@ if ( ! class_exists( 'EditorsKit' ) ) :
 			require_once EDITORSKIT_PLUGIN_DIR . 'includes/class-editorskit-custom-css-classes.php';
 			require_once EDITORSKIT_PLUGIN_DIR . 'includes/helper.php';
 			require_once EDITORSKIT_PLUGIN_DIR . 'includes/class-editorskit-shortcodes.php';
-			require_once EDITORSKIT_PLUGIN_DIR . 'includes/class-editorskit-typography-font-loader.php';
-			require_once EDITORSKIT_PLUGIN_DIR . 'includes/class-editorskit-block-typography-manager.php';
-			require_once EDITORSKIT_PLUGIN_DIR . 'extendify-sdk/loader.php';
 			require_once EDITORSKIT_PLUGIN_DIR . 'includes/class-editorskit-block-locking.php';
+			require_once EDITORSKIT_PLUGIN_DIR . 'includes/notices/class-editorskit-support-notice.php';
+			require_once EDITORSKIT_PLUGIN_DIR . 'includes/class-editorskit-plugin-shortcuts.php';
 
 			if ( is_admin() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
 				require_once EDITORSKIT_PLUGIN_DIR . 'includes/class-editorskit-welcome.php';
@@ -203,7 +203,7 @@ if ( ! class_exists( 'EditorsKit' ) ) :
 		 * @return void
 		 */
 		public function load_textdomain() {
-			load_plugin_textdomain( 'block-options', false, dirname( plugin_basename( EDITORSKIT_PLUGIN_DIR ) ) . '/languages/' );
+			 load_plugin_textdomain( 'block-options', false, dirname( plugin_basename( EDITORSKIT_PLUGIN_DIR ) ) . '/languages/' );
 		}
 
 		/**
@@ -236,13 +236,7 @@ endif; // End if class_exists check.
  * @return object|EditorsKit The one true EditorsKit Instance.
  */
 function editorskit() {
-	return EditorsKit::instance();
-}
-
-// Add Extendify global.
-if ( ! isset( $GLOBALS['extendify_sdk_partner'] ) ) {
-    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-	$GLOBALS['extendify_sdk_partner'] = 'EditorsKit';
+	 return EditorsKit::instance();
 }
 
 // Get Plugin Running.

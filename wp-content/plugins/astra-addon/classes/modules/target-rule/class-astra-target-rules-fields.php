@@ -696,7 +696,6 @@ if ( ! class_exists( 'Astra_Target_Rules_Fields' ) ) {
 
 			/* Wrapper Start */
 			$output .= '<div class="ast-target-rule-wrapper ast-target-rule-' . $rule_type . '-on-wrap" data-type="' . $rule_type . '">';
-			// $output .= '<input type="hidden" class="form-control ast-input ast-target_rule-input" name="' . esc_attr( $input_name ) . '" value=' . $value . ' />';
 			$output .= '<div class="ast-target-rule-selector-wrapper ast-target-rule-' . $rule_type . '-on">';
 			$output .= self::generate_target_rule_selector( $rule_type, $selection_options, $input_name, $saved_values, $add_rule_label );
 			$output .= '</div>';
@@ -704,7 +703,44 @@ if ( ! class_exists( 'Astra_Target_Rules_Fields' ) ) {
 			/* Wrapper end */
 			$output .= '</div>';
 
-			echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo wp_kses(
+				$output,
+				array(
+					'select'   => array(
+						'class'    => array(),
+						'name'     => array(),
+						'multiple' => array(),
+					),
+					'script'   => array(
+						'type' => array(),
+						'id'   => array(),
+					),
+					'span'     => array(
+						'class' => array(),
+					),
+					'a'        => array(
+						'href'           => array(),
+						'class'          => array(),
+						'data-rule-id'   => array(),
+						'data-rule-type' => array(),
+					),
+					'option'   => array(
+						'class'    => array(),
+						'value'    => array(),
+						'selected' => array(),
+					),
+					'optgroup' => array(
+						'class' => array(),
+						'label' => array(),
+					),
+					'div'      => array(
+						'class'     => array(),
+						'style'     => array(),
+						'data-type' => array(),
+						'data-rule' => array(),
+					),
+				)
+			);
 		}
 
 		/**
@@ -1151,7 +1187,44 @@ if ( ! class_exists( 'Astra_Target_Rules_Fields' ) ) {
 				$output     .= '</div>';
 			$output         .= '</div>';
 
-			echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo wp_kses(
+				$output,
+				array(
+					'select'   => array(
+						'class'    => array(),
+						'name'     => array(),
+						'multiple' => array(),
+					),
+					'script'   => array(
+						'type' => array(),
+						'id'   => array(),
+					),
+					'span'     => array(
+						'class' => array(),
+					),
+					'a'        => array(
+						'href'           => array(),
+						'class'          => array(),
+						'data-rule-id'   => array(),
+						'data-rule-type' => array(),
+					),
+					'option'   => array(
+						'class'    => array(),
+						'value'    => array(),
+						'selected' => array(),
+					),
+					'optgroup' => array(
+						'class' => array(),
+						'label' => array(),
+					),
+					'div'      => array(
+						'class'     => array(),
+						'style'     => array(),
+						'data-type' => array(),
+						'data-rule' => array(),
+					),
+				)
+			);
 		}
 
 		/**
@@ -1300,16 +1373,25 @@ if ( ! class_exists( 'Astra_Target_Rules_Fields' ) ) {
 
 				$location = isset( $option['location'] ) ? esc_sql( $option['location'] ) : '';
 
-				$query = "SELECT p.ID, pm.meta_value FROM {$wpdb->postmeta} as pm
-						   INNER JOIN {$wpdb->posts} as p ON pm.post_id = p.ID
-						   WHERE pm.meta_key = '{$location}'
-						   AND p.post_type = '{$post_type}'
-						   AND p.post_status = 'publish'";
+				$wpml_translate_query           = '';
+				$wpml_translate_query_condition = '';
+				$check_wpml                     = false;
+				if ( class_exists( 'SitePress' ) ) {
+					global $sitepress;
+					$cpt_translation_mode = apply_filters( 'wpml_sub_setting', false, 'custom_posts_sync_option', 'astra-advanced-hook' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
-				$orderby = ' ORDER BY p.post_date DESC';
+					if ( false != $cpt_translation_mode ) {
+						$check_wpml                     = true;
+						$current_language               = $sitepress->get_current_language();
+						$wpml_translate_query           = "INNER JOIN {$wpdb->prefix}icl_translations as icl ON pm.post_id = icl.element_id";
+						$wpml_translate_query_condition = "AND icl.language_code = '{$current_language}'";
+					}
+				}
 
 				/* Entire Website */
 				$meta_args = "pm.meta_value LIKE '%\"basic-global\"%'";
+
+				$meta_args = apply_filters( 'astra_addon_meta_args_post_by_condition', $meta_args, $q_obj, $current_post_id );
 
 				switch ( $current_page_type ) {
 					case 'is_404':
@@ -1350,9 +1432,8 @@ if ( ! class_exists( 'Astra_Target_Rules_Fields' ) ) {
 					case 'is_singular':
 						$current_id = esc_sql( get_the_id() );
 
-						if ( class_exists( 'SitePress' ) ) {
-							$default_language = wpml_get_default_language();
-							$current_id       = icl_object_id( $current_id, $current_post_type, true, $default_language );
+						if ( $check_wpml ) {
+							$current_id = icl_object_id( $current_id, $current_post_type, true, $current_language );
 						}
 
 						$current_post_id = $current_id;
@@ -1376,12 +1457,7 @@ if ( ! class_exists( 'Astra_Target_Rules_Fields' ) ) {
 						break;
 				}
 
-				$meta_args = apply_filters( 'astra_addon_meta_args_post_by_condition', $meta_args, $q_obj, $current_post_id );
-
-				// Ignore the PHPCS warning about constant declaration.
-				// @codingStandardsIgnoreStart
-				$posts  = $wpdb->get_results( $query . ' AND (' . $meta_args . ')' . $orderby );
-				// @codingStandardsIgnoreEnd
+				$posts = $wpdb->get_results( $wpdb->prepare( "SELECT p.ID, pm.meta_value FROM {$wpdb->postmeta} as pm INNER JOIN {$wpdb->posts} as p ON pm.post_id = p.ID {$wpml_translate_query} WHERE pm.meta_key = ('%1s') AND p.post_type = ('%2s') {$wpml_translate_query_condition} AND p.post_status = 'publish' AND ({$meta_args}) ORDER BY p.post_date DESC", $location, $post_type ) ); // phpcs:ignore -- Required meta_args as built from previous operations & conditions.
 
 				foreach ( $posts as $local_post ) {
 					self::$current_page_data[ $post_type ][ $local_post->ID ] = array(
@@ -1556,7 +1632,7 @@ if ( ! class_exists( 'Astra_Target_Rules_Fields' ) ) {
 						/* translators: %s post title. */
 						$notice = sprintf( __( 'The same display setting is already exist in %s post/s.', 'astra-addon' ), $rule_set_titles );
 
-						echo '<div class="error">';
+						echo '<div class="notice notice-warning is-dismissible">';
 						echo '<p>' . $notice . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						echo '</div>';
 
