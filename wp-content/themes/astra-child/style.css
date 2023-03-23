@@ -127,6 +127,19 @@ body.post-type-archive-guide_resource .ast-pagination {
   display: grid;
   min-height: 100vh;
 }
+.footer-widget-area[data-section="section-footer-menu"] .astra-footer-horizontal-menu {
+    justify-content: right;
+}
+.emdc-dropdown > a {
+    border-radius: 100%;
+    background: #FAF9F6;
+    color: #000000;
+    display:inline-block;
+    line-height:40px;
+}
+.emdc-dropdown > a.hovered {      
+    background: #eee;
+}
 /**
  * Sticky nav for pages with side nav but not resources.
  */

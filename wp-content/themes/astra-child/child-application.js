@@ -1,6 +1,13 @@
 (function($) {
     $(function() {
-
+        $('.emdc-dropdown').on('mouseover', function() {
+          if (!$('.emdc-dropdown > a').hasClass('hovered')) {
+            $('.emdc-dropdown > a').addClass('hovered');
+          }
+        });
+        $('.emdc-dropdown').on('mouseout', function() {
+          $('.emdc-dropdown > a').removeClass('hovered');
+        });
         /*
         After FacetWP reloads, store any updates into a cookie
         https://facetwp.com/how-to-preserve-facet-selections-across-pages/
