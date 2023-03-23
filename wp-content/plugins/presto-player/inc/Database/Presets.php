@@ -8,7 +8,7 @@ class Presets
 {
     protected $table;
 
-    protected $version = 19;
+    protected $version = 20;
 
     protected $name = 'presto_player_presets';
 
@@ -66,6 +66,7 @@ class Presets
             is_locked boolean DEFAULT 0 NOT NULL,
             cta LONGTEXT NOT NULL,
             watermark LONGTEXT NOT NULL,
+            search LONGTEXT NOT NULL,
             email_collection LONGTEXT NOT NULL,
             action_bar LONGTEXT NOT NULL,
             created_by bigint(20) unsigned NULL,

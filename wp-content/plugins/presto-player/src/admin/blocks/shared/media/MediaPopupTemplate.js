@@ -18,14 +18,10 @@ export default ({
 }) => {
   return (
     <Modal
+      isFullScreen
       title={title ? title : __("Add Media", "presto-player")}
       onRequestClose={onClose}
       css={css`
-        width: 100%;
-        height: 100%;
-        max-width: calc(100% - 32px);
-        max-height: calc(100% - 32px);
-
         .components-modal__content {
           display: flex;
           flex-direction: column;

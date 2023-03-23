@@ -114,14 +114,6 @@ class Block
 
     public function __construct(bool $isPremium = false, $version = 1)
     {
-        $this->enqueue = new Enqueue(
-            'prestoPlayer',
-            'dist',
-            Plugin::version(),
-            'plugin',
-            PRESTO_PLAYER_PLUGIN_FILE
-        );
-
         do_action('presto_player_before_block_output', [$this, 'middleware']);
     }
 

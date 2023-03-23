@@ -2,6 +2,7 @@
 
 namespace PrestoPlayer\Blocks;
 
+use PrestoPlayer\Attachment;
 use PrestoPlayer\Models\CurrentUser;
 use PrestoPlayer\Support\Block;
 
@@ -41,7 +42,11 @@ class AudioBlock extends Block
    */
   public function sanitizeAttributes($attributes, $default_config)
   {
+
+    $src = !empty($attributes['src']) ? $attributes['src'] : '';
+
     return [
+      'src'   => !empty($attributes['attachment_id']) ? Attachment::getSrc($attributes['attachment_id']) : $src,
       'styles' => $default_config['styles'] . ' --presto-curtain-size: 25%',
     ];
   }

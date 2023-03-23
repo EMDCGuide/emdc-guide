@@ -27,6 +27,8 @@ export declare class PrestoYoutube {
    * detect if we're in a webview browser
    */
   setWebView(): void;
+  loadImage(src: any, minWidth?: number): Promise<unknown>;
+  setPoster(): void;
   componentWillLoad(): void;
   render(): any;
 }

@@ -1,29 +1,60 @@
-const { __ } = wp.i18n;
-const { Button } = wp.components;
-const { useSelect } = wp.data;
-import { getSettings, saveSettings } from "@/admin/settings/settings";
+/**
+ * WordPress dependencies
+ */
+import { useSelect } from "@wordpress/data";
+import { __ } from "@wordpress/i18n";
+import { store as coreStore } from "@wordpress/core-data";
+import { Button } from "@wordpress/components";
 
-export default ({ style, className }) => {
-  const settings = getSettings();
+export default function SaveButton({
+  onSave,
+  children,
+  busy,
+  loading,
+  ...rest
+}) {
+  const { isDirty, isSaving } = useSelect((select) => {
+    const {
+      __experimentalGetDirtyEntityRecords,
+      isSavingEntityRecord,
+    } = select(coreStore);
 
-  const ui = useSelect((select) => {
-    return select("presto-player/settings").ui();
-  });
+    const dirtyEntityRecords = (
+      __experimentalGetDirtyEntityRecords() || []
+    ).filter((r) => r.name !== "webhook");
 
-  const save = (e) => {
-    e.preventDefault();
-    saveSettings(settings);
-  };
+    return {
+      isDirty: dirtyEntityRecords.length > 0,
+      isSaving: dirtyEntityRecords.some((record) =>
+        isSavingEntityRecord(record.kind, record.name, record.key)
+      ),
+    };
+  }, []);
+
+  const disabled = !isDirty || isSaving;
+
+  if (loading) {
+    return (
+      <ScSkeleton
+        style={{
+          width: "120px",
+          height: "35px",
+          display: "inline-block",
+        }}
+      ></ScSkeleton>
+    );
+  }
 
   return (
     <Button
       isPrimary
-      style={style}
-      className={className}
-      disabled={ui.saving}
-      onClick={save}
+      aria-disabled={disabled}
+      disabled={disabled || isSaving || busy}
+      isBusy={isSaving || busy}
+      onClick={disabled ? undefined : onSave}
+      {...rest}
     >
-      {__("Save Changes", "presto-player")}
+      {children}
     </Button>
   );
-};
+}

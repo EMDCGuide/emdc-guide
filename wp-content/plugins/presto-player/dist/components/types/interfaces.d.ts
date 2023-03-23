@@ -65,6 +65,8 @@ export interface PrestoConfig extends Object {
   ajaxProgress?: boolean;
   youtube?: YoutubeConfig;
   i18n?: i18nConfig;
+  search?: SearchBarConfig;
+  markers?: any;
   storage?: {
     enabled?: boolean;
     key?: string;
@@ -143,7 +145,14 @@ export interface presetAttributes extends Object {
   email_collection?: EmailCollection;
   cta?: CTA;
   watermark?: Watermark;
+  search?: Search;
   action_bar?: ActionBarConfig;
+}
+export interface Search extends Object {
+  enabled?: boolean;
+  minMatchCharLength?: number;
+  threshold?: number;
+  placeholder?: string;
 }
 export interface Watermark extends Object {
   enabled?: boolean;
@@ -152,6 +161,10 @@ export interface Watermark extends Object {
   color?: string;
   opacity?: number;
   position?: 'top-left' | 'top-right' | 'randomize';
+}
+export interface SearchBarConfig extends Object {
+  showSearchResults?: boolean;
+  searchResults?: any;
 }
 export interface prestoBranding extends Object {
   logo?: string;

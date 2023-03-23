@@ -45,7 +45,7 @@ class VideoSelector extends Component {
    * @returns {array}
    */
   fetchVideos = (input = "") => {
-    return fetch(`/wp-admin/admin-ajax.php`, {
+    return fetch(prestoPlayer.ajaxurl, {
       method: "POST",
       credentials: "same-origin",
       headers: {
@@ -55,6 +55,7 @@ class VideoSelector extends Component {
       body: new URLSearchParams({
         action: "presto_fetch_videos",
         search: input,
+        _wpnonce: prestoPlayer.nonce,
       }),
     })
       .then((response) => response.json())

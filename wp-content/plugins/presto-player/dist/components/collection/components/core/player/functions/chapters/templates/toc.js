@@ -1,8 +1,1 @@
-export default `
-<div class="presto-player-toc__wrapper">
-    <div class="presto-player-toc__cover" data-player-toc-cover></div>
-    <div class="presto-player-toc">
-        <div class="presto-player-toc__title">${window?.prestoPlayer?.i18n?.chapters || 'Chapters'}</div>
-        <div class="presto-player-toc__list" data-player-toc></div>
-    </div>
-</div>`;
+export default`\n<div class="presto-player-toc__wrapper">\n    <div class="presto-player-toc__cover" data-player-toc-cover></div>\n    <div class="presto-player-toc">\n        <div class="presto-player-toc__title">${window?.prestoPlayer?.i18n?.chapters||"Chapters"}</div>\n        <div class="presto-player-toc__list" data-player-toc></div>\n    </div>\n</div>`;

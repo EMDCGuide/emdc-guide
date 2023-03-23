@@ -1,10 +1,1 @@
-import gaTracking from './google';
-import wpTracking from './wp';
-
-export default function (player) {
-  if (!window?.prestoPlayer?.isPremium) {
-    return;
-  }
-  gaTracking();
-  wpTracking(player);
-}
+import gaTracking from"./google";import wpTracking from"./wp";export default function(r){window?.prestoPlayer?.isPremium&&(gaTracking(),wpTracking(r))}

@@ -1,52 +1,71 @@
-const { __ } = wp.i18n;
-const {
+import { __ } from "@wordpress/i18n";
+import {
   Card,
-  SnackbarList,
   Flex,
   FlexBlock,
   FlexItem,
   Spinner,
-} = wp.components;
-const { dispatch, useSelect } = wp.data;
-const { useState, useEffect } = wp.element;
-
-import { fetchSettings } from "@/admin/settings/settings";
+} from "@wordpress/components";
+import { store as noticesStore } from "@wordpress/notices";
+import { useDispatch, useSelect } from "@wordpress/data";
+import { store as coreStore } from "@wordpress/core-data";
+import { useState, useEffect } from "@wordpress/element";
 
 import { Router, Link, Route } from "@/router";
 import { routes } from "./routes";
 
 import SaveButton from "./components/SaveButton";
+import Notices from "./components/Notices";
+import useSave from "../../hooks/useSave";
 import General from "./pages/General";
-import Integrations from "./pages/Integrations";
 import Performance from "./pages/Performance";
+import Integrations from "./pages/Integrations";
 
 function App() {
-  let [loading, setLoading] = useState(true);
+  const { createSuccessNotice, createErrorNotice } = useDispatch(noticesStore);
+  const [loaded, setLoaded] = useState(false);
 
   // scroll top on history change
   window.onhashchange = () => {
     window.scrollTo(0, 0);
   };
 
-  useEffect(() => {
-    fetchSettings().then(() => {
-      setLoading(false);
-    });
-  }, []);
+  const { save } = useSave();
 
-  const notices = useSelect((select) => {
-    return select("presto-player/settings").notices();
+  /**
+   * Form is submitted.
+   */
+  const onSubmit = async () => {
+    try {
+      await save();
+      createSuccessNotice(__("Settings Updated", "presto-player"), {
+        type: "snackbar",
+      });
+    } catch (e) {
+      console.error(e);
+      createErrorNotice(
+        e?.message || __("Something went wrong", "presto-player"),
+        { type: "snackbar" }
+      );
+    }
+  };
+
+  const loading = useSelect((select) => {
+    const queryArgs = ["root", "site"];
+    select(coreStore).getEntityRecords(...queryArgs);
+    return !select(coreStore)?.hasFinishedResolution?.(
+      "getEntityRecords",
+      queryArgs
+    );
   });
 
-  const removeNotice = (id) => {
-    dispatch("presto-player/settings").removeNotice(id);
-  };
+  useEffect(() => {
+    if (!loading) {
+      setLoaded(true);
+    }
+  }, [loading]);
 
-  const scrollToTop = () => {
-    window.scrollTo(0, 0);
-  };
-
-  if (loading) {
+  if (!loaded) {
     return (
       <div className="presto-settings__loading">
         <Spinner />
@@ -95,30 +114,25 @@ function App() {
               </div>
             </FlexBlock>
             <FlexItem>
-              <SaveButton
-                style={{ margin: "0 10px" }}
-                form="presto-settings-form"
-              />
+              <SaveButton onSave={onSubmit} style={{ marginRight: "8px" }}>
+                {__("Update Settings", "presto-player")}
+              </SaveButton>
             </FlexItem>
           </Flex>
         </Card>
 
-        <Route path={routes?.general?.path} onRoute={scrollToTop}>
+        <Route path={routes?.general?.path}>
           <General />
         </Route>
-        <Route path={routes?.integrations?.path} onRoute={scrollToTop}>
+        <Route path={routes?.integrations?.path}>
           <Integrations />
         </Route>
-        <Route path={routes?.performance?.path} onRoute={scrollToTop}>
+        <Route path={routes?.performance?.path}>
           <Performance />
         </Route>
       </Router>
 
-      <SnackbarList
-        className="presto-settings-page-notices"
-        notices={notices}
-        onRemove={removeNotice}
-      />
+      <Notices className="presto-settings-page-notices" />
     </div>
   );
 }

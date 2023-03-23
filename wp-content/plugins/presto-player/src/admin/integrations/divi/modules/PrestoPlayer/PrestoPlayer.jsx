@@ -1,6 +1,6 @@
 // External Dependencies
 import React, { Component } from "react";
-import RenderPlayer from "./RenderPlayer";
+import RenderPlayer from "./RenderPlayer.jsx";
 // Internal Dependencies
 import "./style.css";
 

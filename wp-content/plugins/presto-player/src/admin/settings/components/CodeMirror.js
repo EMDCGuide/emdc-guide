@@ -1,11 +1,10 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core";
-const { ColorPicker, BaseControl } = wp.components;
-const { dispatch } = wp.data;
-const { useEffect, useRef } = wp.element;
+import { BaseControl } from "@wordpress/components";
+import { useEffect, useRef } from "@wordpress/element";
 import classNames from "classnames";
 
-export default ({ option, value, optionName, className, disabled }) => {
+export default ({ option, value, className, disabled, onChange }) => {
   let codeMirror;
 
   const handleChange = (instance) => {
@@ -13,11 +12,7 @@ export default ({ option, value, optionName, className, disabled }) => {
       return;
     }
     instance.save();
-    dispatch("presto-player/settings").updateSetting(
-      option.id,
-      textRef.current.value,
-      optionName
-    );
+    onChange(textRef.current.value);
   };
 
   const textRef = useRef();

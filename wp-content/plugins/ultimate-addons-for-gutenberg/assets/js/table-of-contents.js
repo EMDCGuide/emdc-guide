@@ -19,27 +19,41 @@ UAGBTableOfContents = { // eslint-disable-line no-undef
 
 		const elementToOpen = document.querySelector( id );
 
-		if( document.querySelector( '.uagb-toc__wrap svg' ) !== null && elementToOpen ){
+		/* We need the following fail-safe click listener cause an usual click-listener
+		 * will fail in case the 'Make TOC Collapsible' is not enabled right from the start/page-load.
+		*/
+		document.addEventListener( 'click', collapseListener );
 
-			elementToOpen.querySelector( '.uagb-toc__wrap svg' )?.addEventListener( 'click', function(){
-				const $root = this.closest( '.wp-block-uagb-table-of-contents' );
+		function collapseListener( event ){
+
+			const element = event.target;
+
+			// These two conditions help us target the required element (collapsible icon beside TOC heading).
+			const condition1 = ( element?.tagName === 'path' || element?.tagName === 'svg' );  // Check if the clicked element type is either path or SVG.
+			const condition2 = ( element?.parentNode?.className === 'uagb-toc__title' );  // Check if the clicked element's parent has the required class.
+
+			if( condition1 && condition2 ){
+
+				const $root = element?.closest( '.wp-block-uagb-table-of-contents' );
 
 				if ( $root.classList.contains( 'uagb-toc__collapse' ) ) {
 					$root.classList.remove( 'uagb-toc__collapse' );
 					UAGBTableOfContents._slideDown(
-						elementToOpen.querySelector( '.wp-block-uagb-table-of-contents .uagb-toc__list-wrap' ),
+						elementToOpen?.querySelector( '.wp-block-uagb-table-of-contents .uagb-toc__list-wrap' ),
 						500
 					);
 				} else {
 					$root.classList.add( 'uagb-toc__collapse' );
 					UAGBTableOfContents._slideUp(
-						elementToOpen.querySelector( '.wp-block-uagb-table-of-contents.uagb-toc__collapse .uagb-toc__list-wrap' ),
+						elementToOpen?.querySelector( '.wp-block-uagb-table-of-contents.uagb-toc__collapse .uagb-toc__list-wrap' ),
 						500
 					);
 
 				}
-			} );
+
+			}
 		}
+
 		document.addEventListener( 'scroll',
 			UAGBTableOfContents._showHideScroll// eslint-disable-line no-undef
 		);
@@ -108,7 +122,7 @@ UAGBTableOfContents = { // eslint-disable-line no-undef
 			return;
 		}
 		const hashId = encodeURI( hash.substring( 0 ) );
-		const selectedAnchor = document.querySelector( hashId );
+		const selectedAnchor = document?.querySelector( hashId );
 		if ( null === selectedAnchor ) {
 			return;
 		}
@@ -160,7 +174,7 @@ UAGBTableOfContents = { // eslint-disable-line no-undef
 			scrollData = node.getAttribute( 'data-scroll' );
 			scrollOffset = node.getAttribute( 'data-offset' );
 			let offset = null;
-			
+
 			hash = hash.substring( 1 );
 
 			if ( document?.querySelector( "[id='" + hash + "']" ) ) {
@@ -214,6 +228,9 @@ UAGBTableOfContents = { // eslint-disable-line no-undef
 			return decodeURI( encodeURIComponent( parsedSlug ) );
 		};
 		const $thisScope = document.querySelector( id );
+		if( ! $thisScope ){
+			return;
+		}
 		if ( $thisScope.querySelector( '.uag-toc__collapsible-wrap' ) !== null ){
 			if ( $thisScope.querySelector( '.uag-toc__collapsible-wrap' ).length > 0 ) {
 				$thisScope.querySelector( '.uagb-toc__title-wrap' ).classList.add( 'uagb-toc__is-collapsible' );
@@ -237,19 +254,40 @@ UAGBTableOfContents = { // eslint-disable-line no-undef
 			const tocListWrap = $thisScope.querySelector( '.uagb-toc__list-wrap' );
 
 			const divsArr = Array.from( allHeader );
+			/* Logic for Remove duplicate heading with same HTML tag and create an new array with duplicate entries start here. */
+			const ArrayOfDuplicateElements = function ( headingArray = [] ) {
+				const arrayWithDuplicateEntries = [];
+				headingArray.reduce( ( temporaryArray, currentVal ) => {
+					if (
+						!temporaryArray.some(
+							( item ) => item.innerText === currentVal.innerText
+						)
+						) {
 
+						temporaryArray.push( currentVal );
+					} else {
+						arrayWithDuplicateEntries.push( currentVal );
+
+					}
+					return temporaryArray;
+				}, [] );
+				return arrayWithDuplicateEntries;
+			};
+			const duplicateHeadings = ArrayOfDuplicateElements( divsArr );
+			/* Logic for Remove duplicate heading with same HTML tag and create an new array with duplicate entries ends here. */
 			for ( let i = 0; i < divsArr.length; i++ ) {
 
 				let headerText = parseTocSlug( divsArr[i].innerText );
-
-				if ( headerText.length < 1 ) {
-					const aTags = tocListWrap.getElementsByTagName( 'a' );
-					const searchText = divsArr[i].innerText;
-					for ( let j = 0; j < aTags.length; j++ ) {
-						if ( aTags[j].textContent === searchText ) {
-							const randomID = '#toc_' + Math.random();
-							aTags[j].setAttribute( 'href' , randomID );
-							headerText =  randomID.substring( 1 );
+				if( '' !== divsArr[i].innerText ) {
+					if ( headerText.length < 1 ) {
+						const aTags = tocListWrap.getElementsByTagName( 'a' );
+						const searchText = divsArr[i].innerText;
+						for ( let j = 0; j < aTags.length; j++ ) {
+							if ( aTags[j].textContent === searchText ) {
+								const randomID = '#toc_' + Math.random();
+								aTags[j].setAttribute( 'href' , randomID );
+								headerText =  randomID.substring( 1 );
+							}
 						}
 					}
 				}
@@ -257,6 +295,18 @@ UAGBTableOfContents = { // eslint-disable-line no-undef
 				span.id = headerText;
 				span.className =  'uag-toc__heading-anchor';
 				divsArr[i].prepend( span );
+				/* Logic for Create an unique Id for duplicate heading start here. */
+				for ( let k = 0; k < duplicateHeadings.length; k++ ){
+					const randomID = '#toc_' + Math.random();
+					duplicateHeadings[k]?.querySelector( '.uag-toc__heading-anchor' )?.setAttribute( 'id',randomID.substring( 1 ) )
+					const aTags = Array.from( tocListWrap.getElementsByTagName( 'a' ) );
+					const duplicateHeadingsInTOC = ArrayOfDuplicateElements( aTags );
+					for ( let l = 0; l < duplicateHeadingsInTOC.length; l++ ) {
+						duplicateHeadingsInTOC[k]?.setAttribute( 'href' , randomID );
+					}
+				}
+				/* Logic for Create an unique Id for duplicate heading ends here. */
+
 			}
 		}
 

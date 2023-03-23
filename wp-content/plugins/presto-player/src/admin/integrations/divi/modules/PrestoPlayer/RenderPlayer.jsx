@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { PrestoPlayer } from "@presto-player/react";
+import { PrestoPlayer } from "@presto-player/components-react";
 import { css, jsx } from "@emotion/core";
 import React, { useEffect, useState } from "react";
 import { getProvider } from "../util";

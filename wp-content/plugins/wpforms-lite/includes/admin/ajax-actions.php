@@ -72,7 +72,7 @@ function wpforms_save_form() {
 	$data['settings']['form_tags'] = wp_list_pluck( $form_tags, 'label' );
 
 	// Update form data.
-	$form_id = wpforms()->get( 'form' )->update( $data['id'], $data );
+	$form_id = wpforms()->get( 'form' )->update( $data['id'], $data, [ 'context' => 'save_form' ] );
 
 	/**
 	 * Fires after updating form data.
@@ -307,7 +307,15 @@ function wpforms_builder_increase_next_field_id() {
 		wp_send_json_error();
 	}
 
-	wpforms()->form->next_field_id( absint( $_POST['form_id'] ) );
+	$args = [];
+
+	// In the case of duplicating the Layout field that contains a bunch of fields,
+	// we need to set the next `field_id` to the desired value which is passed via POST argument.
+	if ( ! empty( $_POST['field_id'] ) ) {
+		$args['field_id'] = absint( $_POST['field_id'] );
+	}
+
+	wpforms()->get( 'form' )->next_field_id( absint( $_POST['form_id'] ), $args );
 
 	wp_send_json_success();
 }
@@ -341,16 +349,16 @@ function wpforms_builder_dynamic_choices() {
 
 	// Fetch the option row HTML to be returned to the builder.
 	$field      = new WPForms_Field_Select( false );
-	$field_args = array(
+	$field_args = [
 		'id'              => $id,
 		'dynamic_choices' => $type,
-	);
-	$option_row = $field->field_option( 'dynamic_choices_source', $field_args, array(), false );
+	];
+	$option_row = $field->field_option( 'dynamic_choices_source', $field_args, [], false );
 
 	wp_send_json_success(
-		array(
+		[
 			'markup' => $option_row,
-		)
+		]
 	);
 }
 
@@ -479,9 +487,9 @@ function wpforms_verify_ssl() {
 	// Check for permissions.
 	if ( ! wpforms_current_user_can() ) {
 		wp_send_json_error(
-			array(
+			[
 				'msg' => esc_html__( 'You do not have permission to perform this operation.', 'wpforms-lite' ),
-			)
+			]
 		);
 	}
 
@@ -489,17 +497,17 @@ function wpforms_verify_ssl() {
 
 	if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
 		wp_send_json_success(
-			array(
+			[
 				'msg' => esc_html__( 'Success! Your server can make SSL connections.', 'wpforms-lite' ),
-			)
+			]
 		);
 	}
 
 	wp_send_json_error(
-		array(
+		[
 			'msg'   => esc_html__( 'There was an error and the connection failed. Please contact your web host with the technical details below.', 'wpforms-lite' ),
 			'debug' => '<pre>' . print_r( map_deep( $response, 'wp_strip_all_tags' ), true ) . '</pre>',
-		)
+		]
 	);
 }
 add_action( 'wp_ajax_wpforms_verify_ssl', 'wpforms_verify_ssl' );
@@ -728,3 +736,31 @@ function wpforms_install_addon() {
 	wp_send_json_error( $result );
 }
 add_action( 'wp_ajax_wpforms_install_addon', 'wpforms_install_addon' );
+
+/**
+ * Search pages for dropdown.
+ *
+ * @since 1.7.9
+ */
+function wpforms_ajax_search_pages_for_dropdown() {
+
+	// Run a security check.
+	if ( ! check_ajax_referer( 'wpforms-builder', 'nonce', false ) ) {
+		wp_send_json_error( esc_html__( 'Your session expired. Please reload the builder.', 'wpforms-lite' ) );
+	}
+
+	if ( ! array_key_exists( 'search', $_GET ) ) {
+		wp_send_json_error( esc_html__( 'Incorrect usage of this operation.', 'wpforms-lite' ) );
+	}
+
+	$result_pages = wpforms_search_pages_for_dropdown(
+		sanitize_text_field( wp_unslash( $_GET['search'] ) )
+	);
+
+	if ( empty( $result_pages ) ) {
+		wp_send_json_success( [] );
+	}
+
+	wp_send_json_success( $result_pages );
+}
+add_action( 'wp_ajax_wpforms_ajax_search_pages_for_dropdown', 'wpforms_ajax_search_pages_for_dropdown' );

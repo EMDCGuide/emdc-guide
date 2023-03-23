@@ -1,4 +1,8 @@
-import { PrestoPlayer } from "@presto-player/react";
+import { css } from "@emotion/core";
+import {
+  PrestoPlayer,
+  PrestoSearchBarUi,
+} from "@presto-player/components-react";
 import { getProvider } from "../util";
 const { useSelect } = wp.data;
 
@@ -20,7 +24,7 @@ export default ({
     return select("presto-player/player")?.youtube();
   });
 
-  const css = useSelect((select) => {
+  const playerCSS = useSelect((select) => {
     return select("presto-player/player")?.playerCSS();
   });
 
@@ -110,7 +114,7 @@ export default ({
     >
       <PrestoPlayer
         src={src}
-        css={css}
+        data-css={playerCSS}
         classes={classes}
         currentTime={currentTime}
         overlays={overlays}
@@ -143,6 +147,17 @@ export default ({
         mediaTitle={attributes.title}
       >
         <div slot="player-end">
+          {!!preset.search?.enabled && (
+            <PrestoSearchBarUi
+              css={css`
+                position: absolute;
+                top: 15px;
+                right: 23px;
+                z-index: 1;
+              `}
+              placeholder={preset.search?.placeholder}
+            />
+          )}
           {mutedPreview?.enabled &&
             mutedOverlay?.enabled &&
             mutedOverlayContent()}

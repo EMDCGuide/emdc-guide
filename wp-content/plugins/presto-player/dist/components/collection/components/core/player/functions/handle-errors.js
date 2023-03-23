@@ -1,7 +1,1 @@
-let player;
-export default function (pl) {
-  player = pl;
-  player.on('error', (...args) => {
-    console.error({ args });
-  });
-}
+let player;export default function(r){player=r,player.on("error",((...r)=>{console.error({args:r})}))}

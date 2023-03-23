@@ -4,7 +4,7 @@ Donate link: https://prestoplayer.com
 Tags: video, audio, youtube, vimeo, lms, elementor, learndash, beaver builder, lifterlms
 Requires at least: 5.6
 Tested up to: 6.0
-Stable tag: 1.9.13
+Stable tag: 1.13.0
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -65,9 +65,6 @@ See the features that make Presto Player the **Best Video Player for WordPress**
 * Video chapters.
 * Custom video presets.
 * Bunny.net integration.
-* Amazon S3 integration (coming soon)
-* DigitalOcean Spaces integration (coming soon)
-* Wasabi integration (coming soon)
 
 ### Why Presto Player is such a game-changer? ###
 
@@ -152,6 +149,38 @@ It is also important to point out that BunnyNet has a $1 per month minimum.
 
 
 == Changelog ==
+
+= 1.13.0 - February 22, 2023 = 
+* Improvement: Automatically get highest available thumbnail from YouTube when max resolution image is not available.
+* Improvement: ACF compatibility with file selector.
+* Fix: Issue with media hub items not fetching on search in Divi Page Builder widget.
+
+= 1.12.0 - January 18, 2023 = 
+* Fix: Fixed an issue with Media Hub items not fetching on search in Divi Page Builder widget.
+
+= 1.11.0 - December 29, 2022 = 
+* New: Searchable captions.
+* Fix: Issue with private audio not working for some WordPress users.
+* Fix: Issue with action bar and CTA links not working sometimes with url parameters.
+
+= 1.10.2 - November 30, 2022 =
+* Improvement: Make captions autodetect text direction.
+* Fix: Improve accessibility on control buttons with aria-pressed.
+* Fix: issue with captions sometimes not switching.
+* Fix: issue with audio player email capture not working.
+
+= 1.10.1 - October 26, 2022 = 
+* Fix issue with Integrations settings tab not loading for non-pro users.
+
+= 1.10.0 - October 21, 2022 = 
+* New: Webhooks for email capture.
+* Fix: Issue with muted autoplay on iOS devices.
+* Fix: CSS issue with classic bunny.net popup.
+
+= 1.9.14 - September 20, 2022 = 
+* Fix: Issue with Divi sometimes not able to query media items.
+* Fix: Issue with large play button sizing not matching on Modern skin.
+* Fix: Issue with block widgets sometimes not loading video scripts.
 
 = 1.9.13 - August 01, 2022 = 
 * Improvement: Add filters for HTML attributes to player. 

@@ -1,9 +1,11 @@
 
 UAGBForms = { // eslint-disable-line no-undef
-	init( attr, id ) {
+	init( attr, id, post_id ) {
 
 		const scope = document.querySelector( id );
-
+		if( ! scope ){
+			return;
+		}
 		const form = scope.querySelector( '.uagb-forms-main-form' );
 
 		const phoneinput = form.querySelectorAll( '.uagb-forms-phone-input' );
@@ -41,15 +43,28 @@ UAGBForms = { // eslint-disable-line no-undef
 		// validation for checkbox if required.
 		const requiredCheckboxes = scope.querySelectorAll( '.uagb-forms-checkbox-wrap' );
 		if( requiredCheckboxes.length !== 0 ){
-			for ( let k = 0; k < requiredCheckboxes; k++ ) {
+			for ( let k = 0; k < requiredCheckboxes.length; k++ ) {
 				const checkboxes = requiredCheckboxes[k].querySelectorAll( 'input[type=checkbox]' );
 
 				if ( checkboxes.length > 0 ) {
 					for ( let l = 0; l < checkboxes.length; l++ ) {
-						checkboxes[l].addEventListener( 'change', window.UAGBForms._checkValidity );
-					}
+						checkboxes[l].addEventListener( 'change', function () {
 
-					window.UAGBForms._checkValidity();
+							const isChecked = checkboxes[l].checked;
+							const name = checkboxes[l].getAttribute( 'name' );
+
+							const check = document.querySelectorAll( '[name="'+name+'"]' );
+							for ( let i = 0; i < check.length; i++ ) {
+
+								if( isChecked ) {
+									check[i].required = false;
+								} else {
+									check[i].required = true;
+								}
+							}
+
+						} );
+					}
 				}
 			}
 		}
@@ -106,7 +121,6 @@ UAGBForms = { // eslint-disable-line no-undef
 				sibling[ index + 1 ].after( div );
 				const wrapper_div = formscope[ 0 ].getElementsByClassName( 'uag-col-wrap-' + index );
 				wrapper_div[ 0 ].appendChild( sibling[ index ] );
-				wrapper_div[ 0 ].appendChild( sibling[ index ] );
 
 			}
 
@@ -121,8 +135,6 @@ UAGBForms = { // eslint-disable-line no-undef
 				const wrapper_div = formscope[ 0 ].getElementsByClassName(
 					'uag-col-wrap-' + index
 				);
-				wrapper_div[ 0 ].appendChild( sibling[ index ] );
-				wrapper_div[ 0 ].appendChild( sibling[ index ] );
 				wrapper_div[ 0 ].appendChild( sibling[ index ] );
 			}
 
@@ -139,9 +151,6 @@ UAGBForms = { // eslint-disable-line no-undef
 					'uag-col-wrap-' + index
 				);
 				wrapper_div[ 0 ].appendChild( sibling[ index ] );
-				wrapper_div[ 0 ].appendChild( sibling[ index ] );
-				wrapper_div[ 0 ].appendChild( sibling[ index ] );
-				wrapper_div[ 0 ].appendChild( sibling[ index ] );
 			}
 		}
 
@@ -152,12 +161,14 @@ UAGBForms = { // eslint-disable-line no-undef
 					document.querySelector( '.uagb-form-reacaptcha-error-' + attr.block_id ).innerHTML = '<p style="color:red !important" class="error-captcha">Invalid Google reCAPTCHA Site Key.</p>';
 					return false;
 				}
+
 				grecaptcha.ready( function() { // eslint-disable-line no-undef
 					grecaptcha.execute( reCaptchaSiteKeyV3, {action: 'submit'} ).then( function( token ) { // eslint-disable-line no-undef
 						if ( token ) {
 							if( document.getElementsByClassName( 'uagb-forms-recaptcha' ).length !== 0 ) {
 								document.getElementById( 'g-recaptcha-response' ).value = token;
-								window.UAGBForms._formSubmit( e, this, attr, reCaptchaSiteKeyV2, reCaptchaSiteKeyV3 );
+
+								window.UAGBForms._formSubmit( e, form, attr, reCaptchaSiteKeyV2, reCaptchaSiteKeyV3, post_id );
 							}else{
 								document.querySelector( '.uagb-form-reacaptcha-error-' + attr.block_id ).innerHTML = '<p style="color:red !important" class="error-captcha">Google reCAPTCHA Response not found.</p>';
 								return false;
@@ -166,24 +177,13 @@ UAGBForms = { // eslint-disable-line no-undef
 					} );
 				  } );
 			} else {
-				window.UAGBForms._formSubmit( e, this, attr, reCaptchaSiteKeyV2, reCaptchaSiteKeyV3 );
+				window.UAGBForms._formSubmit( e, this, attr, reCaptchaSiteKeyV2, reCaptchaSiteKeyV3, post_id );
 			}
 		} );
 	},
-	_isChecked() {
-        for ( let i = 0; i < checkboxes.length; i++ ) { // eslint-disable-line no-undef
-            if ( checkboxes[i].checked ) return true; // eslint-disable-line no-undef
-        }
 
-        return false;
-    },
 
-    _checkValidity() {
-        const errorMessage = !window.UAGBForms._isChecked ? 'At least one checkbox must be selected.' : '';
-        checkboxes[i].setCustomValidity( errorMessage ); // eslint-disable-line no-undef
-    },
-
-	_formSubmit( e, form, attr, reCaptchaSiteKeyV2, reCaptchaSiteKeyV3 ) {
+	_formSubmit( e, form, attr, reCaptchaSiteKeyV2, reCaptchaSiteKeyV3, post_id ) {
 		e.preventDefault();
 
 		let captcha_response;
@@ -193,9 +193,9 @@ UAGBForms = { // eslint-disable-line no-undef
 			const hideForm = document.querySelector( '[name="uagb-form-' + attr.block_id + '"]' );
 			hideForm.style.display = 'none';
 
-			const errorMsg = document.querySelector( '.uagb-forms-success-message-' + attr.block_id );
+			const errorMsg = document.querySelector( '.uagb-forms-failed-message-' + attr.block_id );
 			errorMsg.classList.remove( 'uagb-forms-submit-message-hide' );
-			errorMsg.classList.add( 'uagb-forms-success-message' );
+			errorMsg.classList.add( 'uagb-forms-failed-message' );
 			return false;
 		}
 
@@ -228,33 +228,25 @@ UAGBForms = { // eslint-disable-line no-undef
 		postData.id = attr.block_id;
 		for ( let i = 0; i < originalSerialized.length; i++ ) {
 			const inputname = document.getElementById( originalSerialized[ i ].name );
+
 			if ( originalSerialized[ i ].name.endsWith( '[]' ) ) {
+				const name = originalSerialized[ i ].name.replace( /[\[\]']+/g,'' );
 				//For checkbox element
-				const name = document.getElementById( originalSerialized[ i ].name );
-				if ( ! ( name in postData ) ) {
-					postData[ name ] = [];
-				}
-				postData[ name ].push( originalSerialized[ i ].value );
-			} else if ( originalSerialized[ i ].value.startsWith( '+' ) ) {
-				//For phone element.
-				let name = originalSerialized[ i ].name;
-				name = name.substring( 0, name.length - 2 );
 				if ( ! ( name in postData ) ) {
 					postData[ name ] = [];
 				}
 				postData[ name ].push( originalSerialized[ i ].value );
 			} else if( inputname !== null ){
-					postData[ inputname.innerHTML] = originalSerialized[ i ].value;
-				}
+				postData[ inputname.innerHTML] = originalSerialized[ i ].value;
+			}
+
+			const hiddenField = document.getElementById( 'hidden' );
+
+			if ( hiddenField !== null && hiddenField !== undefined ) {
+				postData[ hiddenField.getAttribute( 'name' ) ] = hiddenField.getAttribute( 'value' );
+			}
+
 		}
-
-		const after_submit_data = {
-			to: attr.afterSubmitToEmail,
-			cc: attr.afterSubmitCcEmail,
-			bcc: attr.afterSubmitBccEmail,
-			subject: attr.afterSubmitEmailSubject,
-		};
-
 
 		fetch( uagb_forms_data.ajax_url, { // eslint-disable-line no-undef
 			method: 'POST',
@@ -264,9 +256,10 @@ UAGBForms = { // eslint-disable-line no-undef
 				nonce: uagb_forms_data.uagb_forms_ajax_nonce,
 				form_data: JSON.stringify( postData ),
 				sendAfterSubmitEmail: attr.sendAfterSubmitEmail,
-				after_submit_data : JSON.stringify( after_submit_data ),
 				captcha_version: attr.reCaptchaType,
 				captcha_response,
+				post_id,
+				block_id: attr.block_id
 			  } ),
 		  } )
 		  .then( ( resp ) => resp.json() )

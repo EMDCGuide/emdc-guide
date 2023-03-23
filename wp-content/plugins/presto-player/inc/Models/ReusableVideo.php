@@ -8,6 +8,7 @@ use PrestoPlayer\Blocks\YouTubeBlock;
 use PrestoPlayer\Blocks\SelfHostedBlock;
 use PrestoPlayer\Pro\Blocks\BunnyCDNBlock;
 use PrestoPlayer\Pro\Blocks\PrivateSelfHostedBlock;
+use WP_Query;
 
 class ReusableVideo
 {
@@ -44,10 +45,11 @@ class ReusableVideo
     public function fetch($args = [])
     {
         $args = wp_parse_args($args, [
-            'post_type' => $this->post_type
+            'post_type' => $this->post_type,
+            'post_status' => array( 'publish' )
         ]);
 
-        return get_posts($args);
+        return (new WP_Query($args))->posts;
     }
 
     public function all($args = [])

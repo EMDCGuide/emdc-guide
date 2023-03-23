@@ -1,42 +1,34 @@
-const { __ } = wp.i18n;
-const { BaseControl, PanelRow, Notice } = wp.components;
-const { dispatch } = wp.data;
-const { compose } = wp.compose;
-
-import { getSetting } from "@/admin/settings/util";
+import { __ } from "@wordpress/i18n";
+import { BaseControl, PanelRow, Notice } from "@wordpress/components";
+import { compose } from "@wordpress/compose";
 
 import Integration from "../../../components/Integration";
 import TextControl from "../../../components/TextControl";
 import withIntegration from "./withIntegration";
 
-export default compose([withIntegration()])(
-  ({ settings, success, setSuccess, error, setError, isBusy, makeRequest }) => {
-    const api_key = getSetting("activecampaign", "api_key");
-    const url = getSetting("activecampaign", "url");
-    const connected = getSetting("activecampaign", "connected");
-
-    const setData = (data) => {
-      dispatch("presto-player/settings").updateSetting(
-        "api_key",
-        data?.api_key || "",
-        "activecampaign"
-      );
-      dispatch("presto-player/settings").updateSetting(
-        "url",
-        data?.url || "",
-        "activecampaign"
-      );
-      dispatch("presto-player/settings").updateSetting(
-        "connected",
-        data?.connected || false,
-        "activecampaign"
-      );
+export default compose([
+  withIntegration({ name: "presto_player_activecampaign" }),
+])(
+  ({
+    success,
+    setSuccess,
+    error,
+    setError,
+    isBusy,
+    makeRequest,
+    setting,
+    updateSetting,
+  }) => {
+    const setData = (props) => {
+      updateSetting({
+        ...props,
+      });
     };
 
     const onConnect = () => {
       makeRequest({
         path: "/presto-player/v1/activecampaign/connect",
-        data: { api_key, url },
+        data: { api_key: setting?.api_key, url: setting?.url },
         message: __("Connected", "presto-player"),
         success: setData,
         error: setData,
@@ -55,7 +47,7 @@ export default compose([withIntegration()])(
     return (
       <Integration
         title={__("ActiveCampaign")}
-        connected={connected}
+        connected={setting?.connected}
         onConnect={onConnect}
         onDisconnect={onDisconnect}
         isBusy={isBusy}
@@ -85,42 +77,23 @@ export default compose([withIntegration()])(
         <PanelRow>
           <BaseControl>
             <TextControl
-              className="presto-player__setting--activecampaign-url"
-              option={{
-                id: "url",
-                name: __("Your ActiveCampaign Url", "presto-player"),
-                help: (
-                  <p>
-                    {__(
-                      "You can find this on your Settings > Developer page.",
-                      "presto-player"
-                    )}{" "}
-                  </p>
-                ),
-              }}
-              value={settings?.url}
-              optionName="activecampaign"
+              label={__("Your ActiveCampaign Url", "presto-player")}
               type="url"
-              required
+              help={__(
+                "You can find this on your Settings > Developer page.",
+                "presto-player"
+              )}
+              value={setting?.url}
+              onChange={(url) => updateSetting({ url })}
             />
             <TextControl
-              className="presto-player__setting--activecampaign-api_key"
-              option={{
-                id: "api_key",
-                name: __("Your ActiveCampaign API key", "presto-player"),
-                help: (
-                  <p>
-                    {__(
-                      "You can find this on your Settings > Developer page.",
-                      "presto-player"
-                    )}{" "}
-                  </p>
-                ),
-                type: "password",
-              }}
-              value={settings?.api_key}
-              optionName="activecampaign"
-              required
+              label={__("Your ActiveCampaign API key", "presto-player")}
+              help={__(
+                "You can find this on your Settings > Developer page.",
+                "presto-player"
+              )}
+              value={setting?.api_key}
+              onChange={(api_key) => updateSetting({ api_key })}
             />
           </BaseControl>
         </PanelRow>

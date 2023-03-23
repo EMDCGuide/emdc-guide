@@ -61,11 +61,14 @@ $border        = UAGB_Block_Helper::uag_generate_deprecated_border_css(
 	( isset( $attr['borderWidth'] ) ? $attr['borderWidth'] : '' ),
 	( isset( $attr['borderRadius'] ) ? $attr['borderRadius'] : '' ),
 	( isset( $attr['borderColor'] ) ? $attr['borderColor'] : '' ),
-	( isset( $attr['borderStyle'] ) ? $attr['borderStyle'] : '' ),
-	( isset( $attr['borderHColor'] ) ? $attr['borderHColor'] : '' )
+	( isset( $attr['borderStyle'] ) ? $attr['borderStyle'] : '' )
 );
 $border_tablet = UAGB_Block_Helper::uag_generate_border_css( $attr, 'overall', 'tablet' );
 $border_mobile = UAGB_Block_Helper::uag_generate_border_css( $attr, 'overall', 'mobile' );
+
+$icon_border        = UAGB_Block_Helper::uag_generate_border_css( $attr, 'icon' );
+$icon_border_tablet = UAGB_Block_Helper::uag_generate_border_css( $attr, 'icon', 'tablet' );
+$icon_border_mobile = UAGB_Block_Helper::uag_generate_border_css( $attr, 'icon', 'mobile' );
 
 $selectors = array(
 	' .uagb-icon svg'                                     => array(
@@ -85,13 +88,13 @@ $selectors = array(
 	),
 	' .uagb-faq-item'                                     => array_merge(
 		array(
-			'background-color' => $attr['boxBgColor'],
+			'background-color' => ( 'color' === $attr['boxBgType'] ) ? $attr['boxBgColor'] : 'transparent',
 		),
 		$border
 	),
 	' .uagb-faq-item:hover'                               => array(
-		'background-color' => $attr['boxBgHoverColor'],
-		'border-color'     => $attr['overallBorderHColor'],
+		'background-color' => ( 'color' === $attr['boxBgHoverType'] ) ? $attr['boxBgHoverColor'] : 'transparent',
+		'border-color'     => ! empty( $attr['overallBorderHColor'] ) ? $attr['overallBorderHColor'] : $attr['borderHoverColor'],
 	),
 	' .uagb-faq-item .uagb-question'                      => array(
 		'color' => $attr['questionTextColor'],
@@ -133,6 +136,16 @@ $selectors = array(
 	'.uagb-faq-icon-row-reverse .uagb-faq-item .uagb-faq-icon-wrap' => array(
 		'margin-left' => UAGB_Helper::get_css_value( UAGB_Block_Helper::get_fallback_number( $attr['gapBtwIconQUestion'], 'gapBtwIconQUestion', $block_name ), 'px' ),
 	),
+	'.wp-block-uagb-faq .uagb-faq-item .uagb-faq-icon-wrap' => array_merge(
+		array(
+			'padding'          => UAGB_Helper::get_css_value( $attr['iconBgSize'], $attr['iconBgSizeType'] ),
+			'background-color' => $attr['iconBgColor'],
+		),
+		$icon_border
+	),
+	'.wp-block-uagb-faq .uagb-faq-item .uagb-faq-icon-wrap:hover' => array(
+		'border-color' => $attr['iconBorderHColor'],
+	),
 	' .uagb-faq-item:hover .uagb-icon svg'                => array(
 		'fill' => $icon_active_color,
 	),
@@ -150,6 +163,12 @@ $t_selectors = array(
 	),
 	'.uagb-faq-icon-row-reverse .uagb-faq-item .uagb-faq-icon-wrap' => array(
 		'margin-left' => UAGB_Helper::get_css_value( $attr['gapBtwIconQUestionTablet'], 'px' ),
+	),
+	'.wp-block-uagb-faq .uagb-faq-item .uagb-faq-icon-wrap' => array_merge(
+		array(
+			'padding' => UAGB_Helper::get_css_value( $attr['iconBgSizeTablet'], $attr['iconBgSizeType'] ),
+		),
+		$icon_border_tablet
 	),
 	' .uagb-faq-questions-button'  => array(
 		'padding-top'    => UAGB_Helper::get_css_value( $attr['vquestionPaddingTablet'], $attr['questionPaddingTypeTablet'] ),
@@ -194,6 +213,12 @@ $m_selectors = array(
 	),
 	' .uagb-faq-child__outer-wrap' => array(
 		'margin-bottom' => UAGB_Helper::get_css_value( $attr['rowsGapMobile'], $attr['rowsGapUnit'] ),
+	),
+	'.wp-block-uagb-faq .uagb-faq-item .uagb-faq-icon-wrap' => array_merge(
+		array(
+			'padding' => UAGB_Helper::get_css_value( $attr['iconBgSizeMobile'], $attr['iconBgSizeType'] ),
+		),
+		$icon_border_mobile
 	),
 	' .uagb-faq-questions-button'  => array(
 		'padding-top'    => UAGB_Helper::get_css_value( $attr['vquestionPaddingMobile'], $attr['questionPaddingTypeMobile'] ),
@@ -271,7 +296,7 @@ if ( true === $attr['enableSeparator'] ) {
 		'border-left-width'   => '0px',
 	);
 	$selectors[' .uagb-faq-child__outer-wrap .uagb-faq-content:hover '] = array(
-		'border-top-color' => $attr['overallBorderHColor'],
+		'border-top-color' => ! empty( $attr['overallBorderHColor'] ) ? $attr['overallBorderHColor'] : $attr['borderHoverColor'],
 	);
 }
 if ( 'grid' === $attr['layout'] ) {

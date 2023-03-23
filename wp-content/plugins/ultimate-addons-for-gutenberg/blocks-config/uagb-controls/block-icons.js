@@ -4,7 +4,7 @@
 
 import { createElement as el } from '@wordpress/element';
 
-// This is the color that will be visible on the drag and drop of the blocks. Use this as the primary fill / stroke color. 
+// This is the color that will be visible on the drag and drop of the blocks. Use this as the primary fill / stroke color.
 const iconColor = '#fff';
 // This is the color used for non-block icons.
 const spectraDarkColor = '#1d2327';
@@ -14,9 +14,9 @@ const noColor = 'none';
 
 const UAGB_Block_Icons = {
 
-	// ----------------.
-	// All Block Icons .
-	// ----------------.
+	// ------------------------.
+	// All Spectra Block Icons .
+	// ------------------------.
 
 	logo: el(
 		'svg',
@@ -819,6 +819,237 @@ const UAGB_Block_Icons = {
 			strokeWidth: 1.4,
 		} ),
 	),
+	image_gallery: el(
+		'svg',
+		{ width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', className: 'uagb-editor-icons' },
+		el( 'path', {
+			d: 'M3 8.5V5C3 3.89543 3.89543 3 5 3H8.5C9.60457 3 10.5 3.89543 10.5 5V8.5M3 8.5C3 9.60457 3.89543 10.5 5 10.5H8.5C9.60457 10.5 10.5 9.60457 10.5 8.5M3 8.5L4.94679 6.87767C5.58153 6.34873 6.47618 6.26455 7.19844 6.6658L10.5 8.5M13.5 8.5V5C13.5 3.89543 14.3954 3 15.5 3H19C20.1046 3 21 3.89543 21 5V8.5M13.5 8.5C13.5 9.60457 14.3954 10.5 15.5 10.5H19C20.1046 10.5 21 9.60457 21 8.5M13.5 8.5L15.4468 6.87767C16.0815 6.34873 16.9762 6.26455 17.6984 6.6658L21 8.5M3 19V15.5C3 14.3954 3.89543 13.5 5 13.5H8.5C9.60457 13.5 10.5 14.3954 10.5 15.5V19M3 19C3 20.1046 3.89543 21 5 21H8.5C9.60457 21 10.5 20.1046 10.5 19M3 19L4.94679 17.3777C5.58153 16.8487 6.47618 16.7645 7.19844 17.1658L10.5 19M13.5 19V15.5C13.5 14.3954 14.3954 13.5 15.5 13.5H19C20.1046 13.5 21 14.3954 21 15.5V19M13.5 19C13.5 20.1046 14.3954 21 15.5 21H19C20.1046 21 21 20.1046 21 19M13.5 19L15.4468 17.3777C16.0815 16.8487 16.9762 16.7645 17.6984 17.1658L21 19',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+		} ),
+	),
+	counter: el(
+		'svg',
+		{ width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', className: 'uagb-editor-icons' },
+		el( 'path', {
+			d: 'M1 10.5L3 9.5V16.5M5.5 11C5.66667 10.5 6.3 9.5 7.5 9.5C9 9.5 9.5 10.5 9.5 11C9.5 13.0707 7 15 5.5 16.5H9.7M11.5 10.5C11.6667 10.1667 12.3 9.2 13.5 9.2C14.7 9.2 15.7 10 15.7 11C15.7 12 14.2 13 13 13C14 13 16.2469 13 16 15C15.8742 16.0188 14.8107 16.7 13.5 16.7C13 16.7 12 16.5 11.5 15.5M20.5 18V6M20.5 6L18 8M20.5 6L23 8',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+	),
+	countdown: el(
+		'svg',
+		{ width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', className: 'uagb-editor-icons' },
+		el( 'path', {
+			d: 'M12 5.39514V3.16507M16.2269 6.58948L17.8848 5.09796M9.69775 2.60654H14.3022M11.8872 13.4553H16.6079M20.0052 13.3886C20.0052 17.8099 16.4211 21.394 11.9999 21.394C7.57873 21.394 3.99463 17.8099 3.99463 13.3886C3.99463 8.96743 7.57873 5.38333 11.9999 5.38333C16.4211 5.38333 20.0052 8.96743 20.0052 13.3886ZM12.327 13.3886C12.327 13.2081 12.1807 13.0618 12.0002 13.0618C11.8197 13.0618 11.6733 13.2081 11.6733 13.3886C11.6733 13.5692 11.8197 13.7155 12.0002 13.7155C12.1807 13.7155 12.327 13.5692 12.327 13.3886Z',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+	),
+	modal: el(
+		'svg',
+		{ width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', className: 'uagb-editor-icons' },
+		el( 'rect', {
+			x: 3,
+			y: 7.30975,
+			width: 15.033,
+			height: 11.7712,
+			rx: 2,
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+		el( 'path', {
+			d: 'M6.86572 11.6992H14.1675',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+		el( 'path', {
+			d: 'M6.86572 14.6918H14.1675',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+		el( 'path', {
+			d: 'M19.0982 4.51694L20.1633 5.58197M20.1633 5.58197L21.2283 6.647M20.1633 5.58197L19.0982 6.647M20.1633 5.58197L21.2283 4.51694',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+	),
+	slider: el(
+		'svg',
+		{ width: 24, height: 24, viewBox: '0 0 26 24', fill: 'none', className: 'uagb-editor-icons' },
+		el( 'rect', {
+			x: 5.4502,
+			y: 4.98621,
+			width: 15.0978,
+			height: 11.2249,
+			rx: 2,
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+		el( 'path', {
+			d: 'M9.19922 9.10217H16.501',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+		el( 'path', {
+			d: 'M9.19922 12.0948H16.501',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+		el( 'path', {
+			d: 'M15.9987 19.0138H16.0054M12.9922 19.0138H12.9989M9.99219 19.0138H9.99885',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+		el( 'path', {
+			d: 'M2.49658 9.69873L1.49658 10.5987L2.49658 11.4987',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+		el( 'path', {
+			d: 'M23.5034 11.4987L24.5034 10.5987L23.5034 9.69872',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+	),
+	slider_child: el(
+		'svg',
+		{ width: 24, height: 24, viewBox: '0 0 26 24', fill: 'none', className: 'uagb-editor-icons' },
+		el( 'rect', {
+			x: 5.4502,
+			y: 6.38751,
+			width: 15.0978,
+			height: 11.2249,
+			rx: 2,
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+		el( 'path', {
+			d: 'M9.19922 10.5035H16.501',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+		el( 'path', {
+			d: 'M9.19922 13.4962H16.501',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+		el( 'path', {
+			d: 'M2.49658 11.1L1.49658 12.0001L2.49658 12.9',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+		el( 'path', {
+			d: 'M23.5034 12.9L24.5034 12L23.5034 11.1',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+	),
+
+	// ----------------------------.
+	// All Spectra Pro Block Icons .
+	// ----------------------------.
+
+	login: el(
+		'svg',
+		{ width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', className: 'uagb-editor-icons' },
+		el( 'path', {
+			d: 'M12 16L16 12M16 12L12 8M16 12L4 12M7 16V17C7 18.6569 8.34315 20 10 20H17C18.6569 20 20 18.6569 20 17V7C20 5.34315 18.6569 4 17 4H10C8.34315 4 7 5.34315 7 7V8',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+	),
+	register: el(
+		'svg',
+		{ width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', className: 'uagb-editor-icons' },
+		el( 'path', {
+			d: 'M14 21H4C4 17.134 7.13401 14 11 14C12.0736 14 13.0907 14.2417 14 14.6736M17 15V18M17 18V21M17 18H14M17 18H20M15 7C15 9.20914 13.2091 11 11 11C8.79086 11 7 9.20914 7 7C7 4.79086 8.79086 3 11 3C13.2091 3 15 4.79086 15 7Z',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+	),
+	password: el(
+		'svg',
+		{ width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', className: 'uagb-editor-icons' },
+		el( 'path', {
+			d: 'M15 7C16.1046 7 17 7.89543 17 9M21 9C21 12.3137 18.3137 15 15 15C14.3938 15 13.8087 14.9101 13.2571 14.7429L11 17H9V19H7V21H4C3.44772 21 3 20.5523 3 20V17.4142C3 17.149 3.10536 16.8946 3.29289 16.7071L9.25707 10.7429C9.08989 10.1914 9 9.60617 9 9C9 5.68629 11.6863 3 15 3C18.3137 3 21 5.68629 21 9Z',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+	),
+	rePassword: el(
+		'svg',
+		{ width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', className: 'uagb-editor-icons' },
+		el( 'path', {
+			d: 'M13 9C13 7.9 13.8954 7 15 7C16.1046 7 17 7.89543 17 9C17 10.1 16.1 11 15 11M15 11V10M15 11L16 11.5M21 9C21 12.3137 18.3137 15 15 15C14.3938 15 13.8087 14.9101 13.2571 14.7429L11 17H9V19H7V21H4C3.44772 21 3 20.5523 3 20V17.4142C3 17.149 3.10536 16.8946 3.29289 16.7071L9.25707 10.7429C9.08989 10.1914 9 9.60617 9 9C9 5.68629 11.6863 3 15 3C18.3137 3 21 5.68629 21 9Z',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+	),
 
 	// ------------------------.
 	// All Miscellaneous Icons .
@@ -1119,10 +1350,30 @@ const UAGB_Block_Icons = {
 	),
 	video_placeholder: el(
 		'svg',
-		{ width: 24, height: 24, viewBox: '0 0 512 512', className: 'uagb-editor-icons' },
+		{ width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', className: 'uagb-editor-icons' },
 		el( 'path', {
-			fill: spectraDarkColor,
-			d: 'M512 256C512 397.4 397.4 512 256 512C114.6 512 0 397.4 0 256C0 114.6 114.6 0 256 0C397.4 0 512 114.6 512 256zM176 168V344C176 352.7 180.7 360.7 188.3 364.9C195.8 369.2 205.1 369 212.5 364.5L356.5 276.5C363.6 272.1 368 264.4 368 256C368 247.6 363.6 239.9 356.5 235.5L212.5 147.5C205.1 142.1 195.8 142.8 188.3 147.1C180.7 151.3 176 159.3 176 168V168z',
+			d: 'M14.7519 11.1679L11.5547 9.03647C10.8901 8.59343 10 9.06982 10 9.86852V14.1315C10 14.9302 10.8901 15.4066 11.5547 14.9635L14.7519 12.8321C15.3457 12.4362 15.3457 11.5638 14.7519 11.1679Z',
+			stroke: spectraDarkColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+		el( 'path', {
+			d: 'M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z',
+			stroke: spectraDarkColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+	),
+	gallery_placeholder: el(
+		'svg',
+		{ width: 24, height: 24, viewBox: '0 0 24 24', className: 'uagb-editor-icons' },
+		el( 'path', {
+			d: 'M6 14.6667L9.68329 10.9834C10.3857 10.281 11.5427 10.345 12.1632 11.1207L13.3242 12.5719C13.8866 13.2749 14.9055 13.4042 15.6257 12.8641L16.5103 12.2006C17.1738 11.703 18.1023 11.769 18.6888 12.3554L21 14.6667M6 6H4.66667C3.74619 6 3 6.74619 3 7.66667V19.3333C3 20.2538 3.74619 21 4.66667 21H16.3333C17.2538 21 18 20.2538 18 19.3333V18M17.6667 7.16667C17.6667 7.6269 17.2936 8 16.8333 8C16.3731 8 16 7.6269 16 7.16667C16 6.70643 16.3731 6.33333 16.8333 6.33333C17.2936 6.33333 17.6667 6.70643 17.6667 7.16667ZM7.66667 18H19.3333C20.2538 18 21 17.2538 21 16.3333V4.66667C21 3.74619 20.2538 3 19.3333 3H7.66667C6.74619 3 6 3.74619 6 4.66667V16.3333C6 17.2538 6.74619 18 7.66667 18Z',
+			fill: noColor,
+			stroke: spectraDarkColor,
+			strokeWidth: 1.4,
 		} ),
 	),
 	bg_color: el(
@@ -1161,6 +1412,33 @@ const UAGB_Block_Icons = {
 		el( 'path', {
 			fill: spectraDarkColor,
 			d: 'M8.4002 6.1V1.9C8.4002 1.13 7.7702 0.5 7.0002 0.5H2.1002C1.3302 0.5 0.700195 1.13 0.700195 1.9V6.1C0.700195 6.87 1.3302 7.5 2.1002 7.5H7.0002C7.7702 7.5 8.4002 6.87 8.4002 6.1ZM9.1002 4.35L13.3002 7.5V0.5L9.1002 3.65V4.35Z',
+		} ),
+	),
+	dynamic_content: el(
+		'svg',
+		{ width: 24, height: 24, viewBox: '0 0 24 24', fill: 'red', className: 'uagb-editor-icons' },
+		el( 'path', {
+			stoke: spectraDarkColor,
+			stokeWidth: 1.4,
+			d: 'M4 7V17C4 19.2091 7.58172 21 12 21C16.4183 21 20 19.2091 20 17V7M4 7C4 9.20914 7.58172 11 12 11C16.4183 11 20 9.20914 20 7M4 7C4 4.79086 7.58172 3 12 3C16.4183 3 20 4.79086 20 7M20 12C20 14.2091 16.4183 16 12 16C7.58172 16 4 14.2091 4 12',
+		} ),
+	),
+	icon: el(
+		'svg',
+		{ width: 24, height: 25, viewBox: '0 0 24 25', fill: 'none', className: 'uagb-editor-icons' },
+		el( 'path', {
+			d: 'M21 12.6987C21 17.6693 16.9706 21.6987 12 21.6987C7.02944 21.6987 3 17.6693 3 12.6987C3 7.72817 7.02944 3.69873 12 3.69873C16.9706 3.69873 21 7.72817 21 12.6987Z',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+		el( 'path', {
+			d: 'M11.3217 9.12032C11.5991 8.5582 12.4007 8.5582 12.6781 9.12032L13.3798 10.5422C13.49 10.7654 13.7029 10.9201 13.9493 10.9559L15.5184 11.1839C16.1387 11.2741 16.3864 12.0364 15.9375 12.4739L14.8021 13.5807C14.6239 13.7544 14.5425 14.0048 14.5846 14.2501L14.8526 15.8129C14.9586 16.4307 14.3101 16.9019 13.7553 16.6102L12.3518 15.8723C12.1315 15.7565 11.8683 15.7565 11.6479 15.8723L10.2445 16.6102C9.68964 16.9019 9.04116 16.4307 9.14712 15.8129L9.41516 14.2501C9.45724 14.0048 9.3759 13.7544 9.19765 13.5807L8.06223 12.4739C7.61335 12.0364 7.86105 11.2741 8.48138 11.1839L10.0505 10.9559C10.2968 10.9201 10.5098 10.7654 10.6199 10.5422L11.3217 9.12032Z',
+			fill: noColor,
+			stroke: iconColor,
+			strokeWidth: 1.4,
 		} ),
 	),
 };

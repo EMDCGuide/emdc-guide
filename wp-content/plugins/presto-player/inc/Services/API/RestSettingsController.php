@@ -94,7 +94,7 @@ class RestSettingsController extends \WP_REST_Settings_Controller
                 continue;
             }
 
-            $rest_args['schema'] = $this->set_additional_properties_to_false($rest_args['schema']);
+            $rest_args['schema'] = rest_default_additional_properties_to_false($rest_args['schema']);
 
             $rest_options[$rest_args['name']] = $rest_args;
         }

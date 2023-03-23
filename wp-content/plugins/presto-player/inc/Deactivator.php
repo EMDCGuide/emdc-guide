@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace PrestoPlayer;
 
@@ -7,13 +7,14 @@ use PrestoPlayer\Database\Visits;
 use PrestoPlayer\Database\Presets;
 use PrestoPlayer\Database\Videos;
 use PrestoPlayer\Database\AudioPresets;
+use PrestoPlayer\Database\Webhooks;
 use PrestoPlayer\Models\ReusableVideo;
 
 class Deactivator
 {
 
   public static function uninstall()
-  { 
+  {
     // get plugin settings
     $uninstall_settings = get_option('presto_player_uninstall');
 
@@ -23,7 +24,8 @@ class Deactivator
     }
   }
 
-  public static function delete_data_on_uninstall() {
+  public static function delete_data_on_uninstall()
+  {
     // license
     delete_option('presto_player_license');
     delete_option('presto_player_license_data');
@@ -63,12 +65,13 @@ class Deactivator
     (new Presets($table))->uninstall();
     (new AudioPresets($table))->uninstall();
     (new Videos($table))->uninstall();
+    (new Webhooks($table))->uninstall();
 
     // delete all reusable videos
     $videos = new ReusableVideo();
     $all_videos = $videos->all(['fields' => 'ids']);
     foreach ($all_videos as $video_id) {
-        wp_delete_post($video_id, true);
+      wp_delete_post($video_id, true);
     }
   }
 }

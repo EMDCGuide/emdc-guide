@@ -1,7 +1,1 @@
-export default (el, css) => {
-  if (!css)
-    return;
-  const style = document.createElement('style');
-  el.shadowRoot.append(style);
-  style.appendChild(document.createTextNode(css));
-};
+export default(e,t)=>{if(!t)return;const d=document.createElement("style");e.shadowRoot.append(d),d.appendChild(document.createTextNode(t))};

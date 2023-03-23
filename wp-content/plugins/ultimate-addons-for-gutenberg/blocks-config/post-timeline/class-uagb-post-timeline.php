@@ -832,6 +832,30 @@ if ( ! class_exists( 'UAGB_Post_Timeline' ) ) {
 				$mob_class = ( isset( $attributes['UAGHideMob'] ) ) ? 'uag-hide-mob' : '';
 			}
 
+			$zindex_desktop           = '';
+			$zindex_tablet            = '';
+			$zindex_mobile            = '';
+			$zindex_wrap              = array();
+			$zindex_extention_enabled = ( isset( $attributes['zIndex'] ) || isset( $attributes['zIndexTablet'] ) || isset( $attributes['zIndexMobile'] ) );
+
+			if ( $zindex_extention_enabled ) {
+				$zindex_desktop = ( isset( $attributes['zIndex'] ) ) ? '--z-index-desktop:' . $attributes['zIndex'] . ';' : false;
+				$zindex_tablet  = ( isset( $attributes['zIndexTablet'] ) ) ? '--z-index-tablet:' . $attributes['zIndexTablet'] . ';' : false;
+				$zindex_mobile  = ( isset( $attributes['zIndexMobile'] ) ) ? '--z-index-mobile:' . $attributes['zIndexMobile'] . ';' : false;
+
+				if ( $zindex_desktop ) {
+					array_push( $zindex_wrap, $zindex_desktop );
+				}
+
+				if ( $zindex_tablet ) {
+					array_push( $zindex_wrap, $zindex_tablet );
+				}
+
+				if ( $zindex_mobile ) {
+					array_push( $zindex_wrap, $zindex_mobile );
+				}
+			}
+
 			$outer_class = 'uagb-timeline__outer-wrap';
 
 			$main_classes = array(
@@ -841,6 +865,7 @@ if ( ! class_exists( 'UAGB_Post_Timeline' ) ) {
 				$desktop_class,
 				$tab_class,
 				$mob_class,
+				$zindex_extention_enabled ? 'uag-blocks-common-selector' : '',
 			);
 
 			ob_start();
@@ -853,7 +878,8 @@ if ( ! class_exists( 'UAGB_Post_Timeline' ) ) {
 			<?php
 			echo esc_html( $this->get_classes( $attributes ) );
 			?>
-			" >
+			"
+			style="<?php echo esc_attr( implode( '', $zindex_wrap ) ); ?>" >
 				<?php
 				if ( empty( $recent_posts ) ) {
 					esc_html_e( 'No posts found', 'ultimate-addons-for-gutenberg' );
@@ -938,7 +964,7 @@ if ( ! class_exists( 'UAGB_Post_Timeline' ) ) {
 		public function get_icon( $attributes ) {
 			?>
 			<div class = "uagb-timeline__marker uagb-timeline__out-view-icon" >
-				<?php UAGB_Helper::render_svg_html( $attributes['icon'] ); ?>
+				<span class = "uagb-timeline__icon-new uagb-timeline__out-view-icon" ><?php UAGB_Helper::render_svg_html( $attributes['icon'] ); ?></span>
 			</div>
 			<?php
 		}
@@ -957,7 +983,7 @@ if ( ! class_exists( 'UAGB_Post_Timeline' ) ) {
 			$target = ( isset( $attributes['linkTarget'] ) && ( true === $attributes['linkTarget'] ) ) ? '_blank' : '_self';
 			do_action( "uagb_single_post_before_featured_image_{$attributes['post_type']}", get_the_ID(), $attributes );
 			?>
-				<a class='uagb-timeline__image' href="<?php echo esc_url( apply_filters( "uagb_single_post_link_{$attributes['post_type']}", get_the_permalink(), get_the_ID(), $attributes ) ); ?>" target="<?php echo esc_html( $target ); ?>" rel="noopener noreferrer"><?php echo wp_get_attachment_image( get_post_thumbnail_id(), $attributes['imageSize'] ); ?>
+				<a class='uagb-timeline__image' href="<?php echo esc_url( apply_filters( "uagb_single_post_link_{$attributes['post_type']}", get_the_permalink(), get_the_ID(), $attributes ) ); ?>" target="<?php echo esc_attr( $target ); ?>" rel="noopener noreferrer"><?php echo wp_get_attachment_image( get_post_thumbnail_id(), $attributes['imageSize'] ); ?>
 				</a>
 			<?php
 			do_action( "uagb_single_post_after_featured_image_{$attributes['post_type']}", get_the_ID(), $attributes );
@@ -974,7 +1000,7 @@ if ( ! class_exists( 'UAGB_Post_Timeline' ) ) {
 			global $post;
 			$post_id = $post->ID;
 			?>
-			<div datetime="<?php echo esc_attr( get_the_date( 'c', $post_id ) ); ?>" class="<?php echo esc_html( $classname ); ?>">
+			<div datetime="<?php echo esc_attr( get_the_date( 'c', $post_id ) ); ?>" class="<?php echo esc_attr( $classname ); ?>">
 				<?php
 				if ( isset( $attributes['displayPostDate'] ) && $attributes['displayPostDate'] ) {
 					echo esc_html( get_the_date( $attributes['dateFormat'], $post_id ) );
@@ -998,7 +1024,7 @@ if ( ! class_exists( 'UAGB_Post_Timeline' ) ) {
 			?>
 				<?php do_action( "uagb_single_post_before_title_{$attributes['post_type']}", get_the_ID(), $attributes ); ?>
 				<<?php echo esc_html( $tag ); ?> class="uagb-timeline__heading" >
-					<a href="<?php echo esc_url( apply_filters( "uagb_single_post_link_{$attributes['post_type']}", get_the_permalink(), get_the_ID(), $attributes ) ); ?>" target="<?php echo esc_html( $target ); ?>" rel="noopener noreferrer"><?php the_title(); ?></a>
+					<a href="<?php echo esc_url( apply_filters( "uagb_single_post_link_{$attributes['post_type']}", get_the_permalink(), get_the_ID(), $attributes ) ); ?>" target="<?php echo esc_attr( $target ); ?>" rel="noopener noreferrer"><?php the_title(); ?></a>
 				</<?php echo esc_html( $tag ); ?>>
 				<?php do_action( "uagb_single_post_after_title_{$attributes['post_type']}", get_the_ID(), $attributes ); ?>
 			<?php
@@ -1018,7 +1044,7 @@ if ( ! class_exists( 'UAGB_Post_Timeline' ) ) {
 			do_action( "uagb_single_post_before_cta_{$attributes['post_type']}", get_the_ID(), $attributes );
 			?>
 			<div class="uagb-timeline__link_parent wp-block-button">
-				<a class="uagb-timeline__link wp-block-button__link" href="<?php echo esc_url( apply_filters( "uagb_single_post_link_{$attributes['post_type']}", get_the_permalink(), get_the_ID(), $attributes ) ); ?>" target="<?php echo esc_html( $target ); ?>" rel=" noopener noreferrer"><?php echo esc_html( $attributes['readMoreText'] ); ?></a>
+				<a class="uagb-timeline__link wp-block-button__link" href="<?php echo esc_url( apply_filters( "uagb_single_post_link_{$attributes['post_type']}", get_the_permalink(), get_the_ID(), $attributes ) ); ?>" target="<?php echo esc_attr( $target ); ?>" rel=" noopener noreferrer"><?php echo esc_html( $attributes['readMoreText'] ); ?></a>
 			</div>
 			<?php
 			do_action( "uagb_single_post_after_cta_{$attributes['post_type']}", get_the_ID(), $attributes );

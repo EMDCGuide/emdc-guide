@@ -52,6 +52,7 @@ return [
         \PrestoPlayer\Services\AdminNotices::class,
         \PrestoPlayer\Services\ProCompatibility::class,
         \PrestoPlayer\Services\Compatibility::class,
+        \PrestoPlayer\Services\AjaxActions::class,
 
         // api
         \PrestoPlayer\Services\API\RestPresetsController::class,
