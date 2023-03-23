@@ -92,6 +92,10 @@ if ( ! class_exists( 'Astra_Elementor' ) ) :
 					'.elementor-widget-heading .elementor-heading-title' => array(
 						'margin' => '0',
 					),
+					'.elementor-page .ast-menu-toggle' => array(
+						'color'      => 'unset !important',
+						'background' => 'unset !important',
+					),
 				);
 
 				/* Parse CSS from array() */
@@ -259,7 +263,12 @@ if ( ! class_exists( 'Astra_Elementor' ) ) :
 			if ( version_compare( ELEMENTOR_VERSION, '1.5.0', '<' ) ) {
 				return ( 'builder' === Plugin::$instance->db->get_edit_mode( $id ) );
 			} else {
-				return Plugin::$instance->db->is_built_with_elementor( $id );
+				$document = Plugin::$instance->documents->get( $id );
+				if ( $document ) {
+					return $document->is_built_with_elementor();
+				} else {
+					return false;
+				}
 			}
 		}
 

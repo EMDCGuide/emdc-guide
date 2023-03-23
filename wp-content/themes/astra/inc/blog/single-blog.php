@@ -73,40 +73,6 @@ if ( ! function_exists( 'astra_single_post_class' ) ) {
 add_filter( 'post_class', 'astra_single_post_class' );
 
 /**
- * Prints HTML with meta information for the current post-date/time and author.
- */
-if ( ! function_exists( 'astra_single_get_post_meta' ) ) {
-
-	/**
-	 * Prints HTML with meta information for the current post-date/time and author.
-	 *
-	 * @param boolean $echo   Output print or return.
-	 * @return string|void
-	 */
-	function astra_single_get_post_meta( $echo = true ) {
-
-		$enable_meta       = apply_filters( 'astra_single_post_meta_enabled', '__return_true' );
-		$post_meta         = astra_get_option( 'blog-single-meta' );
-		$current_post_type = get_post_type();
-		$post_type_array   = apply_filters( 'astra_single_post_type_meta', array( 'post' ) );
-
-		$output = '';
-		if ( is_array( $post_meta ) && ( in_array( $current_post_type, $post_type_array ) || 'attachment' == $current_post_type ) && $enable_meta ) {
-
-			$output_str = astra_get_post_meta( $post_meta );
-			if ( ! empty( $output_str ) ) {
-				$output = apply_filters( 'astra_single_post_meta', '<div class="entry-meta">' . $output_str . '</div>', $output_str ); // WPCS: XSS OK.
-			}
-		}
-		if ( $echo ) {
-			echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		} else {
-			return $output;
-		}
-	}
-}
-
-/**
  * Template for comments and pingbacks.
  */
 if ( ! function_exists( 'astra_theme_comment' ) ) {
