@@ -123,6 +123,10 @@ div.main-navigation ul.sub-menu > li.menu-item > a {
 body.post-type-archive-guide_resource .ast-pagination {
     display: none;
 }
+#page { 
+  display: grid;
+  min-height: 100vh;
+}
 /**
  * Sticky nav for pages with side nav but not resources.
  */
