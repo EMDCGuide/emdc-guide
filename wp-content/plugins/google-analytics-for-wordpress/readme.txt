@@ -3,8 +3,8 @@ Contributors: chriscct7, smub
 Donate link: http://www.wpbeginner.com/wpbeginner-needs-your-help/
 Tags: WordPress analytics, google analytics, google analytics dashboard, google analytics widget, WooCommerce stats, analytics dashboard, universal google analytics, statistics, tracking, stats, google, google analytics by yoast, ga, monster insights, monsterinsights, universal analytics, web stats, ecommerce, ecommerce tracking
 Requires at least: 4.8.0
-Tested up to: 6.0
-Stable tag: 8.8.2
+Tested up to: 6.1.1
+Stable tag: 8.13.1
 Requires PHP: 5.6
 License: GPL v3
 
@@ -241,7 +241,7 @@ After reading this exhaustive feature list, you can probably imagine why Monster
 
 Give MonsterInsights a try.
 
-Want to unlock even more features? <a href="?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Upgrade to our Pro version</a>.
+Want to unlock even more features? <a href="https://www.monsterinsights.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Upgrade to our Pro version</a>.
 
 >Simple, yet powerful. Amazing piece of plugin, does exactly what expected and even more.<br>
 > Matt Jaworski
@@ -298,6 +298,49 @@ You can also learn about other <a href="http://www.wpbeginner.com/category/plugi
 4. Want more features? <a href="https://www.monsterinsights.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion">Purchase MonsterInsights Pro</a>!
 
 == Changelog ==
+= 8.13.1: Mar 14, 2023 =
+- Fixed: We fixed a bug that could cause an issue if Google's API endpoint returned a non-200 response.
+
+= 8.13.0: Mar 13, 2023 =
+- Enhancement: We enhanced the notifications user experience.
+- Fixed: We fixed the PDF reports header.
+- Update: We applied additional security hardening.
+
+= 8.12.1: Jan 12, 2023 =
+- Fix: We made updates to authentication
+
+= 8.12.0: Jan 12, 2023 =
+- Enhancement: We updated and fixed some UI/UX elements to make MonsterInsights easier to use
+- Enhancement: We optimized our Javascript code to work better with minification plugins
+- Enhancement: We optimized our Javascript code to work better with minification plugins
+- Enhancement: We optimized the Javascript code to work nicely with minification plugins
+- Enhancement: We optimized our code to work better with PHP8
+
+= 8.11.0: Dec 12, 2022 =
+- New: With our limited-time-only Year in Review report you’ll be able to see how your site performed in 2022 and how to improve in 2023. This report will be automatically available from January 1 to January 14, 2023, inside the Reports section of MonsterInsights.
+- Enhancement: We optimized our media addon events.
+
+= 8.10.1: Nov 09, 2022 =
+- Fix: We fixed a bug in our auto-update logic when it encounters double digit version numbers. 
+
+= 8.10.0: Nov 07, 2022 =
+- New: We created a new Media report available right inside WordPress Admin dashboard to view video plays and engagement
+- New: We added file download support for Pretty Links
+- Enhancement: We enhanced some UI elements within the plugin
+- Fix: We updated User Journey to work with older versions of Easy Digital Downloads
+
+= 8.9.1: Oct 11, 2022 =
+- Enhancement: Our UserJourney addon works with sequential orders
+- Enhancement: We updated some language inside the WordPress Admin area for GA4 reporting
+- Fix: Headline analyzer now understands queries better
+- Fix: We updated our Ads addon to work with Easy Digital Downloads 3.0 
+
+= 8.9.0: Sep 20, 2022 =
+- New: You can now show an MonsterInsights badge on your website!
+- Enhancement: We updated and tweaked many UI elements to better help with onboarding and plugin usage.
+- Enhancement: We now include our dashboard fonts locally.
+- Fix: We updated support for PHP 8 with our headline analyzer tool.
+
 = 8.8.2: Aug 26, 2022 =
 - Fix: We fixed the headline analyzer issues reported by our lite users.
 - Fix: We fixed the PHP errors reported by WordPress 4.8 users.
