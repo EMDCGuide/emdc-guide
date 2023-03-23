@@ -47,6 +47,14 @@ class FacetWP_Settings
                             'false_value' => 'no'
                         ])
                     ],
+                    'strict_query_detection' => [
+                        'label' => __( 'Strict query detection', 'fwp' ),
+                        'notes' => 'Enable if FacetWP auto-detects the wrong archive query',
+                        'html' => $this->get_setting_html( 'strict_query_detection', 'toggle', [
+                            'true_value' => 'yes',
+                            'false_value' => 'no'
+                        ])
+                    ],
                     'debug_mode' => [
                         'label' => __( 'Debug mode', 'fwp' ),
                         'notes' => 'After enabling, type "FWP.settings.debug" into the browser console on your front-end facet page',
@@ -66,7 +74,7 @@ class FacetWP_Settings
                         'html' => $this->get_setting_html( 'wc_enable_variations', 'toggle' )
                     ],
                     'wc_index_all' => [
-                        'label' => __( 'Include all products?', 'fwp' ),
+                        'label' => __( 'Index out-of-stock products?', 'fwp' ),
                         'notes' => __( 'Show facet choices for out-of-stock products?', 'fwp' ),
                         'html' => $this->get_setting_html( 'wc_index_all', 'toggle' )
                     ]
@@ -210,13 +218,12 @@ class FacetWP_Settings
             'compare_type' => [
                 'type' => 'select',
                 'label' => __( 'Compare type', 'fwp' ),
-                'notes' => "<strong>Basic</strong> - the post's range is inside the user-selected range<br /><strong>Enclose</strong> - the post's range surrounds the user-selected range<br /><strong>Intersect</strong> - the post's range overlaps at any point with the the user-selected range",
+                'notes' => "<strong>Basic</strong> - entered range surrounds the post's range<br /><strong>Enclose</strong> - entered range is fully inside the post's range<br /><strong>Intersect</strong> - entered range overlaps the post's range<br /><br />When in doubt, choose <strong>Basic</strong>",
                 'choices' => [
                     '' => __( 'Basic', 'fwp' ),
                     'enclose' => __( 'Enclose', 'fwp' ),
                     'intersect' => __( 'Intersect', 'fwp' )
-                ],
-                'show' => "facet.source_other != ''"
+                ]
             ],
             'ui_type' => [
                 'label' => __( 'UI type', 'fwp' ),
@@ -452,6 +459,7 @@ $false_value = $atts['false_value'] ?? 'no';
         return [
             'Number of grid columns' => __( 'Number of grid columns', 'fwp' ),
             'Spacing between results' => __( 'Spacing between results', 'fwp' ),
+            'No results text' => __( 'No results text', 'fwp' ),
             'Text style' => __( 'Text style', 'fwp' ),
             'Text color' => __( 'Text color', 'fwp' ),
             'Font size' => __( 'Font size', 'fwp' ),
@@ -524,7 +532,7 @@ $false_value = $atts['false_value'] ?? 'no';
             'Column' => __( 'Column', 'fwp' ),
             'Start typing' => __( 'Start typing', 'fwp' ),
             'Label' => __( 'Label', 'fwp' ),
-            'Name' => __( 'Name', 'fwp' ),
+            'Unique name' => __( 'Unique name', 'fwp' ),
             'Facet type' => __( 'Facet type', 'fwp' ),
             'Copy shortcode' => __( 'Copy shortcode', 'fwp' ),
             'Data source' => __( 'Data source', 'fwp' ),
@@ -548,8 +556,7 @@ $false_value = $atts['false_value'] ?? 'no';
             'Stop indexer' => __( 'Stop indexer', 'fwp' ),
             'Loading' => __( 'Loading', 'fwp' ),
             'Importing' => __( 'Importing', 'fwp' ),
-            'Convert to query args' => __( 'Convert to query args', 'fwp' ),
-            'Delete item?' => __( 'Delete item?', 'fwp' )
+            'Convert to query args' => __( 'Convert to query args', 'fwp' )
         ];
     }
 

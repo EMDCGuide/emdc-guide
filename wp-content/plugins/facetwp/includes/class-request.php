@@ -18,6 +18,12 @@ class FacetWP_Request
     /* (boolean) Initial load? */
     public $is_preload = false;
 
+    /* (string) Name of active FacetWP template */
+    public $template_name;
+
+    /* (array) Response output */
+    public $output;
+
 
     function __construct() {
         $this->process_json();
@@ -32,7 +38,9 @@ class FacetWP_Request
         $json = file_get_contents( 'php://input' );
         if ( 0 === strpos( $json, '{' ) ) {
             $post_data = json_decode( $json, true );
-            if ( isset( $post_data['action'] ) && 0 === strpos( $post_data['action'], 'facetwp' ) ) {
+            $action = $post_data['action'] ?? '';
+
+            if ( is_string( $action ) && 0 === strpos( $action, 'facetwp' ) ) {
                 $_POST = $post_data;
             }
         }
@@ -198,7 +206,13 @@ class FacetWP_Request
      * Is this the main query?
      */
     function is_main_query( $query ) {
-        $is_main_query = ( $query->is_main_query() || $query->is_archive );
+        if ( 'yes' == FWP()->helper->get_setting( 'strict_query_detection', 'no' ) ) {
+            $is_main_query = ( $query->is_main_query() );
+        }
+        else {
+            $is_main_query = ( $query->is_main_query() || $query->is_archive );
+        }
+
         $is_main_query = ( $query->is_singular || $query->is_feed ) ? false : $is_main_query;
         $is_main_query = ( $query->get( 'suppress_filters', false ) ) ? false : $is_main_query; // skip get_posts()
         $is_main_query = ( '' !== $query->get( 'facetwp' ) ) ? (bool) $query->get( 'facetwp' ) : $is_main_query; // flag

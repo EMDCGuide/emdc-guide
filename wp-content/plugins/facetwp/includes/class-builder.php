@@ -39,6 +39,9 @@ class FacetWP_Builder
         $selector .= empty( $settings['name'] ) ? '' : '.' . $settings['name'];
 
         $this->css = [
+            '.fwpl-layout, .fwpl-row' => [
+                'display' => 'grid'
+            ],
             $selector => [
                 'grid-template-columns' => 'repeat(' . $settings['num_columns'] . ', 1fr)',
                 'grid-gap' => $settings['grid_gap'] . 'px'
@@ -59,6 +62,7 @@ class FacetWP_Builder
                     'post:id'       => $post->ID,
                     'post:name'     => $post->post_name,
                     'post:type'     => $post->post_type,
+                    'post:title'    => $post->post_title,
                     'post:url'      => get_permalink()
                 ];
 
@@ -81,11 +85,15 @@ class FacetWP_Builder
 
             endwhile;
         }
+        else {
+            $no_results_text = $settings['no_results_text'] ?? '';
+            $output .= do_shortcode( $no_results_text );
+        }
 
         $output .= '</div>';
 
         $output .= $this->render_css();
- 
+
         return $output;
     }
 
@@ -269,7 +277,7 @@ class FacetWP_Builder
 
             // Use wp_date() to support i18n
             if ( $date ) {
-                $value = wp_date( $settings['date_format'], $date->getTimestamp() );
+                $value = wp_date( $settings['date_format'], $date->getTimestamp(), new DateTimeZone( 'UTC' ) );
             }
         }
 
@@ -459,7 +467,14 @@ class FacetWP_Builder
                 $target = ' target="' . $target . '"';
             }
 
-            $value = '<a href="' . $href . '"' . $target . '>' . $value . '</a>';
+            // links around buttons is invalid HTML, so use a form
+            if (0 === strpos( $value, '<button' ) ) {
+                $value = '<form action="' . $href . '">' . $value . '</form>';
+            }
+            // normal text link
+            else {
+                $value = '<a href="' . $href . '"' . $target . '>' . $value . '</a>';
+            }
         }
 
         return $value;
@@ -573,12 +588,17 @@ class FacetWP_Builder
 
             // Cast as decimal for more accuracy
             $type = ( 'NUMERIC' == $type ) ? 'DECIMAL(16,4)' : $type;
+            $exists_bypass = false;
             $value_bypass = false;
 
             // Clear the value for certain compare types
             if ( in_array( $compare, [ 'EXISTS', 'NOT EXISTS', 'EMPTY', 'NOT EMPTY' ] ) ) {
                 $value_bypass = true;
                 $value = '';
+            }
+
+            if ( in_array( $compare, [ 'EXISTS', 'NOT EXISTS' ] ) ) {
+                $exists_bypass = true;
             }
 
             // If "EMPTY", use "=" compare type w/ empty string value
@@ -610,20 +630,12 @@ class FacetWP_Builder
             }
 
             if ( 'ID' == $key ) {
-                if ( 'IN' == $compare ) {
-                    $post_in = $value;
-                }
-                else {
-                    $post_not_in = $value;
-                }
+                $arg_name = ( 'IN' == $compare ) ? 'post_in' : 'post_not_in';
+                $$arg_name = $value;
             }
             elseif ( 'post_author' == $key ) {
-                if ( 'IN' == $compare ) {
-                    $author_in = $value;
-                }
-                else {
-                    $author_not_in = $value;
-                }
+                $arg_name = ( 'IN' == $compare ) ? 'author_in' : 'author_not_in';
+                $$arg_name = $value;
             }
             elseif ( 'post_status' == $key ) {
                 $post_status = $value;
@@ -649,7 +661,7 @@ class FacetWP_Builder
                     'operator' => $compare
                 ];
 
-                if ( ! $exists_clause ) {
+                if ( ! $exists_bypass ) {
                     $temp['terms'] = $value;
                 }
 
@@ -662,7 +674,7 @@ class FacetWP_Builder
                     'type' => $type
                 ];
 
-                if ( ! $exists_clause ) {
+                if ( ! $exists_bypass ) {
                     $temp['value'] = $value;
                 }
 
@@ -769,11 +781,11 @@ class FacetWP_Builder
         }
 
         $data_sources['posts']['choices'] = [
-            'ID' => 'ID',
-            'post_author' => 'Post Author',
-            'post_status' => 'Post Status',
-            'post_date' => 'Post Date',
-            'post_modified' => 'Post Modified'
+            'ID'                => 'ID',
+            'post_author'       => 'Post Author',
+            'post_status'       => 'Post Status',
+            'post_date'         => 'Post Date',
+            'post_modified'     => 'Post Modified'
         ];
 
         return apply_filters( 'facetwp_builder_query_data', [

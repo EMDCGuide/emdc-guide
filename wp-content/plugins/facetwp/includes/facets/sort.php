@@ -4,7 +4,6 @@ class FacetWP_Facet_Sort extends FacetWP_Facet
 {
 
     public $sort_options = [];
-    public $sort_facet = [];
 
 
     function __construct() {
@@ -20,16 +19,16 @@ class FacetWP_Facet_Sort extends FacetWP_Facet
      * Render the sort facet
      */
     function render( $params ) {
-        $facet = $params['facet'];
+        $facet = $this->parse_sort_facet( $params['facet'] );
         $selected_values = (array) $params['selected_values'];
 
         $label = facetwp_i18n( $facet['default_label'] );
         $output = '<option value="">' . esc_attr( $label ) . '</option>';
 
-        foreach ( $facet['sort_options'] as $choice ) {
+        foreach ( $facet['sort_options'] as $key => $choice ) {
             $label = facetwp_i18n( $choice['label'] );
-            $selected = in_array( $choice['name'], $selected_values ) ? ' selected' : '';
-            $output .= '<option value="' . esc_attr( $choice['name'] ) . '"' . $selected . '>' . esc_attr( $label ) . '</option>';
+            $selected = in_array( $key, $selected_values ) ? ' selected' : '';
+            $output .= '<option value="' . esc_attr( $key ) . '"' . $selected . '>' . esc_attr( $label ) . '</option>';
         }
 
         return '<select>' . $output . '</select>';
@@ -69,21 +68,50 @@ class FacetWP_Facet_Sort extends FacetWP_Facet
 
 
     /**
+     * Convert a sort facet's sort options into WP_Query arguments
+     * @since 4.0.8
+     */
+    function parse_sort_facet( $facet ) {
+        $sort_options = [];
+
+        foreach ( $facet['sort_options'] as $row ) {
+            $parsed = FWP()->builder->parse_query_obj([ 'orderby' => $row['orderby'] ]);
+
+            $sort_options[ $row['name'] ] = [
+                'label' => $row['label'],
+                'query_args' => array_intersect_key( $parsed, [
+                    'meta_query' => true,
+                    'orderby' => true
+                ])
+            ];
+        }
+
+        $sort_options = apply_filters( 'facetwp_facet_sort_options', $sort_options, [
+            'facet' => $facet,
+            'template_name' => FWP()->facet->template['name']
+        ]);
+
+        $facet['sort_options'] = $sort_options;
+
+        return $facet;
+    }
+
+
+    /**
      * Handle both sort facets and the (old) sort feature
+     * @since 4.0.6
      */
     function apply_sort( $query_args, $class ) {
 
-        // Does a sort facet exist?
         foreach ( $class->facets as $facet ) {
             if ( 'sort' == $facet['type'] ) {
-                $this->sort_facet = $facet;
+                $sort_facet = $this->parse_sort_facet( $facet );
                 break;
             }
         }
 
-        // Sort shortcode handler
+        // Support the (old) sort feature
         $sort_value = 'default';
-        $this->template = $class->template;
         $this->sort_options = $this->get_sort_options();
 
         if ( ! empty( $class->ajax_params['extras']['sort'] ) ) {
@@ -102,33 +130,13 @@ class FacetWP_Facet_Sort extends FacetWP_Facet
             $query_args['orderby'] = 'post__in';
         }
 
-        // Sort facet handler
-        if ( ! empty( $this->sort_facet['selected_values'] ) ) {
-            $chosen_sort = $this->sort_facet['selected_values'][0];
-            $sort_options = [];
+        // Support the (new) sort facet
+        if ( ! empty( $sort_facet['selected_values'] ) ) {
+            $chosen = $sort_facet['selected_values'][0];
+            $sort_options = $sort_facet['sort_options'];
 
-            foreach ( $this->sort_facet['sort_options'] as $row ) {
-                $parsed = FWP()->builder->parse_query_obj([
-                    'orderby' => $row['orderby']
-                ]);
-
-                $sort_options[ $row['name'] ] = [
-                    'label' => $row['label'],
-                    'query_args' => array_intersect_key( $parsed, [
-                        'meta_query' => true,
-                        'orderby' => true
-                    ])
-                ];
-            }
-
-            // Mimic the (old) facetwp_sort_options hook
-            $sort_options = apply_filters( 'facetwp_facet_sort_options', $sort_options, [
-                'facet' => $this->sort_facet,
-                'template' => $this->template
-            ]);
-
-            if ( isset( $sort_options[ $chosen_sort ] ) ) {
-                $qa = $sort_options[ $chosen_sort ]['query_args'];
+            if ( isset( $sort_options[ $chosen ] ) ) {
+                $qa = $sort_options[ $chosen ]['query_args'];
 
                 if ( isset( $qa['meta_query'] ) ) {
                     $meta_query = $query_args['meta_query'] ?? [];
@@ -145,6 +153,7 @@ class FacetWP_Facet_Sort extends FacetWP_Facet
 
     /**
      * Generate choices for the (old) sort feature
+     * @since 4.0.6
      */
     function get_sort_options() {
 
@@ -184,13 +193,14 @@ class FacetWP_Facet_Sort extends FacetWP_Facet
         ];
 
         return apply_filters( 'facetwp_sort_options', $options, [
-            'template_name' => $this->template['name'],
+            'template_name' => FWP()->facet->template['name'],
         ] );
     }
 
 
     /**
      * Render the (old) sort feature
+     * @since 4.0.6
      */
     function render_sort_feature( $output, $params ) {
         $has_sort = isset( $params['extras']['sort'] );
@@ -207,7 +217,7 @@ class FacetWP_Facet_Sort extends FacetWP_Facet
 
             $output['sort'] = apply_filters( 'facetwp_sort_html', $html, [
                 'sort_options' => $this->sort_options,
-                'template_name' => $this->template['name'],
+                'template_name' => FWP()->facet->template['name'],
             ]);
         }
 

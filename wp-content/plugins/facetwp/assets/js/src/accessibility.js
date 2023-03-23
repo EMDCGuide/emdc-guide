@@ -41,8 +41,8 @@
                 $(this).attr('aria-label', $(this).find('option:selected').text());
             });
 
-            // search
-            $('.facetwp-search').each(function() {
+            // search, date
+            $('.facetwp-search, .facetwp-date').each(function() {
                 $(this).attr('aria-label', $(this).attr('placeholder'));
             });
 
@@ -59,6 +59,8 @@
                 $(this).attr('aria-haspopup', 'true');
                 $(this).attr('aria-expanded', $(this).hasClass('fs-open') ? 'true' : 'false');
             });
+
+            $('.facetwp-type-fselect .facetwp-dropdown').attr('aria-hidden', 'true');
 
             // pager
             $('.facetwp-pager').attr('role', 'navigation');

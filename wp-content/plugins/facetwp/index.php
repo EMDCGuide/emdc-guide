@@ -2,11 +2,11 @@
 /*
 Plugin Name: FacetWP
 Description: Advanced Filtering for WordPress
-Version: 4.0.7
+Version: 4.1.7
 Author: FacetWP, LLC
 Author URI: https://facetwp.com/
 
-Copyright 2022 FacetWP, LLC
+Copyright 2023 FacetWP, LLC
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -27,12 +27,24 @@ defined( 'ABSPATH' ) or exit;
 class FacetWP
 {
 
-    public $ajax;
-    public $facet;
+    private static $instance;
+
+    public $filtered_post_ids;
+    public $unfiltered_post_ids;
+    public $is_filtered;
+
+    public $init;
+    public $api;
     public $helper;
+    public $facet;
+    public $settings;
+    public $diff;
     public $indexer;
     public $display;
-    private static $instance;
+    public $builder;
+    public $request;
+    public $ajax;
+    public $acf;
 
 
     function __construct() {
@@ -44,7 +56,7 @@ class FacetWP
         }
 
         // setup variables
-        define( 'FACETWP_VERSION', '4.0.7' );
+        define( 'FACETWP_VERSION', '4.1.7' );
         define( 'FACETWP_DIR', dirname( __FILE__ ) );
         define( 'FACETWP_URL', plugins_url( '', __FILE__ ) );
         define( 'FACETWP_BASENAME', plugin_basename( __FILE__ ) );

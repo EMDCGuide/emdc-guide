@@ -36,6 +36,9 @@ class FacetWP_Renderer
     /* (array) The final WP_Query object */
     public $query;
 
+    /* (array) Convenience var */
+    public $facet_types;
+
 
     function __construct() {
         $this->facet_types = FWP()->helper->facet_types;
@@ -48,7 +51,6 @@ class FacetWP_Renderer
      * @return array
      */
     function render( $params ) {
-        global $wpdb;
 
         $output = [
             'facets'        => [],
@@ -334,7 +336,7 @@ class FacetWP_Renderer
             // Subsequent ajax requests
             elseif ( ! empty( $this->http_params['archive_args'] ) ) {
                 foreach ( $this->http_params['archive_args'] as $key => $val ) {
-                    if ( in_array( $key, [ 'cat', 'tag_id', 'taxonomy', 'term' ] ) ) {
+                    if ( in_array( $key, [ 'cat', 'tag_id', 'taxonomy', 'term', 's' ] ) ) {
                         $defaults[ $key ] = $val;
                     }
                 }
@@ -361,8 +363,11 @@ class FacetWP_Renderer
      * Get ALL post IDs for the matching query
      * @return array An array of post IDs
      */
-    function get_filtered_post_ids( $query_args ) {
-        global $wpdb;
+    function get_filtered_post_ids( $query_args = [] ) {
+
+        if ( empty( $query_args ) ) {
+            $query_args = $this->query_args;
+        }
 
         // Only get relevant post IDs
         $args = array_merge( $query_args, [
