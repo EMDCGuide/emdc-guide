@@ -19,15 +19,14 @@ class Scripts
     public function register()
     {
         add_action('enqueue_block_assets', [$this, 'registerPrestoComponents']);
-        add_action('enqueue_block_editor_assets', [$this, 'registerPrestoComponents']);
-        add_action('wp_enqueue_scripts', [$this, 'registerPrestoComponents']);
-        add_action('admin_init', [$this, 'registerPrestoComponents']);
+        add_action('init', [$this, 'registerPrestoComponents']);
         add_filter('script_loader_tag', [$this, 'prestoComponentsTag'], 10, 3);
 
-        // block assets
+        // block assets.
         add_action('enqueue_block_editor_assets', [$this, 'blockEditorAssets']);
         add_action('enqueue_block_assets', [$this, 'blockAssets']);
 
+        // learndash.
         add_action('admin_enqueue_scripts', [$this, 'learndashAdminScripts']);
 
         // elementor editor scripts
@@ -104,9 +103,6 @@ class Scripts
         if ('presto-components' === $handle) {
             $tag = '<script src="' . $source . '" type="module" defer></script>';
         }
-        if ('presto-components-static' === $handle) {
-            $tag = '<script src="' . $source . '" defer></script>';
-        }
 
         return $tag;
     }
@@ -116,27 +112,8 @@ class Scripts
      */
     public function registerPrestoComponents()
     {
-        $deps = [
-            'jquery',
-            'wp-hooks',
-            'wp-i18n'
-        ];
 
-        wp_register_script(
-            'presto-components',
-            PRESTO_PLAYER_PLUGIN_URL . "dist/components/web-components/web-components.esm.js",
-            $deps,
-            filemtime(PRESTO_PLAYER_PLUGIN_DIR . "dist/components/web-components/web-components.esm.js"),
-            true
-        );
-
-        wp_register_script(
-            'presto-components-static',
-            PRESTO_PLAYER_PLUGIN_URL . "src/player/player-static.js",
-            $deps,
-            filemtime(PRESTO_PLAYER_PLUGIN_DIR . "src/player/player-static.js"),
-            true
-        );
+        $file = is_admin() || !Setting::get('performance', 'module_enabled') ? "src/player/player-static.js" : "dist/components/web-components/web-components.esm.js";
 
         wp_register_script(
             'hls.js',
@@ -144,6 +121,55 @@ class Scripts
             [],
             '0.14.17',
             true
+        );
+
+        $deps = [
+            'jquery',
+            'wp-hooks',
+            'wp-i18n',
+        ];
+
+        if (is_admin()) {
+            $deps[] = 'hls.js';
+        }
+
+        wp_register_script(
+            'presto-components',
+            PRESTO_PLAYER_PLUGIN_URL . $file,
+            $deps,
+            filemtime(PRESTO_PLAYER_PLUGIN_DIR . $file),
+            true
+        );
+
+        wp_localize_script('presto-components', 'prestoComponents', [
+            'url' => PRESTO_PLAYER_PLUGIN_URL . "dist/components/web-components/web-components.esm.js?ver=" . filemtime(PRESTO_PLAYER_PLUGIN_DIR . "dist/components/web-components/web-components.esm.js")
+        ]);
+
+        if (function_exists('wp_set_script_translations')) {
+            wp_set_script_translations('presto-components', 'presto-player');
+        }
+
+        wp_localize_script(
+            'presto-components',
+            'prestoPlayer',
+            apply_filters('presto-settings-block-js-options', [
+                'plugin_url' => esc_url_raw(trailingslashit(PRESTO_PLAYER_PLUGIN_URL)),
+                'logged_in' => is_user_logged_in(),
+                'root' => esc_url_raw(get_rest_url()),
+                'nonce' => wp_create_nonce('wp_rest'),
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'isAdmin' => is_admin(),
+                'isSetup' => [
+                    'bunny' => false
+                ],
+                'proVersion' => Plugin::proVersion(),
+                'isPremium' => Plugin::isPro(),
+                'wpVersionString' => 'wp/v2/',
+                'prestoVersionString' => 'presto-player/v1/',
+                'debug' => defined('SCRIPT_DEBUG') && SCRIPT_DEBUG,
+                'debug_navigator' => defined('PRESTO_DEBUG_NAVIGATOR') && PRESTO_DEBUG_NAVIGATOR,
+                'i18n' => Translation::geti18n(),
+            ])
         );
     }
 
@@ -155,7 +181,6 @@ class Scripts
         if (!isset($_GET['elementor-preview'])) {
             return;
         }
-
 
         $assets = include trailingslashit(PRESTO_PLAYER_PLUGIN_DIR) . 'dist/elementor.asset.php';
         wp_enqueue_script(
@@ -353,28 +378,18 @@ class Scripts
 
     public function loadJavascript()
     {
-        $module_load = Setting::get('performance', 'module_enabled');
-
         // global styles
         if (!wp_doing_ajax() && !defined('REST_REQUEST') && !defined('PRESTO_TESTSUITE')) {
             $this->globalStyles();
         }
 
         // direct load
-        if ($module_load) {
-            $handle = 'presto-components';
+        if (Setting::get('performance', 'module_enabled') || !is_admin()) {
             // preload components
             add_action('wp_head', [$this, 'preloadComponents']);
-        } else {
-            $handle = 'presto-components-static';
-            wp_localize_script($handle, 'prestoComponents', [
-                'url' => PRESTO_PLAYER_PLUGIN_URL . "dist/components/web-components/web-components.esm.js?ver=" . filemtime(PRESTO_PLAYER_PLUGIN_DIR . "dist/components/web-components/web-components.esm.js")
-            ]);
         }
 
-        wp_enqueue_script($handle);
-
-        return $handle;
+        wp_enqueue_script('presto-components');
     }
 
     /**
@@ -389,12 +404,7 @@ class Scripts
             return;
         }
 
-        $handle = $this->loadJavascript();
-
-        // translations
-        if (function_exists('wp_set_script_translations')) {
-            wp_set_script_translations($handle, 'presto-player');
-        }
+        $this->loadJavascript();
 
         // fallback styles and script to load iframes
         add_action('wp_footer', function () {
@@ -402,29 +412,6 @@ class Scripts
             if (!apply_filters('presto_player/scripts/load_iframe_fallback', false)) return;
             $this->printFallbackScriptsAndStyles();
         });
-
-        wp_localize_script(
-            $handle,
-            'prestoPlayer',
-            apply_filters('presto-settings-block-js-options', [
-                'plugin_url' => esc_url_raw(trailingslashit(PRESTO_PLAYER_PLUGIN_URL)),
-                'logged_in' => is_user_logged_in(),
-                'root' => esc_url_raw(get_rest_url()),
-                'nonce' => wp_create_nonce('wp_rest'),
-                'ajaxurl' => admin_url('admin-ajax.php'),
-                'isAdmin' => is_admin(),
-                'isSetup' => [
-                    'bunny' => false
-                ],
-                'proVersion' => Plugin::proVersion(),
-                'isPremium' => Plugin::isPro(),
-                'wpVersionString' => 'wp/v2/',
-                'prestoVersionString' => 'presto-player/v1/',
-                'debug' => defined('SCRIPT_DEBUG') && SCRIPT_DEBUG,
-                'debug_navigator' => defined('PRESTO_DEBUG_NAVIGATOR') && PRESTO_DEBUG_NAVIGATOR,
-                'i18n' => Translation::geti18n(),
-            ])
-        );
     }
 
     public function licenseScripts($hook)

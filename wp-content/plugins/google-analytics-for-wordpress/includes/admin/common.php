@@ -79,6 +79,27 @@ function monsterinsights_is_reports_page()
 }
 
 /**
+ * Determine if the current page is any of the MI admin page.
+ *
+ * @return bool
+ */
+function monsterinsights_is_own_admin_page() {
+	if ( monsterinsights_is_reports_page() ) {
+		return true;
+	}
+
+	if ( monsterinsights_is_settings_page() ) {
+		return true;
+	}
+
+	if ( 'dashboard_page_monsterinsights-getting-started' === get_current_screen()->id ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Loads styles for all MonsterInsights-based Administration Screens.
  *
  * @return null Return early if not on the proper screen.

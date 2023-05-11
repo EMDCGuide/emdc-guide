@@ -47,3 +47,14 @@ if (null !== submenu_item) {
     }
   }
 }
+
+var automated_submenu_item = document.querySelector('.monsterinsights-automated-submenu');
+if (null !== automated_submenu_item) {
+  var anchorTag = automated_submenu_item.parentNode;
+
+  if ( anchorTag ) {
+    anchorTag.setAttribute("target", "_blank");
+    anchorTag.setAttribute("rel", "noopener");
+    anchorTag.setAttribute("style", "color:#1da867");
+  }
+}

@@ -24,7 +24,7 @@
 			AstraAdvancedHooks.initLayoutSettings();
 			AstraAdvancedHooks.timeDurationEnabled();
 
-			if( document.body.classList.contains('block-editor-page') ) {
+			if( astraCustomHookVars.is_complete_package && document.body.classList.contains('block-editor-page') ) {
 				wp.data.subscribe(function () {
 					setTimeout( function () {
 						AstraAdvancedHooks.code_editor_switcher();
@@ -158,6 +158,12 @@
 					$('body').removeClass( 'astra-php-snippt-enabled' );
 					url = url.replace( '&wordpress_editor', '' );
 					window.location.replace( url + '&code_editor' );
+				} else {
+					if ( $('body').hasClass( 'block-editor-page' ) ) {
+						window.location = url + '&code_editor';
+					} else {
+						window.location = url + '&wordpress_editor';
+					}
 				}
 			});
 		},

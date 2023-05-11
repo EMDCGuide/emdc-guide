@@ -16,6 +16,21 @@ class SelfHostedBlock extends Block
     protected $name = 'self-hosted';
 
     /**
+     * Register the block type.
+     *
+     * @return void
+     */
+    public function registerBlockType()
+    {
+        register_block_type(
+            PRESTO_PLAYER_PLUGIN_DIR . 'src/admin/blocks/blocks/hosted',
+            array(
+                'render_callback' => [$this, 'html'],
+            )
+        );
+    }
+
+    /**
      * Bail if user cannot access video
      *
      * @return void

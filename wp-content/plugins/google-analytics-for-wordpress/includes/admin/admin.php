@@ -73,21 +73,24 @@ function monsterinsights_admin_menu()
 		add_submenu_page($hook, __('Addons:', 'google-analytics-for-wordpress'), '<span style="color:' . monsterinsights_menu_highlight_color() . '"> ' . __('Addons', 'google-analytics-for-wordpress') . '</span>', 'monsterinsights_save_settings', $submenu_base . '#/addons');
 	}
 
-	$plugin_info = get_plugin_data(MONSTERINSIGHTS_PLUGIN_FILE);
-	if (strstr($plugin_info['AuthorName'], 'Exact')) {
-		add_submenu_page(
-			$hook,
-			__('UserFeedback:', 'google-analytics-for-wordpress'),
-			__('UserFeedback', 'google-analytics-for-wordpress') . $newIndicator,
-			'manage_options',
-			$submenu_base . '#/userfeedback'
-		);
-	}
+	add_submenu_page(
+		$hook,
+		__('UserFeedback:', 'google-analytics-for-wordpress'),
+		__('UserFeedback', 'google-analytics-for-wordpress') . $newIndicator,
+		'manage_options',
+		$submenu_base . '#/userfeedback'
+	);
 
 	// Add About us page.
 	add_submenu_page($hook, __('About Us:', 'google-analytics-for-wordpress'), __('About Us', 'google-analytics-for-wordpress'), 'manage_options', $submenu_base . '#/about');
 
+	if (!monsterinsights_is_pro_version()) {
+		// automated promotion
+		monsterinsights_automated_menu($hook);
+	}
+
 	add_submenu_page($hook, __('Growth Tools:', 'google-analytics-for-wordpress'), __('Growth Tools', 'google-analytics-for-wordpress'), 'manage_options', $submenu_base . '#/growth-tools');
+
 
 	if (!monsterinsights_is_pro_version()) {
 		add_submenu_page($hook, __('Upgrade to Pro:', 'google-analytics-for-wordpress'), '<span class="monsterinsights-upgrade-submenu"> ' . __('Upgrade to Pro', 'google-analytics-for-wordpress') . '</span>', 'monsterinsights_save_settings', monsterinsights_get_upgrade_link('admin-menu', 'submenu', "https://www.monsterinsights.com/lite/"));
@@ -95,6 +98,74 @@ function monsterinsights_admin_menu()
 }
 
 add_action('admin_menu', 'monsterinsights_admin_menu');
+
+
+function monsterinsights_automated_menu($hook){
+	$display = false;
+
+	$now = apply_filters('monsterinsights_automated_promotion_date', wp_date('M d, Y h:i:s a'));
+	$conditions = [
+		[
+			'title' => __('Earth Day', 'google-analytics-for-wordpress'),
+			'start_time' => wp_date('M d, Y h:i:s a', strtotime('Apr 17, 2023')),
+			'end_time' => wp_date('M d, Y h:i:s a', strtotime('Apr 18, 2023')),
+			'utm_campaign' => 'lite-promo',
+			'utm_source' => 'liteplugin',
+			'utm_medium' => 'earth-day',
+		],
+		[
+			'title' => __('Cinco De Mayo!', 'google-analytics-for-wordpress'),
+			'start_time' => wp_date('M d, Y h:i:s a', strtotime('May 01, 2023')),
+			'end_time' => wp_date('M d, Y h:i:s a', strtotime('May 08, 2023')),
+			'utm_campaign' => 'lite-promo',
+			'utm_source' => 'liteplugin',
+			'utm_medium' => 'cinco-de-mayo',
+		],
+		[
+			'title' => __('Upgrade to GA4', 'google-analytics-for-wordpress'),
+			'start_time' => wp_date('M d, Y h:i:s a', strtotime('Jun 01, 2023')),
+			'end_time' => wp_date('M d, Y h:i:s a', strtotime('July 01, 2023')),
+			'utm_campaign' => 'lite-promo',
+			'utm_source' => 'liteplugin',
+			'utm_medium' => 'goodbye-ga3',
+		],
+		[
+			'title' => __('Summer Sale', 'google-analytics-for-wordpress'),
+			'start_time' => wp_date('M d, Y h:i:s a', strtotime('Jul 29, 2023')),
+			'end_time' => wp_date('M d, Y h:i:s a', strtotime('Aug 05, 2023')),
+			'utm_campaign' => 'lite-promo',
+			'utm_source' => 'liteplugin',
+			'utm_medium' => 'dogdays',
+		],
+		[
+			'title' => __('Fortune Cookie Day', 'google-analytics-for-wordpress'),
+			'start_time' => wp_date('M d, Y h:i:s a', strtotime('Sep 12, 2023')),
+			'end_time' => wp_date('M d, Y h:i:s a', strtotime('Sep 13, 2023')),
+			'utm_campaign' => 'lite-promo',
+			'utm_source' => 'liteplugin',
+			'utm_medium' => 'fortune-cookie',
+		],
+		[
+			'title' => __('Halloween Sale', 'google-analytics-for-wordpress'),
+			'start_time' => wp_date('M d, Y h:i:s a', strtotime('Oct 26, 2023')),
+			'end_time' => wp_date('M d, Y h:i:s a', strtotime('Nov 04, 2023')),
+			'utm_campaign' => 'lite-promo',
+			'utm_source' => 'liteplugin',
+			'utm_medium' => 'halloween',
+		],
+	];
+
+	foreach($conditions as $key => $condition){
+		if(strtotime($now) >= strtotime($condition['start_time']) && strtotime($now) <= strtotime($condition['end_time'])){
+			add_submenu_page($hook, $condition['title'], '<span class="monsterinsights-automated-submenu"> ' . $condition['title'] . '</span>', 'monsterinsights_save_settings', monsterinsights_get_upgrade_link($condition['utm_medium'], $condition['utm_campaign'], "https://www.monsterinsights.com/lite-promo/"));
+			break;
+		}
+	}
+	
+
+
+	
+}
 
 /**
  * Add this separately so all the Woo menu items are loaded and the position parameter works correctly.
@@ -355,16 +426,16 @@ function monsterinsights_admin_setup_notices()
 	$is_plugins_page = 'plugins' === get_current_screen()->id;
 
 	// 1. Google Analytics not authenticated
-	if (!is_network_admin() && !monsterinsights_get_ua() && !monsterinsights_get_v4_id() && !defined('MONSTERINSIGHTS_DISABLE_TRACKING')) {
+	if ( ! is_network_admin() && ! monsterinsights_get_ua() && ! monsterinsights_get_v4_id() && ! defined( 'MONSTERINSIGHTS_DISABLE_TRACKING' ) && ! monsterinsights_is_own_admin_page() ) {
 
-		$submenu_base = is_network_admin() ? add_query_arg('page', 'monsterinsights_network', network_admin_url('admin.php')) : add_query_arg('page', 'monsterinsights_settings', admin_url('admin.php'));
-		$title        = esc_html__('Please Setup Website Analytics to See Audience Insights', 'google-analytics-for-wordpress');
-		$primary      = esc_html__('Connect MonsterInsights and Setup Website Analytics', 'google-analytics-for-wordpress');
-		$urlone       = is_network_admin() ? network_admin_url('admin.php?page=monsterinsights-onboarding') : admin_url('admin.php?page=monsterinsights-onboarding');
-		$secondary    = esc_html__('Learn More', 'google-analytics-for-wordpress');
+		$submenu_base = is_network_admin() ? add_query_arg( 'page', 'monsterinsights_network', network_admin_url( 'admin.php' ) ) : add_query_arg( 'page', 'monsterinsights_settings', admin_url( 'admin.php' ) );
+		$title        = esc_html__( 'Please Setup Website Analytics to See Audience Insights', 'google-analytics-for-wordpress' );
+		$primary      = esc_html__( 'Please Connect Your Website to MonsterInsights', 'google-analytics-for-wordpress' );
+		$urlone       = is_network_admin() ? network_admin_url( 'admin.php?page=monsterinsights-onboarding' ) : admin_url( 'admin.php?page=monsterinsights-onboarding' );
+		$secondary    = esc_html__( 'Learn More', 'google-analytics-for-wordpress' );
 		$urltwo       = $submenu_base . '#/about/getting-started';
-		$message      = esc_html__('MonsterInsights, WordPress analytics plugin, helps you connect your website with Google Analytics, so you can see how people find and use your website. Over 3 million website owners use MonsterInsights to see the stats that matter and grow their business.', 'google-analytics-for-wordpress');
-		echo '<div class="notice notice-info"><p style="font-weight:700">' . esc_html($title) . '</p><p>' . esc_html($message) . '</p><p><a href="' . esc_url($urlone) . '" class="button-primary">' . esc_html($primary) . '</a>&nbsp;&nbsp;&nbsp;<a href="' . esc_url($urltwo) . '" class="button-secondary">' . esc_html($secondary) . '</a></p></div>';
+		$message      = esc_html__( 'MonsterInsights, the #1 Wordpress Analytics Plugin, helps you easily connect your website to Google Analytics, so that you can see how people find and use your website. Over 3 million website owners use MonsterInsights to see the stats that matter and grow their business.', 'google-analytics-for-wordpress' );
+		echo '<div class="notice notice-info"><p style="font-weight:700">' . $title . '</p><p>' . $message . '</p><p><a href="' . $urlone . '" class="button-primary">' . $primary . '</a>&nbsp;&nbsp;&nbsp;<a href="' . $urltwo . '" class="button-secondary">' . $secondary . '</a></p></div>';
 
 		return;
 	}

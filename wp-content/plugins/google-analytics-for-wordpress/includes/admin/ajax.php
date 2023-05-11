@@ -267,7 +267,7 @@ function monsterinsights_handle_ga_queue_response() {
     $auth = MonsterInsights()->auth;
 
     //  Authenticate with public key
-    $key = sanitize_text_field($_POST['key']);
+    $key = sanitize_text_field($_REQUEST['key']);
 
     $site_key = is_network_admin() ? $auth->get_network_key() : $auth->get_key();
 
@@ -286,14 +286,14 @@ function monsterinsights_handle_ga_queue_response() {
         ], 400);
     }
 
-    if ( empty($_POST['profile']) || empty($_POST['mp_secret']) ) {
+    if ( empty($_REQUEST['profile']) || empty($_REQUEST['mp_secret']) ) {
         wp_send_json_error([
             'error'     => __( 'Profile or secret key missing.', 'google-analytics-for-wordpress' )
         ], 400);
     }
 
-    $v4_id = sanitize_text_field($_POST['profile']);
-    $mp_secret = sanitize_text_field($_POST['mp_secret']);
+    $v4_id = sanitize_text_field($_REQUEST['profile']);
+    $mp_secret = sanitize_text_field($_REQUEST['mp_secret']);
 
     //  Update dual tracking
     if ( is_network_admin() ) {
@@ -323,7 +323,7 @@ function monsterinsights_handle_get_plugin_info() {
     $auth = MonsterInsights()->auth;
 
     //  Authenticate with public key
-    $key = sanitize_text_field($_POST['key']);
+    $key = sanitize_text_field($_REQUEST['key']);
 
     $site_key = is_network_admin() ? $auth->get_network_key() : $auth->get_key();
 

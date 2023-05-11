@@ -63,7 +63,7 @@ final class MonsterInsights_API_Auth {
 	}
 
 	public function generate_tt() {
-		return hash( 'sha512', wp_generate_password( 128, true, true ) . AUTH_SALT . uniqid( "", true ) );
+		return defined( 'AUTH_SALT' ) ? hash( 'sha512', wp_generate_password( 128, true, true ) . AUTH_SALT . uniqid( "", true ) ) : hash( 'sha512', wp_generate_password( 128, true, true ) . uniqid( "", true ) );
 	}
 
 	public function validate_tt( $passed_tt = '' ) {
@@ -656,9 +656,9 @@ final class MonsterInsights_API_Auth {
 			return false;
 		} else {
 			if ( $this->is_network_admin() ) {
-				MonsterInsights()->auth->delete_network_analytics_profile( true );
+				MonsterInsights()->auth->delete_network_analytics_profile( false );
 			} else {
-				MonsterInsights()->auth->delete_analytics_profile( true );
+				MonsterInsights()->auth->delete_analytics_profile( false );
 
 			}
 

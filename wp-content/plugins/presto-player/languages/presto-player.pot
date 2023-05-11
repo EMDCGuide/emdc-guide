@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-02-22T16:00:43+00:00\n"
+"POT-Creation-Date: 2023-05-01T16:03:18+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 
@@ -51,38 +51,38 @@ msgstr ""
 msgid "Watch Time"
 msgstr ""
 
-#: admin/analytics/components/TopUsers.js:48
-#: admin/analytics/components/TopVideos.js:49
+#: admin/analytics/components/TopUsers.js:49
+#: admin/analytics/components/TopVideos.js:50
 #: admin/blocks/blocks/bunny/popup/stream/Sidebar.js:97
 #: admin/blocks/shared/media/MediaPopup.js:108
 #: admin/settings/pages/parts/Webhooks/NewWebhook.js:72
 msgid "Name"
 msgstr ""
 
-#: admin/analytics/components/TopUsers.js:53
-#: admin/analytics/components/TopVideos.js:62
+#: admin/analytics/components/TopUsers.js:54
+#: admin/analytics/components/TopVideos.js:63
 msgid "Total View"
 msgstr ""
 
-#: admin/analytics/components/TopUsers.js:58
-#: admin/analytics/components/TopVideos.js:69
+#: admin/analytics/components/TopUsers.js:59
+#: admin/analytics/components/TopVideos.js:70
 msgid "Avg View Time"
 msgstr ""
 
-#: admin/analytics/components/TopUsers.js:71
+#: admin/analytics/components/TopUsers.js:72
 msgid "Top Users"
 msgstr ""
 
-#: admin/analytics/components/TopVideos.js:55
+#: admin/analytics/components/TopVideos.js:56
 #: admin/integrations/divi/fields/VideoSelector/VideoSelector.jsx:113
 msgid "Untitled"
 msgstr ""
 
-#: admin/analytics/components/TopVideos.js:84
+#: admin/analytics/components/TopVideos.js:85
 msgid "View Details"
 msgstr ""
 
-#: admin/analytics/components/TopVideos.js:97
+#: admin/analytics/components/TopVideos.js:98
 msgid "Top Media"
 msgstr ""
 
@@ -146,12 +146,12 @@ msgstr ""
 msgid "Analytics are currently disabled. To collect analytics, turn them on in your settings page."
 msgstr ""
 
-#: admin/analytics/pages/User.js:65
-#: admin/analytics/pages/Video.js:154
+#: admin/analytics/pages/User.js:66
+#: admin/analytics/pages/Video.js:149
 msgid "Back to Dashboard"
 msgstr ""
 
-#: admin/analytics/pages/User.js:116
+#: admin/analytics/pages/User.js:117
 msgid "View Profile"
 msgstr ""
 
@@ -235,7 +235,7 @@ msgstr ""
 
 #: admin/blocks/blocks/audio/AudioBlockInspectorControl.js:129
 #: admin/blocks/blocks/audio/edit.js:127
-#: admin/blocks/blocks/bunny/edit.js:419
+#: admin/blocks/blocks/bunny/edit.js:412
 #: admin/blocks/blocks/hosted/edit.js:221
 #: admin/blocks/blocks/vimeo/edit.js:130
 #: admin/blocks/blocks/youtube/edit.js:124
@@ -401,12 +401,12 @@ msgstr ""
 msgid "Private self-hosted audio block."
 msgstr ""
 
-#: admin/blocks/blocks/audio/with-player-edit.js:117
+#: admin/blocks/blocks/audio/with-player-edit.js:111
 msgid "Remove this"
 msgstr ""
 
 #: admin/blocks/blocks/bunny/APIPlaceholder.js:42
-#: admin/blocks/blocks/bunny/edit.js:329
+#: admin/blocks/blocks/bunny/edit.js:322
 #: admin/settings/pages/Integrations.js:265
 msgid "Bunny.net Video"
 msgstr ""
@@ -430,51 +430,51 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: admin/blocks/blocks/bunny/edit.js:225
+#: admin/blocks/blocks/bunny/edit.js:218
 msgid "Add/Select Private Video Stream"
 msgstr ""
 
-#: admin/blocks/blocks/bunny/edit.js:226
+#: admin/blocks/blocks/bunny/edit.js:219
 msgid "Add/Select Video Stream"
 msgstr ""
 
-#: admin/blocks/blocks/bunny/edit.js:237
+#: admin/blocks/blocks/bunny/edit.js:230
 msgid "Add/Select Private Video (Classic)"
 msgstr ""
 
-#: admin/blocks/blocks/bunny/edit.js:238
+#: admin/blocks/blocks/bunny/edit.js:231
 msgid "Add/Select Video (Classic)"
 msgstr ""
 
-#: admin/blocks/blocks/bunny/edit.js:250
+#: admin/blocks/blocks/bunny/edit.js:243
 msgid "Enable Bunny.net Stream!"
 msgstr ""
 
-#: admin/blocks/blocks/bunny/edit.js:264
+#: admin/blocks/blocks/bunny/edit.js:257
 msgid "Reconnect Stream"
 msgstr ""
 
-#: admin/blocks/blocks/bunny/edit.js:265
+#: admin/blocks/blocks/bunny/edit.js:258
 msgid "Connect Stream"
 msgstr ""
 
-#: admin/blocks/blocks/bunny/edit.js:275
+#: admin/blocks/blocks/bunny/edit.js:268
 msgid "Reconnect Storage (Classic)"
 msgstr ""
 
-#: admin/blocks/blocks/bunny/edit.js:276
+#: admin/blocks/blocks/bunny/edit.js:269
 msgid "Connect Storage (Classic)"
 msgstr ""
 
-#: admin/blocks/blocks/bunny/edit.js:283
+#: admin/blocks/blocks/bunny/edit.js:276
 msgid "Connection Options"
 msgstr ""
 
-#: admin/blocks/blocks/bunny/edit.js:328
+#: admin/blocks/blocks/bunny/edit.js:321
 msgid "Bunny.net Private Video"
 msgstr ""
 
-#: admin/blocks/blocks/bunny/edit.js:365
+#: admin/blocks/blocks/bunny/edit.js:358
 msgid "Add or select a Bunny.net video"
 msgstr ""
 
@@ -747,34 +747,34 @@ msgstr ""
 msgid "Edit Reusable Video"
 msgstr ""
 
-#: admin/blocks/blocks/reusable-edit/index.js:103
+#: admin/blocks/blocks/reusable-edit/index.js:95
 msgid "Choose a video type to get started."
 msgstr ""
 
-#: admin/blocks/blocks/reusable-edit/index.js:107
+#: admin/blocks/blocks/reusable-edit/index.js:99
 msgid "Choose a Video Type"
 msgstr ""
 
-#: admin/blocks/blocks/reusable-edit/index.js:115
+#: admin/blocks/blocks/reusable-edit/index.js:107
 #: Integrations/Elementor/VideoWidget.php:148
 msgid "Video"
 msgstr ""
 
-#: admin/blocks/blocks/reusable-edit/index.js:123
+#: admin/blocks/blocks/reusable-edit/index.js:115
 #: admin/blocks/shared/presets/Behavior.js:142
 msgid "Youtube"
 msgstr ""
 
-#: admin/blocks/blocks/reusable-edit/index.js:131
+#: admin/blocks/blocks/reusable-edit/index.js:123
 #: Integrations/Elementor/VideoWidget.php:160
 msgid "Vimeo"
 msgstr ""
 
-#: admin/blocks/blocks/reusable-edit/index.js:140
+#: admin/blocks/blocks/reusable-edit/index.js:132
 msgid "Bunny.net"
 msgstr ""
 
-#: admin/blocks/blocks/reusable-edit/index.js:151
+#: admin/blocks/blocks/reusable-edit/index.js:143
 msgid "Audio"
 msgstr ""
 
@@ -813,23 +813,23 @@ msgstr ""
 msgid "A youtube video wrapped in an awesome player."
 msgstr ""
 
-#: admin/blocks/plugins/reusable-videos/render.js:171
+#: admin/blocks/plugins/reusable-videos/render.js:170
 msgid "No videos found."
 msgstr ""
 
-#: admin/blocks/plugins/reusable-videos/render.js:176
+#: admin/blocks/plugins/reusable-videos/render.js:175
 msgid "Create A Reusable Video"
 msgstr ""
 
-#: admin/blocks/plugins/reusable-videos/render.js:194
-#: admin/blocks/plugins/reusable-videos/render.js:249
+#: admin/blocks/plugins/reusable-videos/render.js:193
+#: admin/blocks/plugins/reusable-videos/render.js:248
 #: Services/Menu.php:30
 #: Services/Menu.php:31
 msgid "Media Hub"
 msgstr ""
 
-#: admin/blocks/plugins/reusable-videos/render.js:240
-#: admin/blocks/plugins/reusable-videos/render.js:244
+#: admin/blocks/plugins/reusable-videos/render.js:239
+#: admin/blocks/plugins/reusable-videos/render.js:243
 #: Integrations/BeaverBuilder/ReusableVideoModule/Module.php:16
 #: Integrations/BeaverBuilder/ReusableVideoModule/Module.php:17
 #: Services/Menu.php:20
@@ -2588,6 +2588,69 @@ msgstr ""
 
 #: admin/ui/Pagination.js:55
 msgid "Previous"
+msgstr ""
+
+#: admin/blocks/blocks/audio/block.json
+msgctxt "block title"
+msgid "Presto Audio"
+msgstr ""
+
+#: admin/blocks/blocks/audio/block.json
+msgctxt "block description"
+msgid "A audio player wrapper."
+msgstr ""
+
+#: admin/blocks/blocks/audio/block.json
+msgctxt "block keyword"
+msgid "audio"
+msgstr ""
+
+#: admin/blocks/blocks/bunny/block.json
+msgctxt "block title"
+msgid "Presto Bunny.net Video"
+msgstr ""
+
+#: admin/blocks/blocks/bunny/block.json
+msgctxt "block description"
+msgid "Serve public video through Bunny.net CDN."
+msgstr ""
+
+#: admin/blocks/blocks/bunny/block.json
+#: admin/blocks/blocks/hosted/block.json
+#: admin/blocks/blocks/vimeo/block.json
+#: admin/blocks/blocks/youtube/block.json
+msgctxt "block keyword"
+msgid "video"
+msgstr ""
+
+#: admin/blocks/blocks/hosted/block.json
+msgctxt "block title"
+msgid "Presto Video"
+msgstr ""
+
+#: admin/blocks/blocks/hosted/block.json
+msgctxt "block description"
+msgid "Presto Self-hosted video block."
+msgstr ""
+
+#: admin/blocks/blocks/vimeo/block.json
+msgctxt "block title"
+msgid "Presto Vimeo Video"
+msgstr ""
+
+#: admin/blocks/blocks/vimeo/block.json
+msgctxt "block description"
+msgid "A vimeo video wrapped in an awesome player."
+msgstr ""
+
+#: admin/blocks/blocks/youtube/block.json
+msgctxt "block title"
+msgid "Presto Youtube"
+msgstr ""
+
+#: admin/blocks/blocks/youtube/block.json
+msgctxt "block description"
+msgid "Presto YouTube block."
 msgstr ""
 
 #: Attachment.php:140

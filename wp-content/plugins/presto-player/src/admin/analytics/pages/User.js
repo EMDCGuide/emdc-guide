@@ -22,7 +22,8 @@ const User = ({ route, startDate, endDate, setStartDate, setEndDate }) => {
   const [error, setError] = useState("");
 
   const back = () => {
-    history.push(`#/`);
+    const { search } = history.location;
+    history.push(`${search}#/`);
   };
 
   const getUser = async () => {

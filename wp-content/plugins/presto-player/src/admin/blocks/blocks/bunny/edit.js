@@ -50,15 +50,8 @@ export default compose([withPlayerData(), withPlayerEdit()])(
       renderKey,
       defaultPreset,
     }) => {
-      const {
-        poster,
-        src,
-        id,
-        tracks,
-        visibility,
-        previewSrc,
-        thumbnail,
-      } = attributes;
+      const { poster, src, id, tracks, visibility, previewSrc, thumbnail } =
+        attributes;
 
       const [mediaPopup, setMediaPopup] = useState("");
       const [loading, setLoading] = useState(false);

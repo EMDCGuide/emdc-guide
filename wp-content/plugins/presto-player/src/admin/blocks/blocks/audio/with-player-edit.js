@@ -30,12 +30,6 @@ export default () =>
       const [count, setCount] = useState(1);
       let { poster, chapters } = attributes;
 
-      useEffect(() => {
-        if (isSelected && attributes?.id) {
-          dispatch("core/edit-post").openGeneralSidebar("edit-post/block");
-        }
-      }, [isSelected]);
-
       // don't allow selection if there is an override
       useEffect(() => {
         if (isSelected && attributes?.selectionOverrideClientId) {

@@ -177,11 +177,21 @@ if ( ! function_exists( 'astra_get_background_obj' ) ) {
 					break;
 
 				case 'image':
-					if ( '' !== $bg_img && '' !== $bg_color && ( ! is_numeric( strpos( $bg_color, 'linear-gradient' ) ) && ! is_numeric( strpos( $bg_color, 'radial-gradient' ) ) ) ) {
-						$gen_bg_css['background-image'] = 'linear-gradient(to right, ' . $bg_color . ', ' . $bg_color . '), url(' . $bg_img . ');';
-					}
-					if ( '' === $bg_color || is_numeric( strpos( $bg_color, 'linear-gradient' ) ) || is_numeric( strpos( $bg_color, 'radial-gradient' ) ) && '' !== $bg_img ) {
-						$gen_bg_css['background-image'] = 'url(' . $bg_img . ');';
+					$overlay_type  = isset( $bg_obj['overlay-type'] ) ? $bg_obj['overlay-type'] : 'none';
+					$overlay_color = isset( $bg_obj['overlay-color'] ) ? $bg_obj['overlay-color'] : '';
+					$overlay_grad  = isset( $bg_obj['overlay-gradient'] ) ? $bg_obj['overlay-gradient'] : '';
+					if ( '' !== $bg_img ) {
+						if ( 'none' !== $overlay_type ) {
+							if ( 'classic' === $overlay_type && '' !== $overlay_color ) {
+								$gen_bg_css['background-image'] = 'linear-gradient(to right, ' . $overlay_color . ', ' . $overlay_color . '), url(' . $bg_img . ');';
+							} elseif ( 'gradient' === $overlay_type && '' !== $overlay_grad ) {
+								$gen_bg_css['background-image'] = $overlay_grad . ', url(' . $bg_img . ');';
+							} else {
+								$gen_bg_css['background-image'] = 'url(' . $bg_img . ');';
+							}
+						} else {
+							$gen_bg_css['background-image'] = 'url(' . $bg_img . ');';
+						}
 					}
 					break;
 
@@ -280,11 +290,26 @@ if ( ! function_exists( 'astra_get_responsive_background_obj' ) ) {
 					break;
 
 				case 'image':
-					if ( '' !== $bg_img && '' !== $bg_color && ( ! is_numeric( strpos( $bg_color, 'linear-gradient' ) ) && ! is_numeric( strpos( $bg_color, 'radial-gradient' ) ) ) ) {
-						$gen_bg_css['background-image'] = 'linear-gradient(to right, ' . $bg_color . ', ' . $bg_color . '), url(' . $bg_img . ');';
-					}
-					if ( '' === $bg_color || is_numeric( strpos( $bg_color, 'linear-gradient' ) ) || is_numeric( strpos( $bg_color, 'radial-gradient' ) ) && '' !== $bg_img ) {
-						$gen_bg_css['background-image'] = 'url(' . $bg_img . ');';
+					/** @psalm-suppress PossiblyUndefinedStringArrayOffset */ // phpcs:ignore Generic.Commenting.DocComment.MissingShort
+					$overlay_type = isset( $bg_obj['overlay-type'] ) ? $bg_obj['overlay-type'] : 'none';
+					/** @psalm-suppress PossiblyUndefinedStringArrayOffset */ // phpcs:ignore Generic.Commenting.DocComment.MissingShort
+					$overlay_color = isset( $bg_obj['overlay-color'] ) ? $bg_obj['overlay-color'] : '';
+					/** @psalm-suppress PossiblyUndefinedStringArrayOffset */ // phpcs:ignore Generic.Commenting.DocComment.MissingShort
+					$overlay_grad = isset( $bg_obj['overlay-gradient'] ) ? $bg_obj['overlay-gradient'] : '';
+					/** @psalm-suppress PossiblyUndefinedStringArrayOffset */ // phpcs:ignore Generic.Commenting.DocComment.MissingShort
+
+					if ( '' !== $bg_img ) {
+						if ( 'none' !== $overlay_type ) {
+							if ( 'classic' === $overlay_type && '' !== $overlay_color ) {
+								$gen_bg_css['background-image'] = 'linear-gradient(to right, ' . $overlay_color . ', ' . $overlay_color . '), url(' . $bg_img . ');';
+							} elseif ( 'gradient' === $overlay_type && '' !== $overlay_grad ) {
+								$gen_bg_css['background-image'] = $overlay_grad . ', url(' . $bg_img . ');';
+							} else {
+								$gen_bg_css['background-image'] = 'url(' . $bg_img . ');';
+							}
+						} else {
+							$gen_bg_css['background-image'] = 'url(' . $bg_img . ');';
+						}
 					}
 					break;
 
@@ -341,9 +366,9 @@ if ( ! function_exists( 'astra_addon_get_search_form' ) ) :
 		$form = '<form role="search" method="get" class="search-form" action="' . esc_url( home_url( '/' ) ) . '">
 			<label>
 				<span class="screen-reader-text">' . _x( 'Search for:', 'label', 'astra-addon' ) . '</span>
-				<input type="search" class="search-field" placeholder="' . esc_html( $astra_search_input_placeholder ) . '" value="' . get_search_query() . '" name="s" />
+				<input type="search" class="search-field" placeholder="' . esc_attr( $astra_search_input_placeholder ) . '" value="' . get_search_query() . '" name="s" />
 			</label>
-			<button type="submit" class="search-submit" value="' . esc_html__( 'Search', 'astra-addon' ) . '" aria-label= "' . esc_attr__( 'Search', 'astra-addon' ) . '"><i class="astra-search-icon"> ' . Astra_Icons::get_icons( 'search' ) . ' </i></button>
+			<button type="submit" class="search-submit" value="' . esc_attr__( 'Search', 'astra-addon' ) . '" aria-label= "' . esc_attr__( 'Search', 'astra-addon' ) . '"><i class="astra-search-icon"> ' . Astra_Icons::get_icons( 'search' ) . ' </i></button>
 		</form>';
 
 		/**
@@ -358,56 +383,7 @@ if ( ! function_exists( 'astra_addon_get_search_form' ) ) :
 		}
 
 		if ( $echo ) {
-			echo wp_kses(
-				$result,
-				array(
-					'span'   => array( 'class' => array() ),
-					'label'  => array( 'class' => array() ),
-					'i'      => array( 'class' => array() ),
-					'input'  => array(
-						'type'        => array(),
-						'class'       => array(),
-						'placeholder' => array(),
-						'value'       => array(),
-						'name'        => array(),
-					),
-					'form'   => array(
-						'role'   => array(),
-						'method' => array(),
-						'class'  => array(),
-						'action' => array(),
-					),
-					'button' => array(
-						'type'       => array(),
-						'class'      => array(),
-						'value'      => array(),
-						'aria-label' => array(),
-						'value'      => array(),
-					),
-					'svg'    => array(
-						'xmlns:xlink'       => array(),
-						'version'           => array(),
-						'x'                 => array(),
-						'y'                 => array(),
-						'enable-background' => array(),
-						'xml:space'         => array(),
-						'class'             => array(),
-						'aria-hidden'       => array(),
-						'aria-labelledby'   => array(),
-						'role'              => array(),
-						'xmlns'             => array(),
-						'width'             => array(),
-						'height'            => array(),
-						'viewbox'           => array(),
-					),
-					'g'      => array( 'fill' => array() ),
-					'title'  => array( 'title' => array() ),
-					'path'   => array(
-						'd'    => array(),
-						'fill' => array(),
-					),
-				)
-			);
+			echo wp_kses( $result, Astra_Addon_Kses::astra_addon_form_with_post_kses_protocols() );
 		} else {
 			return $result;
 		}
