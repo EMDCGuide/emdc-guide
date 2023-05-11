@@ -131,11 +131,14 @@ body.post-type-archive-guide_resource .ast-pagination {
     justify-content: right;
 }
 .emdc-dropdown > a {
-    border-radius: 100%;
     background: #FAF9F6;
+    border-radius: 50%;
     color: #000000;
-    display:inline-block;
-    line-height:40px;
+    display: table-cell !important;
+    height: 95px;
+    text-align: center;
+    vertical-align: middle;
+    width: 95px;
 }
 .emdc-dropdown > a.hovered {      
     background: #eee;
