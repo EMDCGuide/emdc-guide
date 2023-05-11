@@ -581,12 +581,17 @@ class MonsterInsights_Rest_Routes {
 			);
 		}
 
+        $parsed_addons = apply_filters('monsterinsights_parsed_addons', $parsed_addons);
+
 		wp_send_json( $parsed_addons );
 	}
 
 	public function get_addon( $installed_plugins, $addons_type, $addon, $slug ) {
 		$active          = false;
 		$installed       = false;
+
+        $slug = apply_filters( 'monsterinsights_addon_slug', $slug );
+
 		$plugin_basename = monsterinsights_get_plugin_basename_from_slug( $slug );
 
 		if ( isset( $installed_plugins[ $plugin_basename ] ) ) {

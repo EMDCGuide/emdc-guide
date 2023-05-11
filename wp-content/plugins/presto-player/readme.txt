@@ -3,8 +3,8 @@ Contributors: 2winfactor, wpcrafter
 Donate link: https://prestoplayer.com
 Tags: video, audio, youtube, vimeo, lms, elementor, learndash, beaver builder, lifterlms
 Requires at least: 5.6
-Tested up to: 6.0
-Stable tag: 1.13.0
+Tested up to: 6.2
+Stable tag: 1.14.0
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -149,6 +149,10 @@ It is also important to point out that BunnyNet has a $1 per month minimum.
 
 
 == Changelog ==
+
+= 1.14.0 - May 1, 2023 =
+* Improvement: Compatibility with Full Site Editing.
+* Fix: CSS formatting issues in popup and placeholder.
 
 = 1.13.0 - February 22, 2023 = 
 * Improvement: Automatically get highest available thumbnail from YouTube when max resolution image is not available.

@@ -83,4 +83,19 @@ class YouTubeBlock extends Block
         preg_match("/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>]+)/", $url, $matches);
         return !empty($matches[1]) ? $matches[1] : '';
     }
+
+    /**
+     * Register the block type.
+     *
+     * @return void
+     */
+    public function registerBlockType()
+    {
+        register_block_type(
+            PRESTO_PLAYER_PLUGIN_DIR . 'src/admin/blocks/blocks/youtube',
+            array(
+                'render_callback' => [$this, 'html'],
+            )
+        );
+    }
 }

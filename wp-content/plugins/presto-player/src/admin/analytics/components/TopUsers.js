@@ -39,7 +39,8 @@ export default compose([withDataList()])(
 
     // navigate to user screen here
     const navigate = (id) => {
-      history.push(`#/user/${id}`);
+      const { search } = history.location;
+      history.push(`${search}#/user/${id}`);
     };
 
     const columns = [

@@ -4,7 +4,7 @@
  * Plugin Name: Presto Player
  * Plugin URI: http://prestoplayer.com
  * Description: A beautiful, fast media player for WordPress.
- * Version: 1.13.0
+ * Version: 1.14.0
  * Author: Presto Made, Inc
  * Author URI: https://prestoplayer.com/ 
  * Text Domain: presto-player

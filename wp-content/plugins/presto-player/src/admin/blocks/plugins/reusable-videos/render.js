@@ -1,11 +1,10 @@
-const { __ } = wp.i18n;
-
-const { Panel, PanelBody, Button, Spinner } = wp.components;
-const { PluginSidebar, PluginSidebarMoreMenuItem } = wp.editPost;
-const { Fragment, useEffect, useState, useCallback } = wp.element;
-const { dispatch, useSelect } = wp.data;
-const { createBlock, getBlockType } = wp.blocks;
-const { apiFetch } = wp;
+import { __ } from "@wordpress/i18n";
+import { PanelBody, Button, Spinner } from "@wordpress/components";
+import { PluginSidebar, PluginSidebarMoreMenuItem } from "@wordpress/edit-post";
+import { Fragment, useEffect, useState, useCallback } from "@wordpress/element";
+import { dispatch, useSelect } from "@wordpress/data";
+import { createBlock, getBlockType } from "@wordpress/blocks";
+import apiFetch from "@wordpress/api-fetch";
 
 import SearchForm from "./SearchForm";
 import InserterShortcodeInput from "./ShortcodeInput";

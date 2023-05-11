@@ -22,9 +22,17 @@ export default ({
       title={title ? title : __("Add Media", "presto-player")}
       onRequestClose={onClose}
       css={css`
+        .components-modal__header {
+          border-bottom: 1px solid #ddd;
+        }
         .components-modal__content {
           display: flex;
           flex-direction: column;
+          padding: 0;
+
+          > :not(.components-modal__header) {
+            flex: 1;
+          }
         }
       `}
       overlayClassName="presto-player__modal-overlay"
@@ -32,7 +40,7 @@ export default ({
       <div
         css={css`
           @media screen and (min-width: 780px) {
-            margin: -24px;
+            height: 100%;
             display: grid;
             flex: 1;
             max-height: calc(100vh - 68px);

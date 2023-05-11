@@ -283,6 +283,9 @@ class MonsterInsights_Dashboard_Widget {
 			$this->options = self::wp_parse_args_recursive( get_user_meta( get_current_user_id(), 'monsterinsights_user_preferences', true ), self::$default_options );
 		}
 
+        // Set interval fixed to last30days on lite plugin.
+		$this->options['interval'] = 'last30days';
+
 		return apply_filters( 'monsterinsights_dashboard_widget_options', $this->options );
 
 	}

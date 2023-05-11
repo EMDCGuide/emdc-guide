@@ -50,4 +50,19 @@ class AudioBlock extends Block
       'styles' => $default_config['styles'] . ' --presto-curtain-size: 25%',
     ];
   }
+
+  /**
+     * Register the block type.
+     *
+     * @return void
+     */
+    public function registerBlockType()
+    {
+        register_block_type(
+            PRESTO_PLAYER_PLUGIN_DIR . 'src/admin/blocks/blocks/audio',
+            array(
+                'render_callback' => [$this, 'html'],
+            )
+        );
+    }
 }

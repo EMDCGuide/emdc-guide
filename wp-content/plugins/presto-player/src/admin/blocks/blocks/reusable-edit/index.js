@@ -49,14 +49,6 @@ export const options = {
       (select) => select("core/block-editor").getBlock(clientId).innerBlocks
     );
 
-    useEffect(() => {
-      if (isSelected) {
-        wp.data
-          .dispatch("core/edit-post")
-          .openGeneralSidebar("edit-post/block");
-      }
-    }, [isSelected]);
-
     // make sure we don't check template validity because is's buggy as fuck
     dispatch("core/block-editor").setTemplateValidity(true);
 

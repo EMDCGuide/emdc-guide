@@ -40,7 +40,8 @@ export default compose([withDataList()])(
     }, [page, startDate, endDate]);
 
     const navigate = (id) => {
-      history.push(`#/video/${id}`);
+      const { search } = history.location;
+      history.push(`${search}#/video/${id}`);
     };
 
     const columns = [

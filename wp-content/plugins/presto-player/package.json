@@ -45,6 +45,7 @@
     "watch": "yarn start",
     "start": "wp-scripts start",
     "test:php": "wp-env run phpunit 'phpunit -c /var/www/html/wp-content/plugins/presto-player/phpunit.xml.dist --testdox'",
+    "test:php:failing": "wp-env run phpunit 'phpunit -c /var/www/html/wp-content/plugins/presto-player/phpunit.xml.dist --testdox --group=failing'",
     "test:e2e": "wp-scripts test-e2e",
     "test:unit": "wp-scripts test-unit-js"
   },

@@ -8,23 +8,11 @@
  */
 
 $btn_border_attributes = UAGB_Block_Helper::uag_generate_border_attribute(
-	'btn',
-	array(
-		'borderTopLeftRadius'     => 3,
-		'borderTopRightRadius'    => 3,
-		'borderBottomLeftRadius'  => 3,
-		'borderBottomRightRadius' => 3,
-	)
+	'btn'
 );
 
 $content_border_attributes = UAGB_Block_Helper::uag_generate_border_attribute(
-	'content',
-	array(
-		'borderTopLeftRadius'     => 3,
-		'borderTopRightRadius'    => 3,
-		'borderBottomLeftRadius'  => 3,
-		'borderBottomRightRadius' => 3,
-	)
+	'content'
 );
 
 $additional_attributes = apply_filters(
@@ -173,6 +161,13 @@ return array_merge(
 		'backgroundOpacity'           => '',
 		'backgroundImageColor'        => '#FFFFFF75',
 		'gradientValue'               => 'linear-gradient(90deg, rgba(6, 147, 227, 0.5) 0%, rgba(155, 81, 224, 0.5) 100%)',
+		'gradientColor1'              => '#06558a',
+		'gradientColor2'              => '#0063A1',
+		'gradientType'                => 'linear',
+		'gradientLocation1'           => 0,
+		'gradientLocation2'           => 100,
+		'gradientAngle'               => 0,
+		'selectGradient'              => 'basic',
 		'backgroundCustomSizeDesktop' => 100,
 		'backgroundCustomSizeTablet'  => '',
 		'backgroundCustomSizeMobile'  => '',

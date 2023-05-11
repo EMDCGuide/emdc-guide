@@ -4,7 +4,9 @@ import {
   PrestoSearchBarUi,
 } from "@presto-player/components-react";
 import { getProvider } from "../util";
-const { useSelect } = wp.data;
+import { useRef, useEffect } from "@wordpress/element";
+import { useSelect } from "@wordpress/data";
+import { convertHex } from "../../../shared/util";
 
 export default ({
   src,
@@ -18,34 +20,71 @@ export default ({
   overlays,
   type,
 }) => {
-  const { chapters, mutedOverlay, mutedPreview } = attributes;
+  const ref = useRef();
+  const {
+    previewThumbnail,
+    preview,
+    chapters,
+    poster,
+    mutedOverlay,
+    mutedPreview,
+    title,
+  } = attributes;
 
-  const youtube = useSelect((select) => {
-    return select("presto-player/player")?.youtube();
+  const { youtube, playerCSS } = useSelect((select) => {
+    return {
+      youtube: select("presto-player/player")?.youtube(),
+      playerCSS: select("presto-player/player")?.playerCSS(),
+    };
   });
 
-  const playerCSS = useSelect((select) => {
-    return select("presto-player/player")?.playerCSS();
-  });
-
-  const convertHex = (hexCode, opacity = 1) => {
-    var hex = hexCode.replace("#", "");
-
-    if (hex.length === 3) {
-      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-    }
-
-    var r = parseInt(hex.substring(0, 2), 16),
-      g = parseInt(hex.substring(2, 4), 16),
-      b = parseInt(hex.substring(4, 6), 16);
-
-    /* Backward compatibility for whole number based opacity values. */
-    if (opacity > 1 && opacity <= 100) {
-      opacity = opacity / 100;
-    }
-
-    return "rgba(" + r + "," + g + "," + b + "," + opacity + ")";
-  };
+  useEffect(() => {
+    ref.current.src = src;
+    ref.current["data-css"] = playerCSS;
+    ref.current.classes = classes;
+    ref.current.currentTime = currentTime;
+    ref.current.overlays = overlays;
+    ref.current.isAdmin = true;
+    ref.current.preload = preload;
+    ref.current.preset = preset;
+    ref.current.bunny = {
+      thumbnail: previewThumbnail,
+      preview,
+    };
+    ref.current.youtube = {
+      channelId: youtube?.channel_id,
+    };
+    ref.current.tracks = [
+      ...(!!preset?.captions
+        ? [
+            {
+              kind: "captions",
+              label: "English",
+              srclang: "en",
+              src: "/path/to/captions.en.vtt",
+              default: true,
+            },
+          ]
+        : []),
+    ];
+    ref.current.branding = branding;
+    ref.current.chapters = chapters;
+    ref.current.blockAttributes = attributes;
+    ref.current.poster = poster;
+    ref.current.provider = type === "audio" ? "audio" : getProvider(src);
+    ref.current.mediaTitle = title;
+  }, [
+    src,
+    classes,
+    preset,
+    branding,
+    attributes,
+    adminPreview,
+    currentTime,
+    (preload = "metadata"),
+    overlays,
+    type,
+  ]);
 
   const mutedOverlayContent = () => {
     return (
@@ -112,49 +151,16 @@ export default ({
             }
       }
     >
-      <PrestoPlayer
-        src={src}
-        data-css={playerCSS}
-        classes={classes}
-        currentTime={currentTime}
-        overlays={overlays}
-        isAdmin={true}
-        preload={preload}
-        preset={preset}
-        bunny={{
-          thumbnail: attributes?.previewThumbnail,
-          preview: attributes?.preview,
-        }}
-        youtube={{
-          channelId: youtube?.channel_id,
-        }}
-        tracks={
-          !!preset?.captions && [
-            {
-              kind: "captions",
-              label: "English",
-              srclang: "en",
-              src: "/path/to/captions.en.vtt",
-              default: true,
-            },
-          ]
-        }
-        branding={branding}
-        chapters={chapters}
-        blockAttributes={attributes}
-        poster={attributes.poster}
-        provider={type === "audio" ? "audio" : getProvider(src)}
-        mediaTitle={attributes.title}
-      >
+      <PrestoPlayer ref={ref}>
         <div slot="player-end">
           {!!preset.search?.enabled && (
             <PrestoSearchBarUi
-              css={css`
-                position: absolute;
-                top: 15px;
-                right: 23px;
-                z-index: 1;
-              `}
+              style={{
+                position: "absolute",
+                top: "15px",
+                right: "23px",
+                zIndex: 1,
+              }}
               placeholder={preset.search?.placeholder}
             />
           )}

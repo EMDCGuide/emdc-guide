@@ -1,13 +1,7 @@
 const { __ } = wp.i18n;
 
-const {
-  Flex,
-  FlexBlock,
-  FlexItem,
-  Spinner,
-  Button,
-  TextControl,
-} = wp.components;
+const { Flex, FlexBlock, FlexItem, Spinner, Button, TextControl } =
+  wp.components;
 
 import { history } from "@/router/context";
 import DatePicker from "../components/DatePicker";
@@ -28,7 +22,8 @@ const Video = ({ route, startDate, endDate, setStartDate, setEndDate }) => {
   const [editing, setEditing] = useState(false);
 
   const back = () => {
-    history.push(`#/`);
+    const { search } = history.location;
+    history.push(`${search}#/`);
   };
 
   const getVideo = async () => {

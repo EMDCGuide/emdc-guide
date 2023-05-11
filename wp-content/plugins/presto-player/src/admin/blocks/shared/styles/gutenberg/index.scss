@@ -52,10 +52,11 @@ progress.presto-progress::-webkit-progress-value {
   &__placeholder-control {
     flex: 1 0 100%;
     margin: 10px 0;
-    padding: 6px;
+    padding: 12px;
     background: #f3f3f3;
 
-    > .components-base-control__field {
+    .components-base-control,
+    .components-base-control__field {
       margin-bottom: 0;
     }
 
@@ -344,6 +345,9 @@ progress.presto-progress::-webkit-progress-value {
     .components-modal__content {
       display: flex;
       flex-direction: column;
+      > :nth-child(2) {
+        display: contents;
+      }
     }
 
     .components-tab-panel__tabs {
