@@ -147,10 +147,12 @@ function child_get_search_form($form) {
 function child_the_content($text) {
 	global $post;
 	if( get_post_type($post) === 'guide_resource' ) {
-		$customField = 'wpf26052_4=' . urlencode('Resource: ' . $post->post_title);
+		$form = ($post->post_name === 'mat') ? 'wpf26782' : 'wpf26052';
+		$url = ($post->post_name === 'mat') ? '/contact-resource-provider-mat/' : '/contact-resource-provider/';
+		$customField = $form . '_4=' . urlencode('Resource: ' . $post->post_title);
 		$buttons = '<div class="resource-nav-buttons">' .
 			'<button onclick="location.href=\'/resources/\';">' . __('Back to Resources') . '</button>' .
-			'<button class="contact-provider" onclick="location.href=\'/contact-resource-provider/?' . $customField . '\';">' . __('Contact Resource Provider') . '</button>' .
+			'<button class="contact-provider" onclick="location.href=\'' . $url . '?' . $customField . '\';">' . __('Contact Resource Provider') . '</button>' .
 		'</div>';
 		$text = $text . $buttons;
 	}
